@@ -55,11 +55,23 @@ class Register(QWidget):
         email_address_label.setText("Email Address")
         email_address_label.setFont(QFont(fonts[0], 12))
         email_address_label.setAlignment(Qt.AlignLeft)
+        
+        # Password Label is initialized two times
+        password_label = QLabel()
+        password_label.setText("Password")
+        password_label.setFont(QFont(fonts[0], 12))
+        password_label.setAlignment(Qt.AlignLeft)
+        password_label_repeat = QLabel()
+        password_label_repeat.setText("Repeat Password")
+        password_label_repeat.setFont(QFont(fonts[0], 12))
+        password_label_repeat.setAlignment(Qt.AlignLeft)
 
         # Add the objects to the left vertical objects
         left_vertical_layout.addWidget(first_name_label)
         left_vertical_layout.addWidget(last_name_label)
         left_vertical_layout.addWidget(email_address_label)
+        left_vertical_layout.addWidget(password_label)
+        left_vertical_layout.addWidget(password_label_repeat)
 
         # Init the right vertical layout, containing the QLineEdit objects
         right_vertical_layout = QVBoxLayout()
@@ -84,10 +96,24 @@ class Register(QWidget):
         email_address_textbox.setFixedHeight(20)
         email_address_textbox.setAlignment(Qt.AlignLeft)
 
+        password_textbox = QLineEdit()
+        password_textbox.setEchoMode(QLineEdit.Password)
+        password_textbox.setFixedWidth(300)
+        password_textbox.setFixedHeight(20)
+        password_textbox.setAlignment(Qt.AlignLeft)
+        password_textbox_repeat = QLineEdit()
+        password_textbox_repeat.setEchoMode(QLineEdit.Password)
+        password_textbox_repeat.setFixedWidth(300)
+        password_textbox_repeat.setFixedHeight(20)
+        password_textbox_repeat.setAlignment(Qt.AlignLeft)
+        
+
         # Add the object to the right vertical layout
         right_vertical_layout.addWidget(first_name_textbox)
         right_vertical_layout.addWidget(last_name_textbox)
         right_vertical_layout.addWidget(email_address_textbox)
+        right_vertical_layout.addWidget(password_textbox)
+        right_vertical_layout.addWidget(password_textbox_repeat)
 
         # Add right and left layout to the main horizontal layout
         main_horizontal_layout.addLayout(left_vertical_layout)
