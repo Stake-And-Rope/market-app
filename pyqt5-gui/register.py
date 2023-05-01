@@ -41,13 +41,25 @@ class Register(QWidget):
         left_vertical_layout.addStretch()
         left_vertical_layout.addSpacing(2)
 
-        first_name = QLabel()
-        first_name.setText("First Name")
-        first_name.setFont(QFont(fonts[0], 12))
-        first_name.setAlignment(Qt.AlignLeft)
+        first_name_label = QLabel()
+        first_name_label.setText("First Name")
+        first_name_label.setFont(QFont(fonts[0], 12))
+        first_name_label.setAlignment(Qt.AlignLeft)
+
+        last_name_label = QLabel()
+        last_name_label.setText("Last Name")
+        last_name_label.setFont(QFont(fonts[0], 12))
+        last_name_label.setAlignment(Qt.AlignLeft)
+
+        email_address_label = QLabel()
+        email_address_label.setText("Email Address")
+        email_address_label.setFont(QFont(fonts[0], 12))
+        email_address_label.setAlignment(Qt.AlignLeft)
 
         # Add the objects to the left vertical objects
-        left_vertical_layout.addWidget(first_name)
+        left_vertical_layout.addWidget(first_name_label)
+        left_vertical_layout.addWidget(last_name_label)
+        left_vertical_layout.addWidget(email_address_label)
 
         # Init the right vertical layout, containing the QLineEdit objects
         right_vertical_layout = QVBoxLayout()
@@ -57,11 +69,25 @@ class Register(QWidget):
         first_name_textbox = QLineEdit()
         first_name_textbox.setFont(QFont(fonts[0], 12))
         first_name_textbox.setFixedWidth(300)
-        first_name_textbox.setAlignment(Qt.AlignRight)
+        first_name_textbox.setFixedHeight(20)
+        first_name_textbox.setAlignment(Qt.AlignLeft)
 
+        last_name_textbox = QLineEdit()
+        last_name_textbox.setFont(QFont(fonts[0], 12))
+        last_name_textbox.setFixedWidth(300)
+        last_name_textbox.setFixedHeight(20)
+        last_name_textbox.setAlignment(Qt.AlignLeft)
+
+        email_address_textbox = QLineEdit()
+        email_address_textbox.setFont(QFont(fonts[0], 12))
+        email_address_textbox.setFixedWidth(300)
+        email_address_textbox.setFixedHeight(20)
+        email_address_textbox.setAlignment(Qt.AlignLeft)
 
         # Add the object to the right vertical layout
         right_vertical_layout.addWidget(first_name_textbox)
+        right_vertical_layout.addWidget(last_name_textbox)
+        right_vertical_layout.addWidget(email_address_textbox)
 
         # Add right and left layout to the main horizontal layout
         main_horizontal_layout.addLayout(left_vertical_layout)
