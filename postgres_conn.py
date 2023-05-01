@@ -42,7 +42,7 @@ def admin_client():
         db_client = psycopg2.connect(
                 user = str(database_username),
                 password = str(database_password),
-                host = str(database_host)
+                host = str(database_host),
                 dbname = str(database_name)
                 )
         cursor = db_client.cursor()
@@ -57,10 +57,10 @@ def admin_client():
     POSTGRES_CONNECTION = db_client
 
 
-def close_conn():
-    tunnel.close()
+    # Close connection to the Linux Server and the Postgres DB. This two line should be commented in production environment    
     db_client.close()
+    tunnel.close()
+
 
 admin_client()
-close_conn()
 
