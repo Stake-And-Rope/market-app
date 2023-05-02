@@ -44,26 +44,31 @@ class Register(QWidget):
         first_name_label = QLabel()
         first_name_label.setText("First Name")
         first_name_label.setFont(QFont(fonts[0], 12))
+        first_name_label.setFixedHeight(25)
         first_name_label.setAlignment(Qt.AlignLeft)
 
         last_name_label = QLabel()
         last_name_label.setText("Last Name")
         last_name_label.setFont(QFont(fonts[0], 12))
+        last_name_label.setFixedHeight(25)
         last_name_label.setAlignment(Qt.AlignLeft)
 
         email_address_label = QLabel()
         email_address_label.setText("Email Address")
         email_address_label.setFont(QFont(fonts[0], 12))
+        email_address_label.setFixedHeight(25)
         email_address_label.setAlignment(Qt.AlignLeft)
         
         # Password Label is initialized two times
         password_label = QLabel()
         password_label.setText("Password")
         password_label.setFont(QFont(fonts[0], 12))
+        password_label.setFixedHeight(25)
         password_label.setAlignment(Qt.AlignLeft)
         password_label_repeat = QLabel()
         password_label_repeat.setText("Repeat Password")
         password_label_repeat.setFont(QFont(fonts[0], 12))
+        password_label_repeat.setFixedHeight(25)
         password_label_repeat.setAlignment(Qt.AlignLeft)
 
         # Add the objects to the left vertical objects
