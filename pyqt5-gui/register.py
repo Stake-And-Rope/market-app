@@ -123,10 +123,28 @@ class Register(QWidget):
         # Add right and left layout to the main horizontal layout
         main_horizontal_layout.addLayout(left_vertical_layout)
         main_horizontal_layout.addLayout(right_vertical_layout)
+        
+        # Buttons Layout
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch()
+        buttons_layout.addSpacing(2)
+
+        register_button = QPushButton()
+        register_button.setText('Register')
+        register_button.setFont(QFont(fonts[0], 12))
+
+        back_button = QPushButton()
+        back_button.setText('Back')
+        back_button.setFont(QFont(fonts[0], 12))
+
+        buttons_layout.addWidget(register_button)
+        buttons_layout.addWidget(back_button)
+
 
         # Init the Main Layout which loads all objects above
         main_layout = QVBoxLayout()
         main_layout.addLayout(main_horizontal_layout)
+        main_layout.addLayout(buttons_layout)
         self.setLayout(main_layout)
         self.show()
 
