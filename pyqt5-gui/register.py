@@ -16,6 +16,7 @@ from PyQt5.QtCore import *
 
 import random, sys, re, string
 
+
 # Create the QWidget class and initiate the objects inside
 class Register(QWidget):
     def __init__(self):
@@ -32,19 +33,15 @@ class Register(QWidget):
             print('Error loading fonts!')
         fonts = QFontDatabase.applicationFontFamilies(font)
         
-        qlabels = []
-        
-        # """Apply the shadow effect to all objects"""
-        # """Prepare the shadow effect variable"""
-        # shadow = QGraphicsDropShadowEffect()
-        # shadow.setOffset(2, 1)
+        qlabels_list = []
+        qlineedit_list = []
 
         """Init the main horizontal layout"""
         main_horizontal_layout = QHBoxLayout()
         main_horizontal_layout.addStretch()
         main_horizontal_layout.addSpacing(2)
         
-        """Init the left vertical layout, containing the QLabels objects"""
+        """Init the left vertical layout, containing the qlabels_list objects"""
         left_vertical_layout = QVBoxLayout()
         left_vertical_layout.addStretch()
         left_vertical_layout.addSpacing(2)
@@ -54,24 +51,24 @@ class Register(QWidget):
         first_name_label.setFont(QFont(fonts[0], 12))
         first_name_label.setFixedHeight(25)
         first_name_label.setAlignment(Qt.AlignLeft)
-        first_name_label.setStyleSheet("color: #FF3300;")
-        qlabels.append(first_name_label)
+        first_name_label.setStyleSheet("color: #003366")
+        qlabels_list.append(first_name_label)
 
         last_name_label = QLabel()
         last_name_label.setText("Last Name")
         last_name_label.setFont(QFont(fonts[0], 12))
         last_name_label.setFixedHeight(25)
         last_name_label.setAlignment(Qt.AlignLeft)
-        last_name_label.setStyleSheet("color: #FF3300")
-        qlabels.append(last_name_label)
+        last_name_label.setStyleSheet("color: #003366")
+        qlabels_list.append(last_name_label)
 
         email_address_label = QLabel()
         email_address_label.setText("Email Address")
         email_address_label.setFont(QFont(fonts[0], 12))
         email_address_label.setFixedHeight(25)
         email_address_label.setAlignment(Qt.AlignLeft)
-        email_address_label.setStyleSheet("color: #FF3300")
-        qlabels.append(email_address_label)
+        email_address_label.setStyleSheet("color: #003366")
+        qlabels_list.append(email_address_label)
         
         """Password Label is initialized two times"""
         password_label = QLabel()
@@ -79,22 +76,23 @@ class Register(QWidget):
         password_label.setFont(QFont(fonts[0], 12))
         password_label.setFixedHeight(25)
         password_label.setAlignment(Qt.AlignLeft)
-        password_label.setStyleSheet("color: #FF3300")
-        qlabels.append(password_label)
+        password_label.setStyleSheet("color: #003366")
+        qlabels_list.append(password_label)
         password_label_repeat = QLabel()
         password_label_repeat.setText("Repeat Password")
         password_label_repeat.setFont(QFont(fonts[0], 12))
         password_label_repeat.setFixedHeight(25)
         password_label_repeat.setAlignment(Qt.AlignLeft)
-        password_label_repeat.setStyleSheet("color: #FF3300")
-        qlabels.append(password_label_repeat)
+        password_label_repeat.setStyleSheet("color: #003366")
+        qlabels_list.append(password_label_repeat)
 
-        """Apply shadow effect to all QLabel added to `qlabels` array
+        """Apply shadow effect to all QLabel added to qlabels_list array
             shadow variable is customizable"""
-        for i in range(len(qlabels)):
+        for i in range(len(qlabels_list)):
             shadow = QGraphicsDropShadowEffect()
             shadow.setOffset(2, 1)
-            qlabels[i].setGraphicsEffect(shadow)
+            shadow.setColor(QColor(255, 255, 255))
+            qlabels_list[i].setGraphicsEffect(shadow)
 
         """Add the objects to the left vertical objects"""
         left_vertical_layout.addWidget(first_name_label)
@@ -113,29 +111,43 @@ class Register(QWidget):
         first_name_textbox.setFixedWidth(300)
         first_name_textbox.setFixedHeight(25)
         first_name_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(first_name_textbox)
 
         last_name_textbox = QLineEdit()
         last_name_textbox.setFont(QFont(fonts[0], 12))
         last_name_textbox.setFixedWidth(300)
         last_name_textbox.setFixedHeight(25)
         last_name_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(last_name_textbox)
 
         email_address_textbox = QLineEdit()
         email_address_textbox.setFont(QFont(fonts[0], 12))
         email_address_textbox.setFixedWidth(300)
         email_address_textbox.setFixedHeight(25)
         email_address_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(email_address_textbox)
 
         password_textbox = QLineEdit()
         password_textbox.setEchoMode(QLineEdit.Password)
         password_textbox.setFixedWidth(300)
         password_textbox.setFixedHeight(25)
         password_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(password_textbox)
         password_textbox_repeat = QLineEdit()
         password_textbox_repeat.setEchoMode(QLineEdit.Password)
         password_textbox_repeat.setFixedWidth(300)
         password_textbox_repeat.setFixedHeight(25)
         password_textbox_repeat.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(password_textbox_repeat)
+        
+        """Apply shadow effect to qlabels_list array
+            shadow variable is customizable"""
+        for i in range(len(qlineedit_list)):
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setOffset(2, 1)
+            shadow.setColor(QColor(0, 51, 102))
+            qlineedit_list[i].setGraphicsEffect(shadow)
+            
         
         """Add the object to the right vertical layout"""
         right_vertical_layout.addWidget(first_name_textbox)
@@ -177,9 +189,6 @@ class Register(QWidget):
             """This function should verify the user data and execute series of queries to
                 create the new user inside the DB. Consider giving the right read permissions to the new user"""
             pass
-
-
-
 
 
 def init_app():
