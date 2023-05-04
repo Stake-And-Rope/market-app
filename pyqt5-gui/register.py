@@ -14,9 +14,12 @@ from PyQt5.QtWidgets import (QApplication,
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from db_handle import postgres_conn
+import sys
+sys.path.append(r'../db_handle')
+# import postgres_conn
+from db_handle import postgres_conn, register_user
 
-import random, sys, re, string
+import random, re, string
 
 
 # Create the QWidget class and initiate the objects inside
@@ -48,6 +51,14 @@ class Register(QWidget):
         left_vertical_layout.addStretch()
         left_vertical_layout.addSpacing(2)
 
+        user_name_label = QLabel()
+        user_name_label.setText("User Name")
+        user_name_label.setFont(QFont(fonts[0], 12))
+        user_name_label.setFixedHeight(25)
+        user_name_label.setAlignment(Qt.AlignLeft)
+        user_name_label.setStyleSheet("color: #003366")
+        qlabels_list.append(user_name_label)   
+    
         first_name_label = QLabel()
         first_name_label.setText("First Name")
         first_name_label.setFont(QFont(fonts[0], 12))
@@ -71,6 +82,15 @@ class Register(QWidget):
         email_address_label.setAlignment(Qt.AlignLeft)
         email_address_label.setStyleSheet("color: #003366")
         qlabels_list.append(email_address_label)
+
+
+        phone_number_label = QLabel()
+        phone_number_label.setText("Phone Number")
+        phone_number_label.setFont(QFont(fonts[0], 12))
+        phone_number_label.setFixedHeight(25)
+        phone_number_label.setAlignment(Qt.AlignLeft)
+        phone_number_label.setStyleSheet("color: #003366")
+        qlabels_list.append(phone_number_label)
         
         """Password Label is initialized two times"""
         password_label = QLabel()
@@ -107,7 +127,14 @@ class Register(QWidget):
         right_vertical_layout = QVBoxLayout()
         right_vertical_layout.addStretch()
         right_vertical_layout.addSpacing(2)
-
+        
+        user_name_textbox = QLineEdit()
+        user_name_textbox.setFont(QFont(fonts[0], 12))
+        user_name_textbox.setFixedWidth(300)
+        user_name_textbox.setFixedHeight(25)
+        user_name_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(user_name_textbox)
+        
         first_name_textbox = QLineEdit()
         first_name_textbox.setFont(QFont(fonts[0], 12))
         first_name_textbox.setFixedWidth(300)
@@ -128,6 +155,15 @@ class Register(QWidget):
         email_address_textbox.setFixedHeight(25)
         email_address_textbox.setAlignment(Qt.AlignLeft)
         qlineedit_list.append(email_address_textbox)
+        
+
+        phone_number_textbox = QLineEdit()
+        phone_number_textbox.setFont(QFont(fonts[0], 12))
+        phone_number_textbox.setFixedWidth(300)
+        phone_number_textbox.setFixedHeight(25)
+        phone_number_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(phone_number_textbox)
+
 
         password_textbox = QLineEdit()
         password_textbox.setEchoMode(QLineEdit.Password)
@@ -190,13 +226,59 @@ class Register(QWidget):
             # Insert code here
             """This function should verify the user data and execute series of queries to
                 create the new user inside the DB. Consider giving the right read permissions to the new user"""
+            user_id_valid = False
+            phone_number_valid = False
+            email_address_valid = False
+            password_valid = True
+
+            create_account_errors = []
             while True:
                 user_id = str(random.randint(0, 9) for _ in range(10))
                 postgres_conn.admin_client()
-                postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id FROM customers;")
+                postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id FROM customers WHERE customer_id = '{user_id}';")
                 current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()
                 if user_id not in current_ids:
+                    user_id_valid = True
                     break
+
+            email_pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+            if not re.match(email_pattern, email_address_textbox.text()):
+                create_account_errors.append('Incorect email address')
+
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT email_adress FROM customer WHERE email_address = '{email_address_textbox.text()}'")
+            if postgres_conn.POSTGRES_CURSOR.fetchall():
+                create_account_errors.append('Email address already existing')
+
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT phone FROM customers WHERE phone = '{phone_number_textbox.text()}'")
+            if not postgres_conn.POSTGRES_CURSOR.fetchall():
+                phone_number_valid = True
+
+            if password_textbox.text() != password_textbox_repeat.text():
+                password_valid = False
+                create_account_errors.append('Password fields does not match.')
+            if len(password_textbox.text()) < 8:
+                password_valid = False
+                create_account_errors.append('Password is too short. It must be at least 8 characters.')
+            if not re.search(re.compile('[!@#$%^&*()-+?_=,<>/]'), password_textbox.text()):
+                password_valid = False
+                create_account_errors.append("Password must contain at least one special character.")
+            if not re.search(re.compile('[A-Z]'), password_textbox.text()):
+                password_valid = False
+                create_account_errors.append("Password must contain at least one uppercase letter.")
+            if not re.search(re.compile('[0-9]'), password_textbox.text()):
+                password_valid = False
+                create_account_errors.append("Password must contain at least one number.")
+
+            if len(create_account_errors) == 0:
+                try:
+                    postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO customers (customer_id, username, first_name, last_name, email_address, phone) \
+                                                          VALUES ('{user_id}', '{user_name_textbox.text()}', '{first_name_textbox.text()}', '{last_name_textbox.text()}',\
+                                                              '{email_address_textbox.text()}', '{phone_number_textbox.text()}')")
+                    register_user.create_user(user_name_textbox.text(), password_textbox.text())
+                except (Exception) as error:
+                    print("Ne stana brat!")
+                    
+
 
 
 
