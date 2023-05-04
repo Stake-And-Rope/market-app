@@ -10,9 +10,11 @@ from PyQt5.QtWidgets import (QApplication,
                              QPlainTextEdit, 
                              QHBoxLayout, 
                              QVBoxLayout,
-                             QGraphicsDropShadowEffect) 
+                             QGraphicsDropShadowEffect)
+
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from db_handle import postgres_conn
 
 import random, sys, re, string
 
@@ -188,7 +190,14 @@ class Register(QWidget):
             # Insert code here
             """This function should verify the user data and execute series of queries to
                 create the new user inside the DB. Consider giving the right read permissions to the new user"""
-            pass
+            while True:
+                user_id = str(random.randint(0, 9) for _ in range(10))
+                postgres_conn.admin_client()
+                postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id FROM customers;")
+                current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()
+                if user_id not in current_ids:
+                    break
+
 
 
 def init_app():
