@@ -15,10 +15,8 @@ from PyQt5.QtWidgets import (QApplication,
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
-# sys.path.append(r'../db_handle')
-# import postgres_conn
+sys.path.append(r'..')
 from db_handle import postgres_conn, register_user
-
 import random, re, string
 
 
@@ -117,8 +115,10 @@ class Register(QWidget):
             qlabels_list[i].setGraphicsEffect(shadow)
 
         """Add the objects to the left vertical objects"""
+        left_vertical_layout.addWidget(user_name_label)
         left_vertical_layout.addWidget(first_name_label)
         left_vertical_layout.addWidget(last_name_label)
+        left_vertical_layout.addWidget(phone_number_label)
         left_vertical_layout.addWidget(email_address_label)
         left_vertical_layout.addWidget(password_label)
         left_vertical_layout.addWidget(password_label_repeat)
@@ -188,8 +188,10 @@ class Register(QWidget):
             
         
         """Add the object to the right vertical layout"""
+        right_vertical_layout.addWidget(user_name_textbox)
         right_vertical_layout.addWidget(first_name_textbox)
         right_vertical_layout.addWidget(last_name_textbox)
+        right_vertical_layout.addWidget(phone_number_textbox)
         right_vertical_layout.addWidget(email_address_textbox)
         right_vertical_layout.addWidget(password_textbox)
         right_vertical_layout.addWidget(password_textbox_repeat)
@@ -204,6 +206,7 @@ class Register(QWidget):
         buttons_layout.addSpacing(2)
 
         register_button = QPushButton()
+        register_button.clicked.connect(lambda : create_new_account())
         register_button.setText('Register')
         register_button.setFont(QFont(fonts[0], 12))
 
@@ -226,26 +229,22 @@ class Register(QWidget):
             # Insert code here
             """This function should verify the user data and execute series of queries to
                 create the new user inside the DB. Consider giving the right read permissions to the new user"""
-            user_id_valid = False
-            phone_number_valid = False
-            email_address_valid = False
-            password_valid = True
-
             create_account_errors = []
             while True:
-                user_id = str(random.randint(0, 9) for _ in range(10))
+                user_id = [str(random.randint(0, 9)) for x in range(10)]
+                user_id = ''.join(user_id)
                 postgres_conn.admin_client()
-                postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id FROM customers WHERE customer_id = '{user_id}';")
+                postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
                 current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()
                 if user_id not in current_ids:
                     user_id_valid = True
                     break
 
-            email_pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+            email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
             if not re.match(email_pattern, email_address_textbox.text()):
                 create_account_errors.append('Incorect email address')
 
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT email_adress FROM customer WHERE email_address = '{email_address_textbox.text()}'")
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT email_address FROM customers WHERE email_address = '{email_address_textbox.text()}'")
             if postgres_conn.POSTGRES_CURSOR.fetchall():
                 create_account_errors.append('Email address already existing')
 
@@ -268,15 +267,18 @@ class Register(QWidget):
             if not re.search(re.compile('[0-9]'), password_textbox.text()):
                 password_valid = False
                 create_account_errors.append("Password must contain at least one number.")
-
+            
+            print(create_account_errors)
             if len(create_account_errors) == 0:
-                try:
                     postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO customers (customer_id, username, first_name, last_name, email_address, phone) \
-                                                          VALUES ('{user_id}', '{user_name_textbox.text()}', '{first_name_textbox.text()}', '{last_name_textbox.text()}',\
+                                                          VALUES ({user_id}, '{user_name_textbox.text().lower()}', '{first_name_textbox.text()}', '{last_name_textbox.text()}',\
                                                               '{email_address_textbox.text()}', '{phone_number_textbox.text()}')")
+                    # print('Query Succeeded')
+                    #postgres_conn.POSTGRES_CONNECTION.commit()
+                    # print('Query Commited')
                     register_user.create_user(user_name_textbox.text(), password_textbox.text())
-                except (Exception) as error:
-                    print("Ne stana brat!")
+            else:
+                print("Ne stana brat!")
                     
 
 

@@ -60,9 +60,9 @@ def admin_client():
 
 
     # Close connection to the Linux Server and the Postgres DB. This two line should be commented in production environment    
-    db_client.close()
-    tunnel.close()
+    # db_client.close()
+    # tunnel.close()
 
 
-admin_client()
+#admin_client()
 
