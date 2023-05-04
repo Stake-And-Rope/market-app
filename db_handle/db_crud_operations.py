@@ -2,7 +2,6 @@ import postgres_conn
 
 
 def crud_operations():
-
     activity = ""
     user_choice = input(f"On which table would you like to perform operations?: ")
     if user_choice != "customers" and user_choice != "employees":
@@ -34,20 +33,27 @@ def crud_operations():
             number_record += 1
 
     def update():
-        column = input(f"Which column would you like to change: ")
-        condition = input(f"What is the condition on which you want to make the change?: ")
-        new_value = input(f"What is the new value?: ")
-        postgres_conn.admin_client()
-        postgres_conn.POSTGRES_CURSOR.execute(f"UPDATE {user_choice} SET {column} = '{new_value}' WHERE {condition};")
-        postgres_conn.POSTGRES_CONNECTION.commit()
-        print("Updates done!")
+        try:
+            column = input(f"Which column would you like to change: ")
+            condition = input(f"What is the condition on which you want to make the change?: ")
+            new_value = input(f"What is the new value?: ")
+
+            postgres_conn.admin_client()
+            postgres_conn.POSTGRES_CURSOR.execute(f"UPDATE {user_choice} SET {column} = '{new_value}' WHERE {condition};")
+            postgres_conn.POSTGRES_CONNECTION.commit()
+            print("Updates done!")
+        except (Exception) as error:
+            print(f"Query is not valid.")
 
     def delete():
-        postgres_conn.admin_client()
-        condition = input(f"What is the condition on which you want to delete the record?: ")
-        postgres_conn.POSTGRES_CURSOR.execute(f"DELETE FROM {user_choice} WHERE {condition};")
-        postgres_conn.POSTGRES_CONNECTION.commit()
-        print(f"Updates done! The record has been deleted.")
+        try:
+            postgres_conn.admin_client()
+            condition = input(f"What is the condition on which you want to delete the record?: ")
+            postgres_conn.POSTGRES_CURSOR.execute(f"DELETE FROM {user_choice} WHERE {condition};")
+            postgres_conn.POSTGRES_CONNECTION.commit()
+            print(f"Updates done! The record has been deleted.")
+        except (Exception) as error:
+            print(f"Query is not valid.")
 
     if activity == "create":
         create()
