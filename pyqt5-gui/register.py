@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (QApplication,
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
-sys.path.append(r'../db_handle')
+# sys.path.append(r'../db_handle')
 # import postgres_conn
 from db_handle import postgres_conn, register_user
 
