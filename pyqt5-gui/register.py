@@ -26,9 +26,9 @@ class Register(QWidget):
         super().__init__()
         self.setWindowTitle("Create New Account")
         self.setWindowIcon(QIcon(r'../img/market.png'))
-        self.setGeometry(650, 300, 400, 300)
+        self.setGeometry(650, 300, 400, 500)
         self.setMaximumWidth(400)
-        self.setMaximumHeight(300)
+        self.setMaximumHeight(500)
         
         """Add customer font to array, ready to be loaded to any text object"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -80,7 +80,6 @@ class Register(QWidget):
         email_address_label.setAlignment(Qt.AlignLeft)
         email_address_label.setStyleSheet("color: #003366")
         qlabels_list.append(email_address_label)
-
 
         phone_number_label = QLabel()
         phone_number_label.setText("Phone Number")
@@ -156,14 +155,12 @@ class Register(QWidget):
         email_address_textbox.setAlignment(Qt.AlignLeft)
         qlineedit_list.append(email_address_textbox)
         
-
         phone_number_textbox = QLineEdit()
         phone_number_textbox.setFont(QFont(fonts[0], 12))
         phone_number_textbox.setFixedWidth(300)
         phone_number_textbox.setFixedHeight(25)
         phone_number_textbox.setAlignment(Qt.AlignLeft)
         qlineedit_list.append(phone_number_textbox)
-
 
         password_textbox = QLineEdit()
         password_textbox.setEchoMode(QLineEdit.Password)
@@ -237,9 +234,12 @@ class Register(QWidget):
                 postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
                 current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()
                 if user_id not in current_ids:
-                    user_id_valid = True
                     break
-
+            
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT username FROM users WHERE username = '{user_name_textbox.text()}'")
+            if postgres_conn.POSTGRES_CURSOR.fetchall():
+                create_account_errors.append('Username already exists')
+            
             email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
             if not re.match(email_pattern, email_address_textbox.text()):
                 create_account_errors.append('Incorect email address')
@@ -249,23 +249,18 @@ class Register(QWidget):
                 create_account_errors.append('Email address already existing')
 
             postgres_conn.POSTGRES_CURSOR.execute(f"SELECT phone FROM customers WHERE phone = '{phone_number_textbox.text()}'")
-            if not postgres_conn.POSTGRES_CURSOR.fetchall():
-                phone_number_valid = True
-
+            if postgres_conn.POSTGRES_CURSOR.fetchall():
+                create_account_errors.append('Phone number already exists')
+                
             if password_textbox.text() != password_textbox_repeat.text():
-                password_valid = False
                 create_account_errors.append('Password fields does not match.')
             if len(password_textbox.text()) < 8:
-                password_valid = False
                 create_account_errors.append('Password is too short. It must be at least 8 characters.')
             if not re.search(re.compile('[!@#$%^&*()-+?_=,<>/]'), password_textbox.text()):
-                password_valid = False
                 create_account_errors.append("Password must contain at least one special character.")
             if not re.search(re.compile('[A-Z]'), password_textbox.text()):
-                password_valid = False
                 create_account_errors.append("Password must contain at least one uppercase letter.")
             if not re.search(re.compile('[0-9]'), password_textbox.text()):
-                password_valid = False
                 create_account_errors.append("Password must contain at least one number.")
             
             print(create_account_errors)
@@ -278,7 +273,13 @@ class Register(QWidget):
                     # print('Query Commited')
                     register_user.create_user(user_name_textbox.text(), password_textbox.text())
             else:
-                print("Ne stana brat!")
+                error_msg_box = QMessageBox(self)
+                error_msg_box.setIcon(QMessageBox.Warning)
+                error_msg = '\n'.join(create_account_errors)
+                error_msg_box.setText(error_msg)
+                error_msg_box.setWindowTitle("Error during creating new account")
+                error_msg_box.setStandardButtons(QMessageBox.Ok)
+                msg_box = error_msg_box.exec()
                     
 
 
