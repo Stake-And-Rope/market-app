@@ -20,7 +20,7 @@ from db_handle import postgres_conn, register_user
 import random, re, string
 
 
-# Create the QWidget class and initiate the objects inside
+"""Create the QWidget class and initiate the objects inside"""
 class Register(QWidget):
     def __init__(self):
         super().__init__()
@@ -183,7 +183,6 @@ class Register(QWidget):
             shadow.setColor(QColor(0, 51, 102))
             qlineedit_list[i].setGraphicsEffect(shadow)
             
-        
         """Add the object to the right vertical layout"""
         right_vertical_layout.addWidget(user_name_textbox)
         right_vertical_layout.addWidget(first_name_textbox)
@@ -214,7 +213,6 @@ class Register(QWidget):
         buttons_layout.addWidget(register_button)
         buttons_layout.addWidget(back_button)
 
-
         """Init the Main Layout which loads all objects above"""
         main_layout = QVBoxLayout()
         main_layout.addLayout(main_horizontal_layout)
@@ -224,8 +222,7 @@ class Register(QWidget):
 
         def create_new_account():
             # Insert code here
-            """This function should verify the user data and execute series of queries to
-                create the new user inside the DB. Consider giving the right read permissions to the new user"""
+            """This function should verify the user data and execute series of queries to create the new user inside the DB"""
             create_account_errors = []
             while True:
                 user_id = [str(random.randint(0, 9)) for x in range(10)]
@@ -263,14 +260,11 @@ class Register(QWidget):
             if not re.search(re.compile('[0-9]'), password_textbox.text()):
                 create_account_errors.append("Password must contain at least one number.")
             
-            print(create_account_errors)
             if len(create_account_errors) == 0:
+                    """Create new record inside customers table"""
                     postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO customers (customer_id, username, first_name, last_name, email_address, phone) \
                                                           VALUES ({user_id}, '{user_name_textbox.text().lower()}', '{first_name_textbox.text()}', '{last_name_textbox.text()}',\
                                                               '{email_address_textbox.text()}', '{phone_number_textbox.text()}')")
-                    # print('Query Succeeded')
-                    #postgres_conn.POSTGRES_CONNECTION.commit()
-                    # print('Query Commited')
                     register_user.create_user(user_name_textbox.text(), password_textbox.text())
             else:
                 error_msg_box = QMessageBox(self)
@@ -281,10 +275,6 @@ class Register(QWidget):
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
                     
-
-
-
-
 def init_app():
     app = QApplication(sys.argv)
     window = Register()

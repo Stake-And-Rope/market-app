@@ -34,7 +34,7 @@ def admin_client():
                 ssh_password = str(linux_password),
                 remote_bind_address = ('127.0.0.1', 5432)
                 )
-        print("SSH connection has been established!")
+        # print("SSH connection has been established!")
         tunnel.start()
     except (Exception) as error:
         print("SSH connection failed!")
@@ -49,7 +49,7 @@ def admin_client():
                 )
         cursor = db_client.cursor()
         cursor.execute("SELECT version()")
-        print(cursor.fetchone())
+        # print(cursor.fetchone())
     except (Exception) as error:
         print("Database connection failed!")
 
