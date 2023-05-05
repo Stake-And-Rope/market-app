@@ -236,7 +236,7 @@ class Register(QWidget):
                 if user_id not in current_ids:
                     break
             
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT username FROM users WHERE username = '{user_name_textbox.text()}'")
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT username FROM customers WHERE username = '{user_name_textbox.text()}'")
             if postgres_conn.POSTGRES_CURSOR.fetchall():
                 create_account_errors.append('Username already exists')
             
