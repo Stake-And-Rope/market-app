@@ -36,13 +36,27 @@ class Register(QWidget):
             print('Error loading fonts!')
         fonts = QFontDatabase.applicationFontFamilies(font)
         
-        qlabels_list = []
-        qlineedit_list = []
+        """Init the top Image Layout"""
+        image_layout = QVBoxLayout()
+        image_layout.addStretch()
+        image_layout.addSpacing(2)
+        image_widget = QLabel()
+        # image_widget.setGeometry(0, 0, 200, 100)
+        image_widget.setText("Image will appear here")
+        pixmap = QPixmap(r'../img/store-banner2.png')
+        image_widget.setPixmap(pixmap)
+        image_widget.resize(self.width(), self.height())
+        image_widget.setScaledContents(True)
+        
+        image_layout.addWidget(image_widget)
 
         """Init the main horizontal layout"""
         main_horizontal_layout = QHBoxLayout()
         main_horizontal_layout.addStretch()
         main_horizontal_layout.addSpacing(2)
+        
+        qlabels_list = []
+        qlineedit_list = []
         
         """Init the left vertical layout, containing the qlabels_list objects"""
         left_vertical_layout = QVBoxLayout()
@@ -217,6 +231,7 @@ class Register(QWidget):
         main_layout = QVBoxLayout()
         main_layout.addLayout(main_horizontal_layout)
         main_layout.addLayout(buttons_layout)
+        main_layout.addLayout(image_layout)
         self.setLayout(main_layout)
         self.show()
 
