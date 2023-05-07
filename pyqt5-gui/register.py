@@ -20,6 +20,11 @@ from db_handle import postgres_conn, register_user
 import random, re, string
 
 
+def start_app():
+    global win
+    win = Register()
+    win.show()
+
 """Create the QWidget class and initiate the objects inside"""
 class Register(QWidget):
     def __init__(self):
@@ -296,4 +301,4 @@ def init_app():
     window.show()
     app.exec()
 
-init_app()
+# init_app()
