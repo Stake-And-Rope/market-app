@@ -17,13 +17,8 @@ from PyQt5.QtCore import *
 import sys
 sys.path.append(r'..')
 from db_handle import postgres_conn, register_user
+import login
 import random, re, string
-
-
-def start_app():
-    global win
-    win = Register()
-    win.show()
 
 """Create the QWidget class and initiate the objects inside"""
 class Register(QWidget):
@@ -226,6 +221,7 @@ class Register(QWidget):
         register_button.setFont(QFont(fonts[0], 12))
 
         back_button = QPushButton()
+        back_button.clicked.connect(lambda: open_login())
         back_button.setText('Back')
         back_button.setFont(QFont(fonts[0], 12))
 
@@ -294,11 +290,16 @@ class Register(QWidget):
                 error_msg_box.setWindowTitle("Error during creating new account")
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
+                
+        def open_login():
+            login.LogIn()
+            window.hide()
                     
 def init_app():
-    app = QApplication(sys.argv)
+    global window
+    # app = QApplication(sys.argv)
     window = Register()
     window.show()
-    app.exec()
+    # app.exec()
 
 # init_app()

@@ -48,6 +48,7 @@ class LogIn(QWidget):
         new_user_label.setStyleSheet("color: #003366")
         
         create_an_account_button = QPushButton()
+        create_an_account_button.clicked.connect(lambda : open_register())
         create_an_account_button.setText("Create an account")
         create_an_account_button.setFont(QFont(fonts[0], 9))
         create_an_account_button.setFlat(True)
@@ -104,8 +105,14 @@ class LogIn(QWidget):
                 error_msg_box.setWindowTitle("LoigIn unsuccessfull")
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
-
-app = QApplication(sys.argv)
-login_window = LogIn()
-login_window.show()
-app.exec()
+        
+        def open_register():
+            register.init_app()
+            login_window.hide()
+            
+def init_app():
+    global login_window
+    app = QApplication(sys.argv)
+    login_window = LogIn()
+    login_window.show()
+    app.exec()
