@@ -2,13 +2,9 @@ import sys
 
 from PyQt5.QtWidgets import (
                             QVBoxLayout,
-                            QWidget,
-                            QLabel,
                             QHBoxLayout,
                             QPushButton,
-                            QApplication,
-                            QLabel,
-                            QMainWindow
+                            QLabel
                             )
 
 from PyQt5.QtWidgets import *
