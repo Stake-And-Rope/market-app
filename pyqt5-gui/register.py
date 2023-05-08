@@ -292,14 +292,19 @@ class Register(QWidget):
                 msg_box = error_msg_box.exec()
                 
         def open_login():
-            login.LogIn()
-            window.hide()
+            login.start_window()
+            register_window.hide()
                     
-def init_app():
-    global window
-    # app = QApplication(sys.argv)
-    window = Register()
-    window.show()
-    # app.exec()
+# def init_app():
+#     global window
+#     # app = QApplication(sys.argv)
+#     window = Register()
+#     window.show()
+#     # app.exec()
+
+def start_window():
+    global register_window
+    register_window = Register()
+    register_window.show()
 
 # init_app()

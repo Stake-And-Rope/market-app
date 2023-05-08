@@ -13,8 +13,7 @@ sys.path.append(r'..')
 from db_handle import postgres_conn
 import register
 
-def open_user_registration(user):
-    return f"You clicked me, {user}!"
+
 class LogIn(QWidget):
     def __init__(self):
         super().__init__()
@@ -107,12 +106,21 @@ class LogIn(QWidget):
                 msg_box = error_msg_box.exec()
         
         def open_register():
-            register.init_app()
+            register.start_window()
             login_window.hide()
             
 def init_app():
-    global login_window
     app = QApplication(sys.argv)
+    global login_window
     login_window = LogIn()
     login_window.show()
     app.exec()
+
+def start_window():
+    global login_window
+    login_window = LogIn()
+    login_window.show()
+
+def open_user_registration(user):
+    return f"You clicked me, {user}!"
+# init_app()
