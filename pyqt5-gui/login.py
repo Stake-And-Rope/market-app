@@ -23,9 +23,6 @@ class LogIn(QWidget):
         self.setMaximumWidth(400)
         self.setMaximumHeight(150)
 
-        """Init connection to the DB server"""
-        
-
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font >= 0:
             fonts = QFontDatabase.applicationFontFamilies(font)

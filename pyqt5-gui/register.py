@@ -295,13 +295,6 @@ class Register(QWidget):
             login.start_window()
             register_window.hide()
                     
-# def init_app():
-#     global window
-#     # app = QApplication(sys.argv)
-#     window = Register()
-#     window.show()
-#     # app.exec()
-
 def start_window():
     global register_window
     register_window = Register()
