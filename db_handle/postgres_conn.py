@@ -93,18 +93,23 @@ def customer_client(username, passwd):
     
     """Initiate DB connection to Postgres(as superuser) and create DB cursor ready to execute SQL queries"""
     try:
-        db_client = psycopg2.connect(
+        user_db_client = psycopg2.connect(
                 user = str(database_username) + "_marketapp",
                 password = str(database_password),
                 host = str(database_host),
                 dbname = str(database_name)
                 )
-        cursor = db_client.cursor()
+        user_cursor = user_db_client.cursor()
         cursor.execute("SELECT version()")
         print(cursor.fetchone())
     except (Exception) as error:
         raise Exception("Database connection failed!")
         
+    
 
-#admin_client()
+    USER_POSTGRES_CURSOR = user_cursor
+    USER_POSTGRES_CONNECTION = user_db_client
+
+
+admin_client()
 
