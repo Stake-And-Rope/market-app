@@ -1,0 +1,6 @@
+pyqt5==5.15.9
+pyqt5-tools==5.15.9.3.3
+python-decouple==3.8
+sshtunnel==0.4.0
+psycopg2-binary==2.9.6
+
