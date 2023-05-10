@@ -100,8 +100,8 @@ def customer_client(username, passwd):
                 dbname = str(database_name)
                 )
         user_cursor = user_db_client.cursor()
-        cursor.execute("SELECT version()")
-        print(cursor.fetchone())
+        user_cursor.execute("SELECT version()")
+        print(user_cursor.fetchone())
     except (Exception) as error:
         raise Exception("Database connection failed!")
         
@@ -111,5 +111,5 @@ def customer_client(username, passwd):
     USER_POSTGRES_CONNECTION = user_db_client
 
 
-admin_client()
+# admin_client()
 
