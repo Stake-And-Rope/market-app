@@ -30,7 +30,7 @@ class Register(QWidget):
         self.setMaximumWidth(400)
         self.setMaximumHeight(500)
         
-        """Add customer font to array, ready to be loaded to any text object"""
+        """Add custom font to array, ready to be loaded to any text object"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font < 0 :
             print('Error loading fonts!')

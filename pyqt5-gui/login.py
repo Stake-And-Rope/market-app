@@ -23,6 +23,7 @@ class LogIn(QWidget):
         self.setMaximumWidth(400)
         self.setMaximumHeight(150)
 
+        """Add custom font to array, ready to be loaded to any text object"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font >= 0:
             fonts = QFontDatabase.applicationFontFamilies(font)
