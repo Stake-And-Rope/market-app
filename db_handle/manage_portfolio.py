@@ -17,16 +17,16 @@ def create_new_category():
     """Enter the category name"""
     category_name = input("Enter category name: ")
 
-    """Calculates the total sub-categories / for new categories is 0 by default"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM subcategories WHERE parent_category = '{category_name}';")
-    sub_categories_number = postgres_conn.POSTGRES_CURSOR.fetchone()
-    
-    """Calculates the total products inside the category / for new categories is 0 by default"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM products WHERE category = '{category_name}';")
-    products_number = postgres_conn.POSTGRES_CURSOR.fetchone()
+    # """Calculates the total sub-categories / for new categories is 0 by default"""
+    # postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM subcategories WHERE parent_category = '{category_name}';")
+    # sub_categories_number = postgres_conn.POSTGRES_CURSOR.fetchone()
+    #
+    # """Calculates the total products inside the category / for new categories is 0 by default"""
+    # postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM products WHERE category = '{category_name}';")
+    # products_number = postgres_conn.POSTGRES_CURSOR.fetchone()
     
     """Save the category into the database"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO categories VALUES ('{category_id}', '{category_name}', '{sub_categories_number[0]}', '{products_number[0]}')")
+    postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO categories VALUES ('{category_id}', '{category_name}', '{0}', '{0}')")
     postgres_conn.POSTGRES_CONNECTION.commit()
 
 def create_new_subcategory():
@@ -39,17 +39,17 @@ def create_new_subcategory():
     """Enter the sub-category name"""
     subcategory_name = input("Enter the new subcategory name: ")
 
-    """Calculates the total products inside the sub-category / for new sub-categories is 0 by default"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM products WHERE category = '{subcategory_name}';")
-    products_number = postgres_conn.POSTGRES_CURSOR.fetchone()
+    # """Calculates the total products inside the sub-category / for new sub-categories is 0 by default"""
+    # postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM products WHERE category = '{subcategory_name}';")
+    # products_number = postgres_conn.POSTGRES_CURSOR.fetchone()
     
     """Set the parent category"""
     while True:
         parent_category = input("Enter the parent category: ")
         postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name FROM categories WHERE category_name = '{parent_category}'")
         result = postgres_conn.POSTGRES_CURSOR.fetchone()
-        if len(result) > 0:
-            postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO subcategories (subcategory_id, subcategory_name, total_items, parent_category) VALUES ('{subcategory_id}', '{subcategory_name}', '{products_number[0]}', '{result[0]}')")
+        if result:
+            postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO subcategories (subcategory_id, subcategory_name, total_items, parent_category) VALUES ('{subcategory_id}', '{subcategory_name}', '{0}', '{result[0]}')")
             postgres_conn.POSTGRES_CURSOR.execute(f"UPDATE categories SET total_subcategories = total_subcategories + 1 WHERE category_name = '{result[0]}'")
             postgres_conn.POSTGRES_CONNECTION.commit()
             break
@@ -78,12 +78,12 @@ def create_new_items():
             parent_category = input("Enter the parent category: ")
             postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name FROM categories WHERE category_name = '{parent_category}'")
             category_result = postgres_conn.POSTGRES_CURSOR.fetchone()
-            if len(category_result) > 0:
+            if category_result:
                 while True:
                     child_category = input("Enter the sub-category: ")
                     postgres_conn.POSTGRES_CURSOR.execute(f"SELECT subcategory_name FROM subcategories WHERE subcategory_name = '{child_category}'")
                     subcategory_result = postgres_conn.POSTGRES_CURSOR.fetchone()
-                    if len(subcategory_result) > 0:
+                    if subcategory_result:
                         postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO products (product_id, product_name, category, subcategory, single_price, quantity) VALUES ('{item_id}', '{item_name}',\
                                                               '{parent_category}', '{child_category}', '{single_price}', '{quantity}')")
                         postgres_conn.POSTGRES_CURSOR.execute(f"UPDATE subcategories SET total_items = total_items + 1 WHERE subcategory_name = '{child_category}'")
@@ -99,8 +99,8 @@ def create_new_items():
                 continue
 
         
-        
+
 # create_new_category()
 # create_new_subcategory()
 
-create_new_items()
+# create_new_items()
