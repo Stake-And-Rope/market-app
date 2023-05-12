@@ -37,11 +37,16 @@ class MainMenu(QWidget):
         fonts = QFontDatabase.applicationFontFamilies(font)
 
         """CREATE THE USER INFO VERTICAL LAYOUT"""
-        user_info_layout = QVBoxLayout()
         user_info_groupbox = QGroupBox('User Information')
-        user_info_layout.addWidget(user_info_groupbox)
+        first_name = QLabel('First Name')
+        last_name = QLabel('Last Name')
+        user_info_layout = QVBoxLayout()
+
+        user_info_layout.addWidget(first_name)
+        user_info_layout.addWidget(last_name)
         user_info_layout.addStretch(0)
         user_info_layout.addSpacing(100)
+        user_info_groupbox.setLayout(user_info_layout)
         
         """CREATE THE LEFT BUTTONS LAYOUT"""
         left_buttons_layout = QVBoxLayout()
@@ -61,7 +66,7 @@ class MainMenu(QWidget):
         
         """INIT THE MAIN LAYOUT"""
         main_layout = QGridLayout()
-        main_layout.addLayout(user_info_layout, 0, 0)
+        main_layout.addWidget(user_info_groupbox, 0, 0)
         main_layout.addLayout(left_buttons_layout, 1, 0)
         """EXAMINE BELOW TWO LINES HOW EXACTLY THEY APPLY THE LOGIC IN THE UI"""
         main_layout.setRowStretch(4, 2)
