@@ -49,12 +49,11 @@ class MainMenu(QWidget):
         user_info_groupbox.setLayout(user_info_layout)
         
         """CREATE THE LEFT BUTTONS LAYOUT"""
-        left_buttons_layout = QVBoxLayout()
         left_buttons_groupbox = QGroupBox('User Actions')
-        left_buttons_layout.addWidget(left_buttons_groupbox)
+        left_buttons_layout = QVBoxLayout()
         
         buttons_text = deque(['First', 'Second', 'Third', 'Fourth', 'Fifth'])
-        for i in range(5):
+        while buttons_text:
             button = QPushButton()
             button.setText(buttons_text.popleft())
             # button.setFont(QFont(fonts[0], 12))
@@ -62,12 +61,15 @@ class MainMenu(QWidget):
             button.setFixedHeight(40)
             left_buttons_layout.addWidget(button)
 
-        
-        
+        left_buttons_layout.addStretch(0)
+        left_buttons_layout.addSpacing(100)
+        left_buttons_groupbox.setLayout(left_buttons_layout)
+
         """INIT THE MAIN LAYOUT"""
         main_layout = QGridLayout()
         main_layout.addWidget(user_info_groupbox, 0, 0)
-        main_layout.addLayout(left_buttons_layout, 1, 0)
+        main_layout.addWidget(left_buttons_groupbox, 1, 0)
+
         """EXAMINE BELOW TWO LINES HOW EXACTLY THEY APPLY THE LOGIC IN THE UI"""
         main_layout.setRowStretch(4, 2)
         main_layout.setColumnStretch(4, 2)
