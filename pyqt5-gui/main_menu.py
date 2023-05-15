@@ -81,11 +81,13 @@ class MainMenu(QWidget):
         log_out_button.setFixedWidth(100)
         log_out_button.setFixedHeight(23)
 
+        top_buttons_layout.addStretch(0)
+        top_buttons_layout.addSpacing(1000)
+
         top_buttons_layout.addWidget(favourites_button)
         top_buttons_layout.addWidget(log_out_button)
 
-        top_buttons_layout.addStretch(0)
-        top_buttons_layout.addSpacing(1000)
+
         top_buttons_groupbox.setLayout(top_buttons_layout)
 
 
