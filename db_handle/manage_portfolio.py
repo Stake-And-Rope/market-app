@@ -16,14 +16,6 @@ def create_new_category():
 
     """Enter the category name"""
     category_name = input("Enter category name: ")
-
-    # """Calculates the total sub-categories / for new categories is 0 by default"""
-    # postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM subcategories WHERE parent_category = '{category_name}';")
-    # sub_categories_number = postgres_conn.POSTGRES_CURSOR.fetchone()
-    #
-    # """Calculates the total products inside the category / for new categories is 0 by default"""
-    # postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM products WHERE category = '{category_name}';")
-    # products_number = postgres_conn.POSTGRES_CURSOR.fetchone()
     
     """Save the category into the database"""
     postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO categories VALUES ('{category_id}', '{category_name}', '{0}', '{0}')")
@@ -38,10 +30,6 @@ def create_new_subcategory():
     
     """Enter the sub-category name"""
     subcategory_name = input("Enter the new subcategory name: ")
-
-    # """Calculates the total products inside the sub-category / for new sub-categories is 0 by default"""
-    # postgres_conn.POSTGRES_CURSOR.execute(f"SELECT COUNT (*) FROM products WHERE category = '{subcategory_name}';")
-    # products_number = postgres_conn.POSTGRES_CURSOR.fetchone()
     
     """Set the parent category"""
     while True:
@@ -104,7 +92,6 @@ def create_new_items():
                 print(f"Parent category name {parent_category} not exists. Enter another parent category.")
                 continue
 
-        
 
 create_new_category()
 create_new_subcategory()
