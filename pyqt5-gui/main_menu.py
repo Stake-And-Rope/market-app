@@ -87,15 +87,30 @@ class MainMenu(QWidget):
         top_buttons_layout.addWidget(favourites_button)
         top_buttons_layout.addWidget(log_out_button)
 
-
         top_buttons_groupbox.setLayout(top_buttons_layout)
 
+        """CREATE THE CATEGORIES LAYOUT"""
+        categories_groupbox = QGroupBox("Categories")
+
+        categories_grid_layout = QGridLayout()
+
+        example_categories = deque(['first', 'second', 'third', 'fourth', 'sixth', 'seventh'])
+
+        while example_categories:
+            for row in range(3):
+                for col in range(4):
+                    if example_categories:
+                        some = QLabel(example_categories.popleft())
+                        categories_grid_layout.addWidget(some, row, col)
+
+        categories_groupbox.setLayout(categories_grid_layout)
 
         """INIT THE MAIN LAYOUT"""
         main_layout = QGridLayout()
         main_layout.addWidget(user_info_groupbox, 0, 0)
         main_layout.addWidget(left_buttons_groupbox, 1, 0)
         main_layout.addWidget(top_buttons_groupbox, 0, 1)
+        main_layout.addWidget(categories_groupbox, 1, 1)
 
         """EXAMINE BELOW TWO LINES HOW EXACTLY THEY APPLY THE LOGIC IN THE UI"""
         main_layout.setRowStretch(4, 2)
