@@ -31,6 +31,11 @@ class MainMenu(QWidget):
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
         
+        def food_open():
+            print("I am eating some food")
+        def books_open():
+            print("I am reading books")
+        
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font < 0:
@@ -95,13 +100,14 @@ class MainMenu(QWidget):
 
         categories_grid_layout = QGridLayout()
 
-        # example_categories = deque(['Food', 'Drinks', 'Cosmetics', 'Pets', 'sixth', 'seventh'])
         postgres_conn.admin_client()
-        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description FROM categories ORDER BY category_name ASC;")
+        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description, category_function FROM categories ORDER BY category_name ASC;")
         result = postgres_conn.POSTGRES_CURSOR.fetchall()
-        categories = deque([x[0] for x in result[0:12]])
-        categories_description = deque([x[1] for x in result[0:12]])
+        categories = deque([x[0] for x in result[0:3]])
+        categories_description = deque([x[1] for x in result[0:3]])
+        categories_functions = deque([x[2] for x in result[0:3]])
 
+        print(categories_functions)
 
         for row in range(3):
             for col in range(4):
@@ -112,10 +118,17 @@ class MainMenu(QWidget):
                     category_name.setFont(QFont(fonts[0], 9))
                     category_description = QLabel(categories_description.popleft())
                     category_description.setFont(QFont(fonts[0], 9))
+                    category_button = QPushButton()
+                    current_function_name = categories_functions.popleft()
+                    current_function = getattr(food_open(), current_function_name)
+                    category_button.clicked.connect(lambda: current_function())
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
+                    current_vertical_layout.addWidget(category_button)
                     current_groupbox.setLayout(current_vertical_layout)
                     categories_grid_layout.addWidget(current_groupbox, row, col)
+                    
+
 
 
         categories_groupbox.setLayout(categories_grid_layout)
@@ -132,6 +145,8 @@ class MainMenu(QWidget):
         main_layout.setColumnStretch(4, 2)
         self.setLayout(main_layout)
         self.show()
+        
+
     
 
 app = QApplication(sys.argv)
