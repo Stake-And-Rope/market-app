@@ -20,12 +20,13 @@ from PyQt5.QtCore import *
 import sys
 sys.path.append(r'..')
 from collections import deque
+from db_handle import postgres_conn
 
 class MainMenu(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Main Menu")
-        self.setWindowIcon(QIcon(r'../img/market.png'))
+        self.setWindowIcon(QIcon(r'img/market.png'))
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
@@ -56,7 +57,7 @@ class MainMenu(QWidget):
         while buttons_text:
             button = QPushButton()
             button.setText(buttons_text.popleft())
-            # button.setFont(QFont(fonts[0], 12))
+            button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
             button.setFixedHeight(40)
             left_buttons_layout.addWidget(button)
@@ -77,7 +78,7 @@ class MainMenu(QWidget):
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
-        log_out_button.setFont(QFont(fonts[0], 9))
+        # log_out_button.setFont(QFont(fonts[0], 9))
         log_out_button.setFixedWidth(100)
         log_out_button.setFixedHeight(23)
 
@@ -94,14 +95,28 @@ class MainMenu(QWidget):
 
         categories_grid_layout = QGridLayout()
 
-        example_categories = deque(['first', 'second', 'third', 'fourth', 'sixth', 'seventh'])
+        # example_categories = deque(['Food', 'Drinks', 'Cosmetics', 'Pets', 'sixth', 'seventh'])
+        postgres_conn.admin_client()
+        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description FROM categories ORDER BY category_name ASC;")
+        result = postgres_conn.POSTGRES_CURSOR.fetchall()
+        categories = deque([x[0] for x in result[0:12]])
+        categories_description = deque([x[1] for x in result[0:12]])
 
-        while example_categories:
-            for row in range(3):
-                for col in range(4):
-                    if example_categories:
-                        some = QLabel(example_categories.popleft())
-                        categories_grid_layout.addWidget(some, row, col)
+
+        for row in range(3):
+            for col in range(4):
+                if categories:
+                    current_groupbox = QGroupBox()
+                    current_vertical_layout = QVBoxLayout()
+                    category_name = QLabel(categories.popleft())
+                    category_name.setFont(QFont(fonts[0], 9))
+                    category_description = QLabel(categories_description.popleft())
+                    category_description.setFont(QFont(fonts[0], 9))
+                    current_vertical_layout.addWidget(category_name)
+                    current_vertical_layout.addWidget(category_description)
+                    current_groupbox.setLayout(current_vertical_layout)
+                    categories_grid_layout.addWidget(current_groupbox, row, col)
+
 
         categories_groupbox.setLayout(categories_grid_layout)
 
