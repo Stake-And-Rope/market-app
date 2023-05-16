@@ -33,8 +33,18 @@ class MainMenu(QWidget):
         
         def food_open():
             print("I am eating some food")
+            
         def books_open():
             print("I am reading books")
+        
+        def drinks_open():
+            print("I am drinking some drinks")
+            
+        functions_dict = {
+            'food_open': food_open,
+            'books_open': books_open,
+            'drinks_open': drinks_open,
+        }
         
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -120,8 +130,8 @@ class MainMenu(QWidget):
                     category_description.setFont(QFont(fonts[0], 9))
                     category_button = QPushButton()
                     current_function_name = categories_functions.popleft()
-                    current_function = getattr(food_open(), current_function_name)
-                    category_button.clicked.connect(lambda: current_function())
+                    print(current_function_name)
+                    category_button.clicked.connect(lambda: functions_dict[current_function_name]())
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
