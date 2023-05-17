@@ -16,7 +16,7 @@ class About(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("About")
-        self.setGeometry(650, 300, 500, 200)
+        self.setGeometry(650, 300, 500, 300)
 
 
 app = QApplication(sys.argv)
