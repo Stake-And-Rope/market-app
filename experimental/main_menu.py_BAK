@@ -1,0 +1,99 @@
+#!/usr/bin/python3
+
+# Import PyQt5 Engine 
+from PyQt5.QtWidgets import (QApplication, 
+                             QWidget, 
+                             QPushButton,
+                             QGridLayout,  
+                             QLabel,
+                             QFrame,
+                             QGroupBox, 
+                             QLineEdit, 
+                             QMessageBox, 
+                             QPlainTextEdit, 
+                             QHBoxLayout, 
+                             QVBoxLayout,
+                             QGraphicsDropShadowEffect)
+
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+import sys
+sys.path.append(r'..')
+from collections import deque
+
+class MainMenu(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Main Menu")
+        self.setWindowIcon(QIcon(r'../img/market.png'))
+        self.setGeometry(200, 150, 1500, 700)
+        self.setMaximumWidth(1500)
+        self.setMaximumHeight(700)
+        
+        
+        """Add custom font to array, ready to be loaded to any text object"""
+        font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
+        if font < 0:
+            print('Error loading fonts!')
+        fonts = QFontDatabase.applicationFontFamilies(font)
+        
+        
+        """Init the main layout"""
+        main_layout = QGridLayout()
+        main_layout_frame = QFrame()
+        main_layout_frame.setFrameStyle(QFrame.StyledPanel)
+        
+        """Init top left layout and it's contents"""
+        user_info = QVBoxLayout()
+        user_info.addStretch(0)
+        user_info.addSpacing(3)
+        
+        user_name = QLabel()
+        user_name.setText("This is a test user label")
+        # user_name.setFont(QFont(fonts[0], 12))
+        second_user_name = QLabel()
+        second_user_name.setText("This is a second test user label")
+        
+        user_info.addWidget(user_name)
+        user_info.addWidget(second_user_name)
+        "Keep these lines, it will create space between the user_info label and buttons layout below"
+        user_info.addStretch(0)
+        user_info.addSpacing(100)
+        
+        """Left Buttons Layout"""
+        buttons_layout = QVBoxLayout()
+        buttons_layout_frame = QFrame()
+        buttons_layout_frame.setFrameStyle(QFrame.StyledPanel)
+        buttons_layout_frame.setLineWidth(1)
+        
+        buttons_text = deque(['First', 'Second', 'Third', 'Fourth', 'Fifth'])
+        """Draw buttons inside a for-loop"""
+        for i in range(5):
+            button = QPushButton()
+            button.setText(buttons_text.popleft())
+            # button.setFont(QFont(fonts[0], 12))
+            button.setFixedWidth(250)
+            button.setFixedHeight(40)
+            buttons_layout.addWidget(button)
+        buttons_layout.addWidget(buttons_layout_frame)
+        
+        
+
+    
+        main_layout.addWidget(main_layout_frame)
+        main_layout.addLayout(user_info, 0, 0)
+        main_layout.addLayout(buttons_layout, 1, 0)
+        """setRowStrech and setColumnStrech are a big unknown for now."""
+        main_layout.setRowStretch(4, 1)
+        main_layout.setColumnStretch(4, 1)
+        self.setLayout(main_layout)
+        self.show()
+
+    
+
+app = QApplication(sys.argv)
+global login_window
+login_window = MainMenu()
+login_window.show()
+app.exec()
+
