@@ -41,9 +41,9 @@ class MainMenu(QWidget):
             print("I am drinking some drinks")
             
         functions_dict = {
-            'food_open': food_open,
-            'books_open': books_open,
-            'drinks_open': drinks_open,
+            'food_open': lambda: food_open(),
+            'books_open': lambda: books_open(),
+            'drinks_open': lambda: drinks_open(),
         }
         
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
@@ -131,13 +131,13 @@ class MainMenu(QWidget):
                     category_button = QPushButton()
                     current_function_name = categories_functions.popleft()
                     print(current_function_name)
-                    category_button.clicked.connect(lambda: functions_dict[current_function_name]())
+                    category_button.clicked.connect(functions_dict[current_function_name])
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
                     current_groupbox.setLayout(current_vertical_layout)
                     categories_grid_layout.addWidget(current_groupbox, row, col)
-                    
+                    a = 5
 
 
 
