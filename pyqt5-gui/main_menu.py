@@ -112,12 +112,12 @@ class MainMenu(QWidget):
 
         postgres_conn.admin_client()
         postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description, category_function FROM categories ORDER BY category_name ASC;")
-        result = postgres_conn.POSTGRES_CURSOR.fetchall()
-        categories = deque([x[0] for x in result[0:3]])
-        categories_description = deque([x[1] for x in result[0:3]])
-        categories_functions = deque([x[2] for x in result[0:3]])
+        result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
+        categories = deque([x[0] for x in result[0:12]])
+        categories_description = deque([x[1] for x in result[0:12]])
+        categories_functions = deque([x[2] for x in result[0:12]])
 
-        print(categories_functions)
+        # print(categories_functions)
 
         for row in range(3):
             for col in range(4):
@@ -129,15 +129,16 @@ class MainMenu(QWidget):
                     category_description = QLabel(categories_description.popleft())
                     category_description.setFont(QFont(fonts[0], 9))
                     category_button = QPushButton()
+                    category_button.setText(category_name.text())
                     current_function_name = categories_functions.popleft()
-                    print(current_function_name)
+                    # print(current_function_name)
                     category_button.clicked.connect(functions_dict[current_function_name])
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
                     current_groupbox.setLayout(current_vertical_layout)
                     categories_grid_layout.addWidget(current_groupbox, row, col)
-                    a = 5
+
 
 
 
