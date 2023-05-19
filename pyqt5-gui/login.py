@@ -2,12 +2,21 @@ from PyQt5.QtWidgets import (
                             QVBoxLayout,
                             QHBoxLayout,
                             QPushButton,
-                            QLabel
+                            QLabel,
+                            QWidget,
+                            QLineEdit,
+                            QMessageBox,
+                            QApplication
                             )
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtGui import (
+                        QIcon,
+                        QFontDatabase,
+                        QFont
+                        )
+
+from PyQt5.QtCore import Qt
+
 import sys
 sys.path.append(r'..')
 from db_handle import postgres_conn
