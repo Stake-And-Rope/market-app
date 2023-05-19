@@ -26,7 +26,7 @@ class MainMenu(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Main Menu")
-        self.setWindowIcon(QIcon(r'img/market.png'))
+        self.setWindowIcon(QIcon(r'../img/market.png'))
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
@@ -122,25 +122,34 @@ class MainMenu(QWidget):
         for row in range(3):
             for col in range(4):
                 if categories:
+                    photo_label = QLabel()
+                    pixmap = QPixmap('food.jpg')
+                    photo_label.setPixmap(pixmap)
+
                     current_groupbox = QGroupBox()
+
                     current_vertical_layout = QVBoxLayout()
+
                     category_name = QLabel(categories.popleft())
                     category_name.setFont(QFont(fonts[0], 9))
+
                     category_description = QLabel(categories_description.popleft())
                     category_description.setFont(QFont(fonts[0], 9))
+
                     category_button = QPushButton()
                     category_button.setText(category_name.text())
-                    current_function_name = categories_functions.popleft()
+
+                    # current_function_name = categories_functions.popleft()
                     # print(current_function_name)
-                    category_button.clicked.connect(functions_dict[current_function_name])
+                    # category_button.clicked.connect(functions_dict[current_function_name])
+
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
+                    current_vertical_layout.addWidget(photo_label)
+
                     current_groupbox.setLayout(current_vertical_layout)
                     categories_grid_layout.addWidget(current_groupbox, row, col)
-
-
-
 
         categories_groupbox.setLayout(categories_grid_layout)
 
@@ -156,9 +165,7 @@ class MainMenu(QWidget):
         main_layout.setColumnStretch(4, 2)
         self.setLayout(main_layout)
         self.show()
-        
 
-    
 
 app = QApplication(sys.argv)
 global login_window
