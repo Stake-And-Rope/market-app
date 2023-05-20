@@ -124,14 +124,14 @@ class MainMenu(QWidget):
         for row in range(3):
             for col in range(4):
                 if categories:
-                    photo_label = QLabel()
-                    url_image = categories_images.popleft()
-                    # print(url_image)
-                    image = QImage()
-                    image.loadFromData(requests.get(url_image).content)
-                    photo_label.setPixmap(QPixmap(image))
-                    photo_label.setMaximumWidth(300)
-                    photo_label.setMaximumHeight(50)
+                    # photo_label = QLabel()
+                    # url_image = categories_images.popleft()
+                    # # print(url_image)
+                    # image = QImage()
+                    # image.loadFromData(requests.get(url_image).content)
+                    # photo_label.setPixmap(QPixmap(image))
+                    # photo_label.setMaximumWidth(300)
+                    # photo_label.setMaximumHeight(50)
 
                     current_groupbox = QGroupBox()
 
@@ -143,6 +143,14 @@ class MainMenu(QWidget):
                     category_description = QLabel(categories_description.popleft())
                     category_description.setFont(QFont(fonts[0], 9))
 
+                    category_image_label = QLabel()
+                    image = f"../img/categories/{category_name.text()}.png"
+                    category_image = QImage(image)
+                    # category_image.loadFromData(image)
+                    category_image_label.setPixmap(QPixmap(category_image))
+                    category_image_label.setMaximumWidth(300)
+                    category_image_label.setMaximumHeight(150)
+
                     category_button = QPushButton()
                     category_button.setText(category_name.text())
 
@@ -152,7 +160,7 @@ class MainMenu(QWidget):
 
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
-                    current_vertical_layout.addWidget(photo_label)
+                    current_vertical_layout.addWidget(category_image_label)
                     current_vertical_layout.addWidget(category_button)
 
                     current_groupbox.setLayout(current_vertical_layout)
