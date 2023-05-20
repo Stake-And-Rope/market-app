@@ -117,22 +117,10 @@ class MainMenu(QWidget):
         categories = deque([x[0] for x in result[0:12]])
         categories_description = deque([x[1] for x in result[0:12]])
         categories_functions = deque([x[2] for x in result[0:12]])
-        categories_images = deque([x[3] for x in result[0:12]])
-
-        # print(categories_functions)
 
         for row in range(3):
             for col in range(4):
                 if categories:
-                    # photo_label = QLabel()
-                    # url_image = categories_images.popleft()
-                    # # print(url_image)
-                    # image = QImage()
-                    # image.loadFromData(requests.get(url_image).content)
-                    # photo_label.setPixmap(QPixmap(image))
-                    # photo_label.setMaximumWidth(300)
-                    # photo_label.setMaximumHeight(50)
-
                     current_groupbox = QGroupBox()
 
                     current_vertical_layout = QVBoxLayout()
@@ -146,7 +134,6 @@ class MainMenu(QWidget):
                     category_image_label = QLabel()
                     image = f"../img/categories/{category_name.text()}.png"
                     category_image = QImage(image)
-                    # category_image.loadFromData(image)
                     category_image_label.setPixmap(QPixmap(category_image))
                     category_image_label.setMaximumWidth(300)
                     category_image_label.setMaximumHeight(150)
