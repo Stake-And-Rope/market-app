@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-
+import sys
+import requests
 # Import PyQt5 Engine 
 from PyQt5.QtWidgets import (QApplication, 
                              QWidget, 
@@ -17,7 +18,7 @@ from PyQt5.QtWidgets import (QApplication,
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys
+
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
@@ -111,11 +112,12 @@ class MainMenu(QWidget):
         categories_grid_layout = QGridLayout()
 
         postgres_conn.admin_client()
-        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description, category_function FROM categories ORDER BY category_name ASC;")
+        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description, category_function, image_url FROM categories ORDER BY category_name ASC;")
         result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
         categories = deque([x[0] for x in result[0:12]])
         categories_description = deque([x[1] for x in result[0:12]])
         categories_functions = deque([x[2] for x in result[0:12]])
+        categories_images = deque([x[3] for x in result[0:12]])
 
         # print(categories_functions)
 
@@ -123,8 +125,13 @@ class MainMenu(QWidget):
             for col in range(4):
                 if categories:
                     photo_label = QLabel()
-                    pixmap = QPixmap('food.jpg')
-                    photo_label.setPixmap(pixmap)
+                    url_image = categories_images.popleft()
+                    # print(url_image)
+                    image = QImage()
+                    image.loadFromData(requests.get(url_image).content)
+                    photo_label.setPixmap(QPixmap(image))
+                    photo_label.setMaximumWidth(300)
+                    photo_label.setMaximumHeight(50)
 
                     current_groupbox = QGroupBox()
 
@@ -145,8 +152,8 @@ class MainMenu(QWidget):
 
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
-                    current_vertical_layout.addWidget(category_button)
                     current_vertical_layout.addWidget(photo_label)
+                    current_vertical_layout.addWidget(category_button)
 
                     current_groupbox.setLayout(current_vertical_layout)
                     categories_grid_layout.addWidget(current_groupbox, row, col)
