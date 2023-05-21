@@ -64,7 +64,8 @@ class MainMenu(QWidget):
         user_info_layout.addStretch(0)
         user_info_layout.addSpacing(100)
         user_info_groupbox.setLayout(user_info_layout)
-        
+
+
         """CREATE THE LEFT BUTTONS LAYOUT"""
         left_buttons_groupbox = QGroupBox('User Actions')
         left_buttons_layout = QVBoxLayout()
