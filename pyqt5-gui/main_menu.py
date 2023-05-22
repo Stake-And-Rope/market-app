@@ -95,7 +95,7 @@ class MainMenu(QWidget):
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
-        # log_out_button.setFont(QFont(fonts[0], 9))
+        log_out_button.setFont(QFont(fonts[0], 9))
         log_out_button.setFixedWidth(100)
         log_out_button.setFixedHeight(23)
 
@@ -123,6 +123,8 @@ class MainMenu(QWidget):
             for col in range(4):
                 if categories:
                     current_groupbox = QGroupBox()
+                    current_groupbox.setStyleSheet("border: 2px solid red")
+                    current_groupbox.setMaximumWidth(300)
 
                     current_vertical_layout = QVBoxLayout()
 
@@ -148,15 +150,9 @@ class MainMenu(QWidget):
                     category_description.setGraphicsEffect(cat_desc_shadow_effect)
                     # category_description.setStyleSheet("background-color: white")
 
-                    # category_image_label = QLabel()
-                    # image = f"../img/categories/{category_name.text()}.png"
-                    # category_image = QImage(image)
-                    # category_image_label.setPixmap(QPixmap(category_image))
-                    # category_image_label.setMaximumWidth(300)
-                    # category_image_label.setMaximumHeight(150)
-
                     category_button = QPushButton()
                     category_button.setText(category_name.text())
+                    category_button.setMaximumWidth(100)
 
                     # current_function_name = categories_functions.popleft()
                     # print(current_function_name)
@@ -180,8 +176,8 @@ class MainMenu(QWidget):
         main_layout.addWidget(categories_groupbox, 1, 1)
 
         """EXAMINE BELOW TWO LINES HOW EXACTLY THEY APPLY THE LOGIC IN THE UI"""
-        main_layout.setRowStretch(4, 2)
-        main_layout.setColumnStretch(4, 2)
+        main_layout.setRowStretch(1, 1)
+        main_layout.setColumnStretch(1, 1)
         self.setLayout(main_layout)
         self.show()
 
