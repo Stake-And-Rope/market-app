@@ -128,7 +128,12 @@ class MainMenu(QWidget):
 
                     category_name = QLabel(categories.popleft())
                     category_name.setFont(QFont(fonts[0], 9))
-                    category_name.setStyleSheet("background-color: white")
+                    cat_name_shadow_effect = QGraphicsDropShadowEffect()
+                    cat_name_shadow_effect.setBlurRadius(2)
+                    cat_name_shadow_effect.setOffset(1, 1)
+                    cat_name_shadow_effect.setColor(QColor("blue"))
+                    category_name.setGraphicsEffect(cat_name_shadow_effect)
+                    # category_name.setStyleSheet()
 
                     image = f"../img/categories/{category_name.text()}.png"
                     groupbox_stylesheet = f"QGroupBox {{ background-image: url({image}); }}"
@@ -136,7 +141,12 @@ class MainMenu(QWidget):
 
                     category_description = QLabel(categories_description.popleft())
                     category_description.setFont(QFont(fonts[0], 9))
-                    category_description.setStyleSheet("background-color: white")
+                    cat_desc_shadow_effect = QGraphicsDropShadowEffect()
+                    cat_desc_shadow_effect.setBlurRadius(2)
+                    cat_desc_shadow_effect.setOffset(1, 1)
+                    cat_desc_shadow_effect.setColor(QColor("blue"))
+                    category_description.setGraphicsEffect(cat_desc_shadow_effect)
+                    # category_description.setStyleSheet("background-color: white")
 
                     # category_image_label = QLabel()
                     # image = f"../img/categories/{category_name.text()}.png"
