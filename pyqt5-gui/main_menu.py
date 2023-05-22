@@ -2,19 +2,20 @@
 import sys
 import requests
 # Import PyQt5 Engine 
-from PyQt5.QtWidgets import (QApplication, 
-                             QWidget, 
+from PyQt5.QtWidgets import (QApplication,
+                             QWidget,
                              QPushButton,
-                             QGridLayout,  
+                             QGridLayout,
                              QLabel,
                              QFrame,
-                             QGroupBox, 
-                             QLineEdit, 
-                             QMessageBox, 
-                             QPlainTextEdit, 
-                             QHBoxLayout, 
+                             QGroupBox,
+                             QLineEdit,
+                             QMessageBox,
+                             QPlainTextEdit,
+                             QHBoxLayout,
                              QVBoxLayout,
-                             QGraphicsDropShadowEffect)
+                             QGraphicsDropShadowEffect,
+                             QGraphicsOpacityEffect)
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -138,8 +139,11 @@ class MainMenu(QWidget):
                     # category_name.setStyleSheet()
 
                     image = f"../img/categories/{category_name.text()}.png"
-                    groupbox_stylesheet = f"QGroupBox {{ background-image: url({image}); }}"
+                    groupbox_stylesheet = f"QGroupBox {{ background-image: url({image});}}"
                     current_groupbox.setStyleSheet(groupbox_stylesheet)
+                    # opacity_effect = QGraphicsOpacityEffect()
+                    # opacity_effect.setOpacity(0.3)
+                    # current_groupbox.setGraphicsEffect(opacity_effect)
 
                     category_description = QLabel(categories_description.popleft())
                     category_description.setFont(QFont(fonts[0], 9))
