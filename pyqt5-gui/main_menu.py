@@ -138,8 +138,8 @@ class MainMenu(QWidget):
                     category_name.setGraphicsEffect(cat_name_shadow_effect)
                     # category_name.setStyleSheet()
 
-                    image = f"../img/categories_new_images/{category_name.text()}.png"
-                    groupbox_stylesheet = f"QGroupBox {{ background-image: url({image});}}"
+                    image = f"../img/categories/{category_name.text()}.png"
+                    groupbox_stylesheet = f"QGroupBox {{ background-image: url({image}); border-radius: 10px;}}"
                     current_groupbox.setStyleSheet(groupbox_stylesheet)
                     # opacity_effect = QGraphicsOpacityEffect()
                     # opacity_effect.setOpacity(0.3)
