@@ -131,19 +131,17 @@ class MainMenu(QWidget):
 
                     category_name = QLabel(categories.popleft())
                     category_name.setFont(QFont(fonts[0], 9))
-                    cat_name_shadow_effect = QGraphicsDropShadowEffect()
-                    cat_name_shadow_effect.setBlurRadius(2)
-                    cat_name_shadow_effect.setOffset(1, 1)
-                    cat_name_shadow_effect.setColor(QColor("blue"))
-                    category_name.setGraphicsEffect(cat_name_shadow_effect)
-                    # category_name.setStyleSheet()
+                    # cat_name_shadow_effect = QGraphicsDropShadowEffect()
+                    # cat_name_shadow_effect.setBlurRadius(2)
+                    # cat_name_shadow_effect.setOffset(1, 1)
+                    # cat_name_shadow_effect.setColor(QColor("blue"))
+                    # category_name.setGraphicsEffect(cat_name_shadow_effect)
+                    category_name.setAlignment(Qt.AlignCenter)
+                    category_name.setStyleSheet("background-color: rgba(250, 250, 250, 215); border-radius: 10px;")
 
                     image = f"../img/categories/{category_name.text()}.png"
                     groupbox_stylesheet = f"QGroupBox {{ background-image: url({image}); border-radius: 10px;}}"
                     current_groupbox.setStyleSheet(groupbox_stylesheet)
-                    # opacity_effect = QGraphicsOpacityEffect()
-                    # opacity_effect.setOpacity(0.3)
-                    # current_groupbox.setGraphicsEffect(opacity_effect)
 
                     category_description = QLabel(categories_description.popleft())
                     category_description.setFont(QFont(fonts[0], 9))
@@ -164,7 +162,6 @@ class MainMenu(QWidget):
 
                     current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
-                    # current_vertical_layout.addWidget(category_image_label)
                     current_vertical_layout.addWidget(category_button)
 
                     current_groupbox.setLayout(current_vertical_layout)
