@@ -1,12 +1,16 @@
+#!/usr/bin/python3
+
 import sys
 sys.path.append(r'.')
-from db_handle import postgres_conn
+import postgres_conn
 import random, string
 
 
-"""Init connection to the database"""
+"""INIT DATABASE CONNECTION"""
 postgres_conn.admin_client()
 
+
+"""CREATE NEW CATEGORY IN THE DATABASE"""
 def create_new_category():
     """Create ranomly generated category ID"""
     category_id = []
@@ -21,7 +25,9 @@ def create_new_category():
     postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO categories VALUES ('{category_id}', '{category_name}', '{0}', '{0}')")
     postgres_conn.POSTGRES_CONNECTION.commit()
 
+"""CREATE NEW SUBCATEGORY IN THE DATABASE"""
 def create_new_subcategory():
+    
     """Create ranomly generated sub-category ID"""
     subcategory_id = []
     for i in range(1, 7):
@@ -45,6 +51,7 @@ def create_new_subcategory():
             print(f"Wrong parent category name: {parent_category}. Try again.\n")
             continue
 
+"""CREATE NEW SUBCATEGORY IN THE DATABASE"""
 def create_new_items():
         """Create randomly generated item ID"""
         item_id = []
@@ -93,7 +100,17 @@ def create_new_items():
                 continue
 
 
-create_new_category()
-create_new_subcategory()
+"""INIT THE OPERATION"""
 
-create_new_items()
+print("What are you going to do?\n")
+print("1.Create a new category\n2.Create a new subcategory\n3.Create a new item\n")
+user_input = int(input())
+
+
+if user_input == 1:
+    create_new_category()
+elif user_input == 2:
+    create_new_subcategory()
+elif user_input == 3:
+    create_new_items()
+
