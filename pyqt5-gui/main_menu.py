@@ -149,15 +149,16 @@ class MainMenu(QWidget):
                                           f"}}"
                     current_groupbox.setStyleSheet(groupbox_stylesheet)
 
-                    category_description = QLabel()
+                    category_description = QLabel("background-color: #FFFAFF;")
                     category_description.setText(f"{categories_description.popleft()}")
-                    category_description.setFont(QFont(fonts[0], 9))
+                    category_description.setFont(QFont(fonts[0], 11))
+                    category_description.setStyleSheet("color: rgb(0, 0, 0);")
                     cat_desc_shadow_effect = QGraphicsDropShadowEffect()
                     cat_desc_shadow_effect.setBlurRadius(2)
-                    cat_desc_shadow_effect.setOffset(1, 1)
+                    cat_desc_shadow_effect.setOffset(2, 1)
                     cat_desc_shadow_effect.setColor(QColor("white"))
                     category_description.setGraphicsEffect(cat_desc_shadow_effect)
-                    # category_description.setStyleSheet("background-color: white")
+
 
                     category_button = QPushButton()
                     category_button.setText(category_name.text())
@@ -169,7 +170,7 @@ class MainMenu(QWidget):
                     # category_button.clicked.connect(functions_dict[current_function_name])
 
                     # current_vertical_layout.addWidget(category_name)
-                    current_vertical_layout.addWidget(category_description)
+                    # current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
 
                     current_groupbox.setLayout(current_vertical_layout)
