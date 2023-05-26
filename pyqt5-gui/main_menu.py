@@ -15,7 +15,8 @@ from PyQt5.QtWidgets import (QApplication,
                              QHBoxLayout,
                              QVBoxLayout,
                              QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect)
+                             QGraphicsOpacityEffect,
+                             )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -70,14 +71,16 @@ class MainMenu(QWidget):
         """CREATE THE LEFT BUTTONS LAYOUT"""
         left_buttons_groupbox = QGroupBox('User Actions')
         left_buttons_layout = QVBoxLayout()
+
         
-        buttons_text = deque(['First', 'Second', 'Third', 'Fourth', 'Fifth'])
+        buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Fourth', 'Fifth'])
         while buttons_text:
             button = QPushButton()
             button.setText(buttons_text.popleft())
             button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
-            button.setFixedHeight(40)
+            button.setFixedHeight(30)
+            button.setStyleSheet("background-color: rgb(51, 153, 255)")
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -137,7 +140,7 @@ class MainMenu(QWidget):
                     # cat_name_shadow_effect.setColor(QColor("blue"))
                     # category_name.setGraphicsEffect(cat_name_shadow_effect)
                     category_name.setAlignment(Qt.AlignCenter)
-                    category_name.setStyleSheet("background-color: rgba(250, 250, 250, 215); border-radius: 10px;")
+                    category_name.setStyleSheet("background-color: rgba(255, 255, 255, 215); border-radius: 10px;")
 
                     image = f"../img/categories/{category_name.text()}.png"
                     groupbox_stylesheet = f"QGroupBox {{ background-image: url({image}); border-radius: 10px;}}"
