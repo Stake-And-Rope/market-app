@@ -134,11 +134,11 @@ class MainMenu(QWidget):
 
                     category_name = QLabel(categories.popleft())
                     category_name.setFont(QFont(fonts[0], 9))
-                    # cat_name_shadow_effect = QGraphicsDropShadowEffect()
-                    # cat_name_shadow_effect.setBlurRadius(2)
-                    # cat_name_shadow_effect.setOffset(1, 1)
-                    # cat_name_shadow_effect.setColor(QColor("blue"))
-                    # category_name.setGraphicsEffect(cat_name_shadow_effect)
+                    cat_name_shadow_effect = QGraphicsDropShadowEffect()
+                    cat_name_shadow_effect.setBlurRadius(2)
+                    cat_name_shadow_effect.setOffset(1, 1)
+                    cat_name_shadow_effect.setColor(QColor("blue"))
+                    category_name.setGraphicsEffect(cat_name_shadow_effect)
                     category_name.setAlignment(Qt.AlignCenter)
                     category_name.setStyleSheet("background-color: rgba(255, 255, 255, 255);" \
                                                 "border-radius: 10px;")
@@ -161,7 +161,8 @@ class MainMenu(QWidget):
 
                     category_button = QPushButton()
                     category_button.setText(category_name.text())
-                    category_button.setMaximumWidth(100)
+                    category_button.setFont(QFont(fonts[0], 11))
+                    category_button.setMaximumWidth(150)
 
                     # current_function_name = categories_functions.popleft()
                     # print(current_function_name)
