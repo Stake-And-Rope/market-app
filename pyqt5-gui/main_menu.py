@@ -80,7 +80,7 @@ class MainMenu(QWidget):
             button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
             button.setFixedHeight(30)
-            button.setStyleSheet("background-color: rgb(51, 153, 255)")
+            # button.setStyleSheet("background-color: rgb(51, 153, 255)")
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -140,18 +140,22 @@ class MainMenu(QWidget):
                     # cat_name_shadow_effect.setColor(QColor("blue"))
                     # category_name.setGraphicsEffect(cat_name_shadow_effect)
                     category_name.setAlignment(Qt.AlignCenter)
-                    category_name.setStyleSheet("background-color: rgba(255, 255, 255, 215); border-radius: 10px;")
+                    category_name.setStyleSheet("background-color: rgba(255, 255, 255, 255);" \
+                                                "border-radius: 10px;")
 
                     image = f"../img/categories/{category_name.text()}.png"
-                    groupbox_stylesheet = f"QGroupBox {{ background-image: url({image}); border-radius: 10px;}}"
+                    groupbox_stylesheet = f"QGroupBox {{ background-image: url({image});" \
+                                          f"border-radius: 10px;" \
+                                          f"}}"
                     current_groupbox.setStyleSheet(groupbox_stylesheet)
 
-                    category_description = QLabel(categories_description.popleft())
+                    category_description = QLabel()
+                    category_description.setText(f"{categories_description.popleft()}")
                     category_description.setFont(QFont(fonts[0], 9))
                     cat_desc_shadow_effect = QGraphicsDropShadowEffect()
                     cat_desc_shadow_effect.setBlurRadius(2)
                     cat_desc_shadow_effect.setOffset(1, 1)
-                    cat_desc_shadow_effect.setColor(QColor("blue"))
+                    cat_desc_shadow_effect.setColor(QColor("white"))
                     category_description.setGraphicsEffect(cat_desc_shadow_effect)
                     # category_description.setStyleSheet("background-color: white")
 
@@ -163,7 +167,7 @@ class MainMenu(QWidget):
                     # print(current_function_name)
                     # category_button.clicked.connect(functions_dict[current_function_name])
 
-                    current_vertical_layout.addWidget(category_name)
+                    # current_vertical_layout.addWidget(category_name)
                     current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
 
