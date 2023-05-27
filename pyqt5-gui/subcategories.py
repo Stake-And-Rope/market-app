@@ -21,11 +21,13 @@ from PyQt5.QtWidgets import (QApplication,
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+from main_menu_dev import SUBCATEGORY_NAME
 
-from main_menu_dev import button_text_main_menu
+# from main_menu_dev import button_text_main_menu
 
 class SubcategoriesMenu(QWidget):
     def __init__(self):
@@ -133,10 +135,10 @@ class SubcategoriesMenu(QWidget):
 
         subcategories_grid_layout = QGridLayout()
 
-        postgres_conn.POSTGRES_CURSOR.execute(
-            f"SELECT subcategory_name FROM subcategories where parent_category = {button_text_main_menu} ORDER BY subcategory_name ASC;")
-        result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
-        subcategories = deque([x[0] for x in result[0:12]])
+        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{SUBCATEGORY_NAME}' ORDER BY subcategory_name ASC;")
+        result = postgres_conn.POSTGRES_CURSOR.fetchall()
+        subcategories = deque([x[0] for x in result])
+        print(subcategories)
 
         for row in range(3):
             for col in range(4):
@@ -147,7 +149,7 @@ class SubcategoriesMenu(QWidget):
 
                     current_vertical_layout = QVBoxLayout()
 
-                    subcategory_name = QLabel(subcategories.popleft())
+                    subcategory_name = QLabel(f"{subcategories.popleft()}")
                     subcategory_name.setFont(QFont(fonts[0], 9))
                     subcat_name_shadow_effect = QGraphicsDropShadowEffect()
                     subcat_name_shadow_effect.setBlurRadius(2)
@@ -193,10 +195,19 @@ class SubcategoriesMenu(QWidget):
         main_layout.setColumnStretch(1, 1)
         self.setLayout(main_layout)
         self.show()
+    
 
+        
 
-app = QApplication(sys.argv)
-global subcategories_window
-subcategories_window = SubcategoriesMenu()
-subcategories_window.show()
-app.exec()
+def start_subcategories():
+    app = QApplication(sys.argv)
+    global subcategories_window
+    subcategories_window = SubcategoriesMenu()
+    subcategories_window.show()
+    app.exec()
+
+def start_window():
+    global subcategories_window
+    subcategories_window = SubcategoriesMenu()
+    subcategories_window.show()
+    

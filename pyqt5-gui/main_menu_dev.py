@@ -21,10 +21,14 @@ from PyQt5.QtWidgets import (QApplication,
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+import subcategories
 
+# This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
+SUBCATEGORY_NAME = 'Accessories'
 
 class MainMenu(QWidget):
     def __init__(self):
@@ -46,11 +50,50 @@ class MainMenu(QWidget):
 
         def drinks_open():
             print("I am drinking some drinks")
+            
+        def accessories_open():
+            print("Accessories")
+            global SUBCATEGORY_NAME
+            SUBCATEGORY_NAME = 'Accessories'
+            open_subcategories()
+        
+        def homeandliving_open():
+            print("Home and Living")
+
+        def hair_open():
+            print("Hair")
+        
+        def sports_open():
+            print("Sports")
+        
+        def beachwear_open():
+            print("Beachwear")
+        
+        def shoes_open():
+            print("Shoes")
+        
+        def electronics_open():
+            print("Electronics")
+        
+        def cosmetics_open():
+            print("Cosmetics")
+        
+        def clothes_open():
+            print("Clothes")
 
         functions_dict = {
             'food_open': lambda: food_open(),
             'books_open': lambda: books_open(),
             'drinks_open': lambda: drinks_open(),
+            'accessories_open': lambda: accessories_open(),
+            'homeandliving_open': lambda: homeandliving_open(),
+            'hair_open': lambda: hair_open(),
+            'sports_open': lambda: sports_open(),
+            'beachwear_open': lambda: beachwear_open(),
+            'shoes_open': lambda: shoes_open(),
+            'electronics_open': lambda: electronics_open(),
+            'cosmetics_open': lambda: cosmetics_open(),
+            'clothes_open': lambda: clothes_open(),
         }
 
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
@@ -179,11 +222,11 @@ class MainMenu(QWidget):
                     category_button.setText(category_name.text())
                     category_button.setFont(QFont(fonts[0], 11))
                     category_button.setMaximumWidth(150)
-                    get_button_name(category_button)
+                    # get_button_name(category_button)
 
-                    # current_function_name = categories_functions.popleft()
-                    # print(current_function_name)
-                    # category_button.clicked.connect(functions_dict[current_function_name])
+                    current_function_name = categories_functions.popleft() + "_open"
+                    print(current_function_name)
+                    category_button.clicked.connect(functions_dict[current_function_name])
 
                     # current_vertical_layout.addWidget(category_name)
                     # current_vertical_layout.addWidget(category_description)
@@ -206,10 +249,18 @@ class MainMenu(QWidget):
         main_layout.setColumnStretch(1, 1)
         self.setLayout(main_layout)
         self.show()
+    
+        def open_subcategories():
+            subcategories.start_window()
+            main_window.hide()
+
+def open_app():
+    app = QApplication(sys.argv)
+    global main_window
+    main_window = MainMenu()
+    main_window.show()
+    app.exec()
 
 
-app = QApplication(sys.argv)
-global login_window
-login_window = MainMenu()
-login_window.show()
-app.exec()
+if __name__ == '__main__':
+    open_app()
