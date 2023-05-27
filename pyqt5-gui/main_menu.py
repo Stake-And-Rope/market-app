@@ -34,6 +34,9 @@ class MainMenu(QWidget):
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
         
+        """INIT CONNECTION TO THE DATABASE"""
+        postgres_conn.admin_client()
+        
         def food_open():
             print("I am eating some food")
             
@@ -57,12 +60,25 @@ class MainMenu(QWidget):
 
         """CREATE THE USER INFO VERTICAL LAYOUT"""
         user_info_groupbox = QGroupBox('User Information')
-        first_name = QLabel('First Name')
-        last_name = QLabel('Last Name')
-        user_info_layout = QVBoxLayout()
+        postgres_conn.POSTGRES_CURSOR.execute("SELECT current_user;")
+        current_user = postgres_conn.POSTGRES_CURSOR.fetchone()
+        # The query below should be modified once we implement the main_menu window with rest of the application. WHERE username = {current_user}
+        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = 'pesho'")
+        user_info = postgres_conn.POSTGRES_CURSOR.fetchone()
 
-        user_info_layout.addWidget(first_name)
-        user_info_layout.addWidget(last_name)
+        user_name = QLabel(f"Hello, {user_info[1]} {user_info[2]}")
+        user_name.setFont(QFont(fonts[0], 12))
+        
+        user_id = QLabel(f"Your ID is {user_info[0]}")
+        user_id.setFont(QFont(fonts[0], 12))
+        user_info_layout = QVBoxLayout()
+        
+        user_total_orders = QLabel(f"Total orders: {user_info[3]}")
+        user_total_orders.setFont(QFont(fonts[0], 12))
+
+        user_info_layout.addWidget(user_name)
+        user_info_layout.addWidget(user_id)
+        user_info_layout.addWidget(user_total_orders)
         user_info_layout.addStretch(0)
         user_info_layout.addSpacing(100)
         user_info_groupbox.setLayout(user_info_layout)
@@ -116,7 +132,6 @@ class MainMenu(QWidget):
 
         categories_grid_layout = QGridLayout()
 
-        postgres_conn.admin_client()
         postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description, category_function, image_url FROM categories ORDER BY category_name ASC;")
         result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
         categories = deque([x[0] for x in result[0:12]])
