@@ -89,7 +89,7 @@ class MainMenu(QWidget):
         left_buttons_layout = QVBoxLayout()
 
         
-        buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Fourth', 'Fifth'])
+        buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options'])
         while buttons_text:
             button = QPushButton()
             button.setText(buttons_text.popleft())
@@ -112,6 +112,12 @@ class MainMenu(QWidget):
         favourites_button.setFont(QFont(fonts[0], 9))
         favourites_button.setFixedWidth(120)
         favourites_button.setFixedHeight(23)
+        
+        about_button = QPushButton()
+        about_button.setText("About")
+        about_button.setFont(QFont(fonts[0], 9))
+        about_button.setFixedWidth(120)
+        about_button.setFixedHeight(23)
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
@@ -123,6 +129,7 @@ class MainMenu(QWidget):
         top_buttons_layout.addSpacing(1000)
 
         top_buttons_layout.addWidget(favourites_button)
+        top_buttons_layout.addWidget(about_button)
         top_buttons_layout.addWidget(log_out_button)
 
         top_buttons_groupbox.setLayout(top_buttons_layout)
@@ -146,6 +153,7 @@ class MainMenu(QWidget):
                     current_groupbox.setMaximumWidth(300)
 
                     current_vertical_layout = QVBoxLayout()
+                    current_vertical_layout.setAlignment(Qt.AlignBottom)
 
                     category_name = QLabel(categories.popleft())
                     category_name.setFont(QFont(fonts[0], 9))
