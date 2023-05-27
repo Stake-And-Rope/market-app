@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 
 from PyQt5.QtWidgets import (
@@ -15,30 +17,45 @@ from PyQt5.QtCore import *
 class About(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("About Us")
+        self.setWindowTitle("About")
         self.setGeometry(650, 300, 600, 400)
+        
+        
+        """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
+        font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
+        if font >= 0:
+            fonts = QFontDatabase.applicationFontFamilies(font)
+        else:
+            print("Error loading fonts!")
 
         main_layout = QVBoxLayout()
 
-        """Init the our story layout"""
+        """INIT THE OUR STORY LAYOUT"""
         our_story_layout = QVBoxLayout()
         our_story_header = QLabel()
-        our_story_header.setText("<b><font size='4'>Our Story</font></b>")
-
-        description_text = "<font size='4'>Since 2013, we've been committed to providing high-quality organic food.<br>" \
-                            "We link local farmers and consumers, offering the best from the field to your table.<br>" \
-                            "We stand for a healthier lifestyle, environmental respect, and support for the local economy.<br>" \
-                            "With us, you'll enjoy the freshest, organically grown food for a healthier you.</font>"
+        our_story_header.setText("About MarketApp")
+        our_story_header.setFont(QFont(fonts[0], 9).setBold(True))
+        
+        
+        description_text = "<font size='4'>MarketApp is a hobby-project created by students and professionals,<br>" \
+                            "aiming to create an environment for training and gaining new skills:<br>" \
+                            "* Python coding skills<br>" \
+                            "* Using Python libraries (pyqt5, sshtunnel, python-decouple, etc.)<br>" \
+                            "* Linux-based Operating Systems<br>" \
+                            "* PostreSQL - Install, Configure and work with database<br>" \
+                            "* Qt Framework<br>" \
+                            "* Git/GitHub<>br" \
+                            "* Project Management and Team-work<br>" \
+                            "</font>"
         our_story = QLabel()
         our_story.setText(description_text)
+        our_story.setFont(QFont(fonts[0], 9))
 
         our_story_layout.addWidget(our_story_header)
         our_story_layout.addWidget(our_story)
-
         our_story_layout.addStretch()
 
-        """Contact Us Layout"""
-
+        """CONTACT US LAYOUT"""
         contact_us_layout = QVBoxLayout()
         contact_us = QLabel()
         contact_us.setText("<b><font size='4'>Contact Us</font></b><br>"
@@ -48,8 +65,7 @@ class About(QWidget):
         contact_us_layout.addWidget(contact_us)
         contact_us_layout.addStretch()
 
-        """Contributors Layout"""
-
+        """CONTRIBUTORS LAYOUT"""
         contributors_layout = QVBoxLayout()
 
         contributors_header = QLabel()
@@ -70,7 +86,7 @@ class About(QWidget):
         contributors_layout.addStretch()
 
 
-        """Adding all layers together"""
+        """ADDING ALL LAYERS TO MAIN LAYOUT"""
         main_layout.addLayout(our_story_layout)
         main_layout.addLayout(contact_us_layout)
         main_layout.addLayout(contributors_layout)
