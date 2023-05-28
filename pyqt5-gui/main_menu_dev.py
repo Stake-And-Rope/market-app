@@ -192,7 +192,7 @@ class MainMenu(QWidget):
             for col in range(4):
                 if categories:
                     current_groupbox = QGroupBox()
-                    current_groupbox.setStyleSheet("border: 2px solid red")
+                    # current_groupbox.setStyleSheet("border: 2px solid red")
                     current_groupbox.setMaximumWidth(300)
 
                     current_vertical_layout = QVBoxLayout()
