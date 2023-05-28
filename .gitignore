@@ -164,4 +164,7 @@ cython_debug/
 .vscode/
 
 # Obsidian Config Folder
-./obsidian
+.obsidian/
+
+# Ignore experimental dir
+experimental/

@@ -20,9 +20,19 @@ def create_new_category():
 
     """Enter the category name"""
     category_name = input("Enter category name: ")
+
+    """Enter category description"""
+    category_description = input("Enter category description: ")
+
+    """Enter category function"""
+    category_function = input("Enter category function: ")
+
+    """Enter category image URL"""
+    category_image_URL = input("Enter category URL: ")
     
     """Save the category into the database"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO categories VALUES ('{category_id}', '{category_name}', '{0}', '{0}')")
+    postgres_conn.POSTGRES_CURSOR.execute(f"insert into categories (category_id, category_name, total_subcategories,"
+                                          f" total_items, category_description, category_function, image_url) values ('{category_id}', '{category_name}', '{0}', '{0}', '{category_description}', '{category_function}', '{category_image_URL}')")
     postgres_conn.POSTGRES_CONNECTION.commit()
 
 """CREATE NEW SUBCATEGORY IN THE DATABASE"""

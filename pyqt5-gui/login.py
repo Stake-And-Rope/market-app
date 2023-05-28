@@ -2,12 +2,21 @@ from PyQt5.QtWidgets import (
                             QVBoxLayout,
                             QHBoxLayout,
                             QPushButton,
-                            QLabel
+                            QLabel,
+                            QWidget,
+                            QLineEdit,
+                            QMessageBox,
+                            QApplication
                             )
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtGui import (
+                        QIcon,
+                        QFontDatabase,
+                        QFont
+                        )
+
+from PyQt5.QtCore import Qt
+
 import sys
 sys.path.append(r'..')
 from db_handle import postgres_conn
@@ -23,13 +32,14 @@ class LogIn(QWidget):
         self.setMaximumWidth(400)
         self.setMaximumHeight(150)
 
+        """Add custom font to array, ready to be loaded to any text object"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font >= 0:
             fonts = QFontDatabase.applicationFontFamilies(font)
         else:
             print("Error loading fonts!")
 
-        """Init the title layout"""
+        """INIT THE TITLE LAYOUT"""
         title_layout = QVBoxLayout()
         
         title_label = QLabel()
@@ -53,7 +63,7 @@ class LogIn(QWidget):
         title_layout.addWidget(new_user_label)
         title_layout.addWidget(create_an_account_button)
 
-        """Init the first center vertical layout"""
+        """INIT THE FIRST CENTERED VERTICAL LAYOUT"""
         first_center_vertical_layout = QVBoxLayout()
 
         username_label = QLabel()
@@ -77,14 +87,14 @@ class LogIn(QWidget):
         log_in_button.setFont(QFont(fonts[0], 11))
         log_in_button.setStyleSheet("background-color : lightBlue")
 
-        """Add labels to the center vertical layout"""
+        """ADD LABEL TO THE CENTERED VERTICAL LAYOUT"""
         first_center_vertical_layout.addWidget(username_label)
         first_center_vertical_layout.addWidget(username_textbox)
         first_center_vertical_layout.addWidget(password_label)
         first_center_vertical_layout.addWidget(password_textbox)
         first_center_vertical_layout.addWidget(log_in_button)
 
-        """Init the Main Layout"""
+        """INIT THE MAIN LAYOUT"""
         main_layout = QVBoxLayout()
         main_layout.addLayout(title_layout)
         main_layout.addLayout(first_center_vertical_layout)
