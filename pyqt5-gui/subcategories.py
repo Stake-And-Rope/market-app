@@ -147,8 +147,8 @@ class SubcategoriesMenu(QWidget):
             for col in range(4):
                 if subcategories:
                     current_groupbox = QGroupBox()
-                    # current_groupbox.setStyleSheet("border: 2px solid red")
-                    current_groupbox.setMaximumWidth(300)
+                    current_groupbox.setMaximumWidth(400)
+                    current_groupbox.setMaximumHeight(150)
 
                     current_vertical_layout = QVBoxLayout()
 
@@ -174,7 +174,7 @@ class SubcategoriesMenu(QWidget):
                     subcategory_button.setText(subcategory_name.text())
                     subcategory_button.setFont(QFont(fonts[0], 11))
                     subcategory_button.setMaximumWidth(150)
-                    subcategory_button.setStyleSheet("background-color: rgba(255, 255, 0)")
+                    # subcategory_button.setStyleSheet("background-color: rgba(255, 255, 0)")
 
                     # current_function_name = categories_functions.popleft()
                     # print(current_function_name)
