@@ -28,9 +28,10 @@ from db_handle import postgres_conn
 import subcategories
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
-SUBCATEGORY_NAME = 'Accessories'
+global subcategory_name
+subcategory_name = ''
 
-class MainMenu(QWidget):
+class MainMenu(QWidget):   
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Main Menu")
@@ -38,12 +39,17 @@ class MainMenu(QWidget):
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
+        
+        
 
         """INIT CONNECTION TO THE DATABASE"""
         postgres_conn.admin_client()
 
         def food_open():
             print("I am eating some food")
+            global subcategory_name
+            subcategory_name = "Food"
+            open_subcategories()
 
         def books_open():
             print("I am reading books")
@@ -52,9 +58,9 @@ class MainMenu(QWidget):
             print("I am drinking some drinks")
             
         def accessories_open():
-            print("Accessories")
-            global SUBCATEGORY_NAME
-            SUBCATEGORY_NAME = 'Accessories'
+            print("I will open Accessories")
+            global subcategory_name
+            subcategory_name = 'Accessories'
             open_subcategories()
         
         def homeandliving_open():
@@ -251,7 +257,7 @@ class MainMenu(QWidget):
         self.show()
     
         def open_subcategories():
-            subcategories.start_window()
+            subcategories.start_window(subcategory_name)
             main_window.hide()
 
 def open_app():

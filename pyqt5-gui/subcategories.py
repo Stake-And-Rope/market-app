@@ -25,9 +25,11 @@ sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-from main_menu_dev import SUBCATEGORY_NAME
+# from main_menu_dev import subcategory_name
 
-# from main_menu_dev import button_text_main_menu
+# global subcategory_name
+subcategory_name = ''
+
 
 class SubcategoriesMenu(QWidget):
     def __init__(self):
@@ -135,7 +137,8 @@ class SubcategoriesMenu(QWidget):
 
         subcategories_grid_layout = QGridLayout()
 
-        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{SUBCATEGORY_NAME}' ORDER BY subcategory_name ASC;")
+        global subcategory_name
+        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{subcategory_name}' ORDER BY subcategory_name ASC;")
         result = postgres_conn.POSTGRES_CURSOR.fetchall()
         subcategories = deque([x[0] for x in result])
         print(subcategories)
@@ -144,7 +147,7 @@ class SubcategoriesMenu(QWidget):
             for col in range(4):
                 if subcategories:
                     current_groupbox = QGroupBox()
-                    current_groupbox.setStyleSheet("border: 2px solid red")
+                    # current_groupbox.setStyleSheet("border: 2px solid red")
                     current_groupbox.setMaximumWidth(300)
 
                     current_vertical_layout = QVBoxLayout()
@@ -171,6 +174,7 @@ class SubcategoriesMenu(QWidget):
                     subcategory_button.setText(subcategory_name.text())
                     subcategory_button.setFont(QFont(fonts[0], 11))
                     subcategory_button.setMaximumWidth(150)
+                    subcategory_button.setStyleSheet("background-color: rgba(255, 255, 0)")
 
                     # current_function_name = categories_functions.popleft()
                     # print(current_function_name)
@@ -195,9 +199,8 @@ class SubcategoriesMenu(QWidget):
         main_layout.setColumnStretch(1, 1)
         self.setLayout(main_layout)
         self.show()
-    
 
-        
+   
 
 def start_subcategories():
     app = QApplication(sys.argv)
@@ -206,8 +209,10 @@ def start_subcategories():
     subcategories_window.show()
     app.exec()
 
-def start_window():
+def start_window(sub_cat_name):
     global subcategories_window
+    global subcategory_name
+    subcategory_name = sub_cat_name
     subcategories_window = SubcategoriesMenu()
     subcategories_window.show()
     
