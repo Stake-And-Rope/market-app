@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+import sys
+sys.path.append(r'..')
 from PyQt5.QtWidgets import (
                             QVBoxLayout,
                             QHBoxLayout,
@@ -16,12 +19,11 @@ from PyQt5.QtGui import (
                         )
 
 from PyQt5.QtCore import Qt
-
-import sys
-sys.path.append(r'..')
 from db_handle import postgres_conn
 import register
 import main_menu
+
+
 
 class LogIn(QWidget):
     def __init__(self):

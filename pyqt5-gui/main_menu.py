@@ -30,6 +30,8 @@ import subcategories
 global subcategory_name
 subcategory_name = ''
 
+
+
 class MainMenu(QWidget):
     def __init__(self):
         super().__init__()
@@ -42,11 +44,14 @@ class MainMenu(QWidget):
         """INIT CONNECTION TO THE DATABASE"""
         postgres_conn.admin_client()
         
+        """OPEN THE PROPER SUBCATEGORY"""
         def open_func(subcat_name):
             global subcategory_name
             subcategory_name = subcat_name
             open_subcategories()
+        
 
+        """SUBCATEGORIES CALL FUNCTION"""
         functions_dict = {
             'food_open': lambda: open_func("Food"),
             'books_open': lambda: open_func("Books"),
@@ -62,6 +67,16 @@ class MainMenu(QWidget):
             'clothes_open': lambda: open_func("Clothes"),
         }
         
+        
+        """LEFT LAYOUT BUTTONS CALL FUNCTION"""
+        left_layout_buttons_dict = {
+            'edit_account': lambda: open_update_account(),
+            'view_my_orders': lambda: print("My Orders"),
+            'payment_options': lambda: print("Payment Options"),
+            'back': lambda: print("Go Back to categories"),
+        }
+        
+
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font < 0:
@@ -99,13 +114,19 @@ class MainMenu(QWidget):
         left_buttons_layout = QVBoxLayout()
 
         
-        buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options'])
+        buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
         while buttons_text:
             button = QPushButton()
-            button.setText(buttons_text.popleft())
+            button_text = buttons_text.popleft()
+            button.setText(button_text)
+            button_function = button_text.replace(" ", "_")
+            button_function = button_function.lower()
+            print(button_function)
             button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
             button.setFixedHeight(30)
+            button.clicked.connect(left_layout_buttons_dict[button_function])
+            
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -218,12 +239,23 @@ class MainMenu(QWidget):
         main_layout.setColumnStretch(1, 1)
         self.setLayout(main_layout)
         self.show()
+
+        """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
+        def open_update_account():
+            user_settings_layout = QVBoxLayout()
+            test_label = QLabel()
+            test_label.setText("Edit Account Test Label")
+            main_layout.removeWidget(categories_groupbox)
+            main_layout.addWidget(test_label, 1, 1)
+
         
+        """OPEN SUBCATEGORIES WINDOW"""
         def open_subcategories():
             subcategories.start_window(subcategory_name)
             main_window.hide()
 
 
+"""OBSOLETE - KEEP FOR NOW, BUT MOST PROBEBLY WONT BE NEEDED"""
 def open_app():
     app = QApplication(sys.argv)
     global main_window
@@ -231,6 +263,7 @@ def open_app():
     main_window.show()
     app.exec()
 
+"""START MAIN MENU"""
 def start_window():
     global main_menu_window
     main_menu_window = MainMenu()
