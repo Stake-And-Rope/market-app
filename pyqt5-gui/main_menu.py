@@ -24,6 +24,11 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+import subcategories
+
+# This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
+global subcategory_name
+subcategory_name = ''
 
 class MainMenu(QWidget):
     def __init__(self):
@@ -37,19 +42,24 @@ class MainMenu(QWidget):
         """INIT CONNECTION TO THE DATABASE"""
         postgres_conn.admin_client()
         
-        def food_open():
-            print("I am eating some food")
-            
-        def books_open():
-            print("I am reading books")
-        
-        def drinks_open():
-            print("I am drinking some drinks")
-            
+        def open_func(subcat_name):
+            global subcategory_name
+            subcategory_name = subcat_name
+            open_subcategories()
+
         functions_dict = {
-            'food_open': lambda: food_open(),
-            'books_open': lambda: books_open(),
-            'drinks_open': lambda: drinks_open(),
+            'food_open': lambda: open_func("Food"),
+            'books_open': lambda: open_func("Books"),
+            'drinks_open': lambda: open_func("Drinks"),
+            'accessories_open': lambda: open_func("Accessories"),
+            'homeandliving_open': lambda: open_func("Home and Living"),
+            'hair_open': lambda: open_func("Hair"),
+            'sports_open': lambda: open_func("Sports"),
+            'beachwear_open': lambda: open_func("Beachwear"),
+            'shoes_open': lambda: open_func("Shoes"),
+            'electronics_open': lambda: open_func("Electronics"),
+            'cosmetics_open': lambda: open_func("Cosmetics"),
+            'clothes_open': lambda: open_func("Clothes"),
         }
         
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
@@ -96,7 +106,6 @@ class MainMenu(QWidget):
             button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
             button.setFixedHeight(30)
-            # button.setStyleSheet("background-color: rgb(51, 153, 255)")
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -111,19 +120,19 @@ class MainMenu(QWidget):
         favourites_button.setText("Favourites")
         favourites_button.setFont(QFont(fonts[0], 9))
         favourites_button.setFixedWidth(120)
-        favourites_button.setFixedHeight(23)
+        favourites_button.setFixedHeight(30)
         
         about_button = QPushButton()
         about_button.setText("About")
         about_button.setFont(QFont(fonts[0], 9))
         about_button.setFixedWidth(120)
-        about_button.setFixedHeight(23)
+        about_button.setFixedHeight(30)
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
         log_out_button.setFont(QFont(fonts[0], 9))
         log_out_button.setFixedWidth(100)
-        log_out_button.setFixedHeight(23)
+        log_out_button.setFixedHeight(30)
 
         top_buttons_layout.addStretch(0)
         top_buttons_layout.addSpacing(1000)
@@ -182,18 +191,14 @@ class MainMenu(QWidget):
                     cat_desc_shadow_effect.setColor(QColor("white"))
                     category_description.setGraphicsEffect(cat_desc_shadow_effect)
 
-
                     category_button = QPushButton()
                     category_button.setText(category_name.text())
                     category_button.setFont(QFont(fonts[0], 11))
                     category_button.setMaximumWidth(150)
 
-                    # current_function_name = categories_functions.popleft()
-                    # print(current_function_name)
-                    # category_button.clicked.connect(functions_dict[current_function_name])
+                    current_function_name = categories_functions.popleft() + "_open"
+                    category_button.clicked.connect(functions_dict[current_function_name])
 
-                    # current_vertical_layout.addWidget(category_name)
-                    # current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
 
                     current_groupbox.setLayout(current_vertical_layout)
@@ -213,11 +218,23 @@ class MainMenu(QWidget):
         main_layout.setColumnStretch(1, 1)
         self.setLayout(main_layout)
         self.show()
+        
+        def open_subcategories():
+            subcategories.start_window(subcategory_name)
+            main_window.hide()
 
 
-app = QApplication(sys.argv)
-global login_window
-login_window = MainMenu()
-login_window.show()
-app.exec()
+def open_app():
+    app = QApplication(sys.argv)
+    global main_window
+    main_window = MainMenu()
+    main_window.show()
+    app.exec()
 
+def start_window():
+    global main_menu_window
+    main_menu_window = MainMenu()
+    main_menu_window.show()
+
+if __name__ == '__main__':
+    open_app()
