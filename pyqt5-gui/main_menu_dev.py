@@ -45,61 +45,24 @@ class MainMenu(QWidget):
         """INIT CONNECTION TO THE DATABASE"""
         postgres_conn.admin_client()
 
-        def food_open():
-            print("I am eating some food")
+        def open_func(subcat_name):
             global subcategory_name
-            subcategory_name = "Food"
+            subcategory_name = subcat_name
             open_subcategories()
-
-        def books_open():
-            print("I am reading books")
-
-        def drinks_open():
-            print("I am drinking some drinks")
-            
-        def accessories_open():
-            print("I will open Accessories")
-            global subcategory_name
-            subcategory_name = 'Accessories'
-            open_subcategories()
-        
-        def homeandliving_open():
-            print("Home and Living")
-
-        def hair_open():
-            print("Hair")
-        
-        def sports_open():
-            print("Sports")
-        
-        def beachwear_open():
-            print("Beachwear")
-        
-        def shoes_open():
-            print("Shoes")
-        
-        def electronics_open():
-            print("Electronics")
-        
-        def cosmetics_open():
-            print("Cosmetics")
-        
-        def clothes_open():
-            print("Clothes")
 
         functions_dict = {
-            'food_open': lambda: food_open(),
-            'books_open': lambda: books_open(),
-            'drinks_open': lambda: drinks_open(),
-            'accessories_open': lambda: accessories_open(),
-            'homeandliving_open': lambda: homeandliving_open(),
-            'hair_open': lambda: hair_open(),
-            'sports_open': lambda: sports_open(),
-            'beachwear_open': lambda: beachwear_open(),
-            'shoes_open': lambda: shoes_open(),
-            'electronics_open': lambda: electronics_open(),
-            'cosmetics_open': lambda: cosmetics_open(),
-            'clothes_open': lambda: clothes_open(),
+            'food_open': lambda: open_func("Food"),
+            'books_open': lambda: open_func("Books"),
+            'drinks_open': lambda: open_func("Drinks"),
+            'accessories_open': lambda: open_func("Accessories"),
+            'homeandliving_open': lambda: open_func("Home and Living"),
+            'hair_open': lambda: open_func("Hair"),
+            'sports_open': lambda: open_func("Sports"),
+            'beachwear_open': lambda: open_func("Beachwear"),
+            'shoes_open': lambda: open_func("Shoes"),
+            'electronics_open': lambda: open_func("Electronics"),
+            'cosmetics_open': lambda: open_func("Cosmetics"),
+            'clothes_open': lambda: open_func("Clothes"),
         }
 
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
