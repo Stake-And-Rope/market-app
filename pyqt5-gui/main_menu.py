@@ -30,7 +30,8 @@ import subcategories
 global subcategory_name
 subcategory_name = ''
 
-
+"""INIT CONNECTION TO THE DATABASE"""
+postgres_conn.admin_client()
 
 class MainMenu(QWidget):
     def __init__(self):
@@ -41,8 +42,7 @@ class MainMenu(QWidget):
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
         
-        """INIT CONNECTION TO THE DATABASE"""
-        postgres_conn.admin_client()
+
         
         """OPEN THE PROPER SUBCATEGORY"""
         def open_func(subcat_name):
@@ -71,7 +71,7 @@ class MainMenu(QWidget):
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
             'edit_account': lambda: open_update_account(),
-            'view_my_orders': lambda: print("My Orders"),
+            'view_my_orders': lambda: open_user_orders(),
             'payment_options': lambda: print("Payment Options"),
             'back': lambda: print("Go Back to categories"),
         }
@@ -243,41 +243,84 @@ class MainMenu(QWidget):
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
             # Change to dynamic query in implementation
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT first_name, last_name FROM customers WHERE username = 'pesho'")
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT first_name, last_name, email_address, phone FROM customers WHERE username = 'pesho'")
             result = postgres_conn.POSTGRES_CURSOR.fetchone()
             
             update_user_settings_groupbox = QGroupBox("Update Account Settings")
             update_user_settings_layout = QVBoxLayout()
-            
-            first_name_label = QLabel()
-            first_name_label.setText("First Name")
-            first_name_label.setFont(QFont(fonts[0], 12))
-            
-            first_name_texbox = QLineEdit()
-            first_name_texbox.setText(result[0])
-            first_name_texbox.setFont(QFont(fonts[0], 12))
-            
-            last_name_label = QLabel()
-            last_name_label.setText("Last Name")
-            last_name_label.setFont(QFont(fonts[0], 12))
-            
-            last_name_textbox = QLineEdit()
-            last_name_textbox.setText(result[1])
-            last_name_textbox.setFont(QFont(fonts[0], 12))
-            
-            update_user_settings_layout.addWidget(first_name_label)
-            update_user_settings_layout.addWidget(first_name_texbox)
-            update_user_settings_layout.addWidget(last_name_label)
-            update_user_settings_layout.addWidget(last_name_textbox)
-            
-            update_user_settings_groupbox.setLayout(update_user_settings_layout)            
+            update_user_settings_layout.addStretch()
+            update_user_settings_layout.addSpacing(10)
+
+            text_labels = deque(['First Name', 'Last Name', 'Current Email Address', 'Phone Number'])
+            text_labels_length = len(text_labels)
+            for i in range(text_labels_length - 1):
+                if i != 3:
+                    current_text_label = QLabel()
+                    current_text_label.setText(text_labels.popleft())
+                    current_text_label.setFont(QFont(fonts[0], 12))
+
+                    current_line_edit = QLineEdit()
+                    current_line_edit.setText(result[i])
+                    current_line_edit.setFont(QFont(fonts[0], 12))
+                    current_line_edit.setMaximumWidth(250)
+                else:
+                    current_text_label = QLabel()
+                    current_text_label.setText("New Email Address")
+                    current_text_label.setFont(QFont(fonts[0], 12))
+
+                    current_line_edit = QLineEdit()
+                    current_line_edit.setFont(QFont(fonts[0], 12))
+                    current_line_edit.setMaximumWidth(250)
+
+
+                update_user_settings_layout.addWidget(current_text_label)
+                update_user_settings_layout.addWidget(current_line_edit)
 
             
+            # first_name_label = QLabel()
+            # first_name_label.setText("First Name")
+            # first_name_label.setFont(QFont(fonts[0], 12))
+            # first_name_textbox = QLineEdit()
+            # first_name_textbox.setText(result[0])
+            # first_name_textbox.setMaximumWidth(200)
+            # first_name_textbox.setFont(QFont(fonts[0], 12))
+            #
+            # last_name_label = QLabel()
+            # last_name_label.setText("Last Name")
+            # last_name_label.setFont(QFont(fonts[0], 12))
+            # last_name_textbox = QLineEdit()
+            # last_name_textbox.setText(result[1])
+            # last_name_textbox.setMaximumWidth(200)
+            # last_name_textbox.setFont(QFont(fonts[0], 12))
+            #
+            # current_email_address_label = QLabel()
+            # current_email_address_label.setText("Current Email Address")
+            # current_email_address_label.setFont(QFont(fonts[0], 12))
+            # current_email_address_textbox = QLineEdit()
+            # current_email_address_textbox.setText(result[2])
+            # current_email_address_textbox.setMaximumWidth(200)
+            # current_email_address_textbox.setFont(QFont(fonts[0], 12))
+            #
+            # update_user_settings_layout.addWidget(first_name_label)
+            # update_user_settings_layout.addWidget(first_name_textbox)
+            # update_user_settings_layout.addWidget(last_name_label)
+            # update_user_settings_layout.addWidget(last_name_textbox)
+            # update_user_settings_layout.addWidget(current_email_address_label)
+            # update_user_settings_layout.addWidget(current_email_address_textbox)
+            update_user_settings_layout.addStretch()
+            update_user_settings_layout.addSpacing(150)
+
+            
+            update_user_settings_groupbox.setLayout(update_user_settings_layout)
             update_user_settings_groupbox.setLayout(update_user_settings_layout)
             
             # Remove Categories groupbox and place update user settings in main_layout(1,1)
             categories_groupbox.deleteLater()
             main_layout.addWidget(update_user_settings_groupbox, 1, 1)
+
+        """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
+        def open_user_orders():
+            pass
 
         
         """OPEN SUBCATEGORIES WINDOW"""
