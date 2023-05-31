@@ -73,7 +73,7 @@ class MainMenu(QWidget):
             'edit_account': lambda: open_update_account(),
             'view_my_orders': lambda: open_user_orders(),
             'payment_options': lambda: print("Payment Options"),
-            'back': lambda: print("Go Back to categories"),
+            'back': lambda: open_categories(),
         }
         
 
@@ -240,6 +240,11 @@ class MainMenu(QWidget):
         self.setLayout(main_layout)
         self.show()
 
+        """BRING BACK THE CATEGORIES"""
+        def open_categories():
+            hide_user_update_settings()
+
+
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
             # Change to dynamic query in implementation
@@ -276,47 +281,19 @@ class MainMenu(QWidget):
                 update_user_settings_layout.addWidget(current_text_label)
                 update_user_settings_layout.addWidget(current_line_edit)
 
-            
-            # first_name_label = QLabel()
-            # first_name_label.setText("First Name")
-            # first_name_label.setFont(QFont(fonts[0], 12))
-            # first_name_textbox = QLineEdit()
-            # first_name_textbox.setText(result[0])
-            # first_name_textbox.setMaximumWidth(200)
-            # first_name_textbox.setFont(QFont(fonts[0], 12))
-            #
-            # last_name_label = QLabel()
-            # last_name_label.setText("Last Name")
-            # last_name_label.setFont(QFont(fonts[0], 12))
-            # last_name_textbox = QLineEdit()
-            # last_name_textbox.setText(result[1])
-            # last_name_textbox.setMaximumWidth(200)
-            # last_name_textbox.setFont(QFont(fonts[0], 12))
-            #
-            # current_email_address_label = QLabel()
-            # current_email_address_label.setText("Current Email Address")
-            # current_email_address_label.setFont(QFont(fonts[0], 12))
-            # current_email_address_textbox = QLineEdit()
-            # current_email_address_textbox.setText(result[2])
-            # current_email_address_textbox.setMaximumWidth(200)
-            # current_email_address_textbox.setFont(QFont(fonts[0], 12))
-            #
-            # update_user_settings_layout.addWidget(first_name_label)
-            # update_user_settings_layout.addWidget(first_name_textbox)
-            # update_user_settings_layout.addWidget(last_name_label)
-            # update_user_settings_layout.addWidget(last_name_textbox)
-            # update_user_settings_layout.addWidget(current_email_address_label)
-            # update_user_settings_layout.addWidget(current_email_address_textbox)
             update_user_settings_layout.addStretch()
             update_user_settings_layout.addSpacing(150)
 
-            
             update_user_settings_groupbox.setLayout(update_user_settings_layout)
             update_user_settings_groupbox.setLayout(update_user_settings_layout)
-            
-            # Remove Categories groupbox and place update user settings in main_layout(1,1)
-            categories_groupbox.deleteLater()
+
+            categories_groupbox.hide()
             main_layout.addWidget(update_user_settings_groupbox, 1, 1)
+
+            global hide_user_update_settings
+            def hide_user_update_settings():
+                update_user_settings_groupbox.hide()
+                categories_groupbox.show()
 
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
@@ -343,7 +320,7 @@ def start_window():
     main_menu_window = MainMenu()
     main_menu_window.show()
 
-if __name__ == '__main__':
-    open_app()
+# if __name__ == '__main__':
+#     open_app()
 
-# open_app()
+open_app()
