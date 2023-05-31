@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sys
 import requests
-# Import PyQt5 Engine 
+"""IMPORT PyQt5 ENGINE"""
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
                              QPushButton,
@@ -242,11 +242,42 @@ class MainMenu(QWidget):
 
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
-            user_settings_layout = QVBoxLayout()
-            test_label = QLabel()
-            test_label.setText("Edit Account Test Label")
-            main_layout.removeWidget(categories_groupbox)
-            main_layout.addWidget(test_label, 1, 1)
+            # Change to dynamic query in implementation
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT first_name, last_name FROM customers WHERE username = 'pesho'")
+            result = postgres_conn.POSTGRES_CURSOR.fetchone()
+            
+            update_user_settings_groupbox = QGroupBox("Update Account Settings")
+            update_user_settings_layout = QVBoxLayout()
+            
+            first_name_label = QLabel()
+            first_name_label.setText("First Name")
+            first_name_label.setFont(QFont(fonts[0], 12))
+            
+            first_name_texbox = QLineEdit()
+            first_name_texbox.setText(result[0])
+            first_name_texbox.setFont(QFont(fonts[0], 12))
+            
+            last_name_label = QLabel()
+            last_name_label.setText("Last Name")
+            last_name_label.setFont(QFont(fonts[0], 12))
+            
+            last_name_textbox = QLineEdit()
+            last_name_textbox.setText(result[1])
+            last_name_textbox.setFont(QFont(fonts[0], 12))
+            
+            update_user_settings_layout.addWidget(first_name_label)
+            update_user_settings_layout.addWidget(first_name_texbox)
+            update_user_settings_layout.addWidget(last_name_label)
+            update_user_settings_layout.addWidget(last_name_textbox)
+            
+            update_user_settings_groupbox.setLayout(update_user_settings_layout)            
+
+            
+            update_user_settings_groupbox.setLayout(update_user_settings_layout)
+            
+            # Remove Categories groupbox and place update user settings in main_layout(1,1)
+            categories_groupbox.deleteLater()
+            main_layout.addWidget(update_user_settings_groupbox, 1, 1)
 
         
         """OPEN SUBCATEGORIES WINDOW"""
@@ -255,7 +286,7 @@ class MainMenu(QWidget):
             main_window.hide()
 
 
-"""OBSOLETE - KEEP FOR NOW, BUT MOST PROBEBLY WONT BE NEEDED"""
+"""OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
 def open_app():
     app = QApplication(sys.argv)
     global main_window
@@ -271,3 +302,5 @@ def start_window():
 
 if __name__ == '__main__':
     open_app()
+
+# open_app()
