@@ -121,7 +121,6 @@ class MainMenu(QWidget):
             button.setText(button_text)
             button_function = button_text.replace(" ", "_")
             button_function = button_function.lower()
-            print(button_function)
             button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
             button.setFixedHeight(30)
@@ -248,7 +247,7 @@ class MainMenu(QWidget):
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
             # Change to dynamic query in implementation
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT first_name, last_name, email_address, phone FROM customers WHERE username = 'pesho'")
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
             result = postgres_conn.POSTGRES_CURSOR.fetchone()
             
             update_user_settings_groupbox = QGroupBox("Update Account Settings")
@@ -256,35 +255,41 @@ class MainMenu(QWidget):
             update_user_settings_layout.addStretch()
             update_user_settings_layout.addSpacing(10)
 
-            text_labels = deque(['First Name', 'Last Name', 'Current Email Address', 'Phone Number'])
+            text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
             text_labels_length = len(text_labels)
-            for i in range(text_labels_length - 1):
-                if i != 3:
-                    current_text_label = QLabel()
-                    current_text_label.setText(text_labels.popleft())
-                    current_text_label.setFont(QFont(fonts[0], 12))
+            for i in range(text_labels_length):
+                current_text_label = QLabel()
+                current_text_label.setText(text_labels.popleft())
+                current_text_label.setFont(QFont(fonts[0], 12))
 
-                    current_line_edit = QLineEdit()
-                    current_line_edit.setText(result[i])
-                    current_line_edit.setFont(QFont(fonts[0], 12))
-                    current_line_edit.setMaximumWidth(250)
-                else:
-                    current_text_label = QLabel()
-                    current_text_label.setText("New Email Address")
-                    current_text_label.setFont(QFont(fonts[0], 12))
-
-                    current_line_edit = QLineEdit()
-                    current_line_edit.setFont(QFont(fonts[0], 12))
-                    current_line_edit.setMaximumWidth(250)
-
+                current_line_edit = QLineEdit()
+                current_line_edit.setText(str(result[i]))
+                current_line_edit.setFont(QFont(fonts[0], 12))
+                current_line_edit.setMaximumWidth(250)
+                # Disables user_id and username modification
+                if i < 2:
+                    current_line_edit.setReadOnly(True)
 
                 update_user_settings_layout.addWidget(current_text_label)
                 update_user_settings_layout.addWidget(current_line_edit)
 
             update_user_settings_layout.addStretch()
-            update_user_settings_layout.addSpacing(150)
+            update_user_settings_layout.addSpacing(20)
+            
+            reset_button = QPushButton()
+            reset_button.setText("Reset to default")
+            reset_button.setFont(QFont(fonts[0], 12))
+            reset_button.setFixedWidth(200)
+            reset_button.clicked.connect(lambda: open_update_account())
+            
+            update_user_setting_button = QPushButton()
+            update_user_setting_button.setText("Update Info")
+            update_user_setting_button.setFont(QFont(fonts[0], 12))
+            update_user_setting_button.setFixedWidth(200)
+            
+            update_user_settings_layout.addWidget(reset_button)
+            update_user_settings_layout.addWidget(update_user_setting_button)
 
-            update_user_settings_groupbox.setLayout(update_user_settings_layout)
             update_user_settings_groupbox.setLayout(update_user_settings_layout)
 
             categories_groupbox.hide()
