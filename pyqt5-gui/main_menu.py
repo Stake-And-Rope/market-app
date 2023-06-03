@@ -257,6 +257,7 @@ class MainMenu(QWidget):
 
             text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
             text_labels_length = len(text_labels)
+            
             for i in range(text_labels_length):
                 current_text_label = QLabel()
                 current_text_label.setText(text_labels.popleft())
@@ -273,11 +274,12 @@ class MainMenu(QWidget):
                 update_user_settings_layout.addWidget(current_text_label)
                 update_user_settings_layout.addWidget(current_line_edit)
 
+                
             update_user_settings_layout.addStretch()
             update_user_settings_layout.addSpacing(20)
             
             reset_button = QPushButton()
-            reset_button.setText("Reset to default")
+            reset_button.setText("Reset to defaults")
             reset_button.setFont(QFont(fonts[0], 12))
             reset_button.setFixedWidth(200)
             reset_button.clicked.connect(lambda: open_update_account())
@@ -285,6 +287,7 @@ class MainMenu(QWidget):
             update_user_setting_button = QPushButton()
             update_user_setting_button.setText("Update Info")
             update_user_setting_button.setFont(QFont(fonts[0], 12))
+            update_user_setting_button.clicked.connect(lambda: update_user())
             update_user_setting_button.setFixedWidth(200)
             
             update_user_settings_layout.addWidget(reset_button)
@@ -299,7 +302,15 @@ class MainMenu(QWidget):
             def hide_user_update_settings():
                 update_user_settings_groupbox.hide()
                 categories_groupbox.show()
-
+            
+            # Not fully implemented, fucntion is still taking old data from qlineedit's
+            def update_user():
+                user_data = []
+                # Make this query dynamically accepting the username in production
+                update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
+                postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0], user_data[1], user_data[2], user_data[3]))
+                postgres_conn.POSTGRES_CONNECTION.commit()
+            
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
             pass
