@@ -135,6 +135,12 @@ class SubcategoriesMenu(QWidget):
         """CREATE THE CATEGORIES LAYOUT"""
         subcategories_groupbox = QGroupBox("Categories")
 
+        image = f"../img/background1.png"
+        subcats_groupbox_stylesheet = f"QGroupBox {{ background-image: url({image});" \
+                                      f"border-radius: 10px;" \
+                                      f"}}"
+        subcategories_groupbox.setStyleSheet(subcats_groupbox_stylesheet)
+
         subcategories_grid_layout = QGridLayout()
 
         global subcategory_name
