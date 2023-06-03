@@ -303,13 +303,6 @@ class MainMenu(QWidget):
                 update_user_settings_groupbox.hide()
                 categories_groupbox.show()
             
-            # Not fully implemented, fucntion is still taking old data from qlineedit's
-            def update_user():
-                user_data = []
-                # Make this query dynamically accepting the username in production
-                update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
-                postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0], user_data[1], user_data[2], user_data[3]))
-                postgres_conn.POSTGRES_CONNECTION.commit()
             
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
@@ -320,6 +313,14 @@ class MainMenu(QWidget):
         def open_subcategories():
             subcategories.start_window(subcategory_name)
             main_window.hide()
+        
+        # Not fully implemented, fucntion is still taking old data from qlineedit's
+        def update_user():
+            user_data = []
+            # Make this query dynamically accepting the username in production
+            update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
+            postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0], user_data[1], user_data[2], user_data[3]))
+            postgres_conn.POSTGRES_CONNECTION.commit()
 
 
 """OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
