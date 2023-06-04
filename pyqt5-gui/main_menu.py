@@ -246,6 +246,8 @@ class MainMenu(QWidget):
 
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
+            global user_data
+            user_data = []
             # Change to dynamic query in implementation
             postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
             result = postgres_conn.POSTGRES_CURSOR.fetchone()
@@ -270,6 +272,8 @@ class MainMenu(QWidget):
                 # Disables user_id and username modification
                 if i < 2:
                     current_line_edit.setReadOnly(True)
+                else:
+                    user_data.append(current_line_edit)
 
                 update_user_settings_layout.addWidget(current_text_label)
                 update_user_settings_layout.addWidget(current_line_edit)
@@ -316,10 +320,9 @@ class MainMenu(QWidget):
         
         # Not fully implemented, fucntion is still taking old data from qlineedit's
         def update_user():
-            user_data = []
             # Make this query dynamically accepting the username in production
             update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
-            postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0], user_data[1], user_data[2], user_data[3]))
+            postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
             postgres_conn.POSTGRES_CONNECTION.commit()
 
 
