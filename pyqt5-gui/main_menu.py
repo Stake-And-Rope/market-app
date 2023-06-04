@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sys
 import requests
-# Import PyQt5 Engine 
+"""IMPORT PyQt5 ENGINE"""
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
                              QPushButton,
@@ -24,6 +24,14 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+import subcategories
+
+# This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
+global subcategory_name
+subcategory_name = ''
+
+"""INIT CONNECTION TO THE DATABASE"""
+postgres_conn.admin_client()
 
 class MainMenu(QWidget):
     def __init__(self):
@@ -34,24 +42,41 @@ class MainMenu(QWidget):
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
         
-        """INIT CONNECTION TO THE DATABASE"""
-        postgres_conn.admin_client()
+
         
-        def food_open():
-            print("I am eating some food")
-            
-        def books_open():
-            print("I am reading books")
+        """OPEN THE PROPER SUBCATEGORY"""
+        def open_func(subcat_name):
+            global subcategory_name
+            subcategory_name = subcat_name
+            open_subcategories()
         
-        def drinks_open():
-            print("I am drinking some drinks")
-            
+
+        """SUBCATEGORIES CALL FUNCTION"""
         functions_dict = {
-            'food_open': lambda: food_open(),
-            'books_open': lambda: books_open(),
-            'drinks_open': lambda: drinks_open(),
+            'food_open': lambda: open_func("Food"),
+            'books_open': lambda: open_func("Books"),
+            'drinks_open': lambda: open_func("Drinks"),
+            'accessories_open': lambda: open_func("Accessories"),
+            'homeandliving_open': lambda: open_func("Home and Living"),
+            'hair_open': lambda: open_func("Hair"),
+            'sports_open': lambda: open_func("Sports"),
+            'beachwear_open': lambda: open_func("Beachwear"),
+            'shoes_open': lambda: open_func("Shoes"),
+            'electronics_open': lambda: open_func("Electronics"),
+            'cosmetics_open': lambda: open_func("Cosmetics"),
+            'clothes_open': lambda: open_func("Clothes"),
         }
         
+        
+        """LEFT LAYOUT BUTTONS CALL FUNCTION"""
+        left_layout_buttons_dict = {
+            'edit_account': lambda: open_update_account(),
+            'view_my_orders': lambda: open_user_orders(),
+            'payment_options': lambda: print("Payment Options"),
+            'back': lambda: open_categories(),
+        }
+        
+
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font < 0:
@@ -89,14 +114,18 @@ class MainMenu(QWidget):
         left_buttons_layout = QVBoxLayout()
 
         
-        buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options'])
+        buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
         while buttons_text:
             button = QPushButton()
-            button.setText(buttons_text.popleft())
+            button_text = buttons_text.popleft()
+            button.setText(button_text)
+            button_function = button_text.replace(" ", "_")
+            button_function = button_function.lower()
             button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
             button.setFixedHeight(30)
-            # button.setStyleSheet("background-color: rgb(51, 153, 255)")
+            button.clicked.connect(left_layout_buttons_dict[button_function])
+            
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -111,19 +140,19 @@ class MainMenu(QWidget):
         favourites_button.setText("Favourites")
         favourites_button.setFont(QFont(fonts[0], 9))
         favourites_button.setFixedWidth(120)
-        favourites_button.setFixedHeight(23)
+        favourites_button.setFixedHeight(30)
         
         about_button = QPushButton()
         about_button.setText("About")
         about_button.setFont(QFont(fonts[0], 9))
         about_button.setFixedWidth(120)
-        about_button.setFixedHeight(23)
+        about_button.setFixedHeight(30)
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
         log_out_button.setFont(QFont(fonts[0], 9))
         log_out_button.setFixedWidth(100)
-        log_out_button.setFixedHeight(23)
+        log_out_button.setFixedHeight(30)
 
         top_buttons_layout.addStretch(0)
         top_buttons_layout.addSpacing(1000)
@@ -182,18 +211,14 @@ class MainMenu(QWidget):
                     cat_desc_shadow_effect.setColor(QColor("white"))
                     category_description.setGraphicsEffect(cat_desc_shadow_effect)
 
-
                     category_button = QPushButton()
                     category_button.setText(category_name.text())
                     category_button.setFont(QFont(fonts[0], 11))
                     category_button.setMaximumWidth(150)
 
-                    # current_function_name = categories_functions.popleft()
-                    # print(current_function_name)
-                    # category_button.clicked.connect(functions_dict[current_function_name])
+                    current_function_name = categories_functions.popleft() + "_open"
+                    category_button.clicked.connect(functions_dict[current_function_name])
 
-                    # current_vertical_layout.addWidget(category_name)
-                    # current_vertical_layout.addWidget(category_description)
                     current_vertical_layout.addWidget(category_button)
 
                     current_groupbox.setLayout(current_vertical_layout)
@@ -214,10 +239,105 @@ class MainMenu(QWidget):
         self.setLayout(main_layout)
         self.show()
 
+        """BRING BACK THE CATEGORIES"""
+        def open_categories():
+            hide_user_update_settings()
 
-app = QApplication(sys.argv)
-global login_window
-login_window = MainMenu()
-login_window.show()
-app.exec()
 
+        """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
+        def open_update_account():
+            # Change to dynamic query in implementation
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
+            result = postgres_conn.POSTGRES_CURSOR.fetchone()
+            
+            update_user_settings_groupbox = QGroupBox("Update Account Settings")
+            update_user_settings_layout = QVBoxLayout()
+            update_user_settings_layout.addStretch()
+            update_user_settings_layout.addSpacing(10)
+
+            text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
+            text_labels_length = len(text_labels)
+            
+            for i in range(text_labels_length):
+                current_text_label = QLabel()
+                current_text_label.setText(text_labels.popleft())
+                current_text_label.setFont(QFont(fonts[0], 12))
+
+                current_line_edit = QLineEdit()
+                current_line_edit.setText(str(result[i]))
+                current_line_edit.setFont(QFont(fonts[0], 12))
+                current_line_edit.setMaximumWidth(250)
+                # Disables user_id and username modification
+                if i < 2:
+                    current_line_edit.setReadOnly(True)
+
+                update_user_settings_layout.addWidget(current_text_label)
+                update_user_settings_layout.addWidget(current_line_edit)
+
+                
+            update_user_settings_layout.addStretch()
+            update_user_settings_layout.addSpacing(20)
+            
+            reset_button = QPushButton()
+            reset_button.setText("Reset to defaults")
+            reset_button.setFont(QFont(fonts[0], 12))
+            reset_button.setFixedWidth(200)
+            reset_button.clicked.connect(lambda: open_update_account())
+            
+            update_user_setting_button = QPushButton()
+            update_user_setting_button.setText("Update Info")
+            update_user_setting_button.setFont(QFont(fonts[0], 12))
+            update_user_setting_button.clicked.connect(lambda: update_user())
+            update_user_setting_button.setFixedWidth(200)
+            
+            update_user_settings_layout.addWidget(reset_button)
+            update_user_settings_layout.addWidget(update_user_setting_button)
+
+            update_user_settings_groupbox.setLayout(update_user_settings_layout)
+
+            categories_groupbox.hide()
+            main_layout.addWidget(update_user_settings_groupbox, 1, 1)
+
+            global hide_user_update_settings
+            def hide_user_update_settings():
+                update_user_settings_groupbox.hide()
+                categories_groupbox.show()
+            
+            
+        """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
+        def open_user_orders():
+            pass
+
+        
+        """OPEN SUBCATEGORIES WINDOW"""
+        def open_subcategories():
+            subcategories.start_window(subcategory_name)
+            main_window.hide()
+        
+        # Not fully implemented, fucntion is still taking old data from qlineedit's
+        def update_user():
+            user_data = []
+            # Make this query dynamically accepting the username in production
+            update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
+            postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0], user_data[1], user_data[2], user_data[3]))
+            postgres_conn.POSTGRES_CONNECTION.commit()
+
+
+"""OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
+def open_app():
+    app = QApplication(sys.argv)
+    global main_window
+    main_window = MainMenu()
+    main_window.show()
+    app.exec()
+
+"""START MAIN MENU"""
+def start_window():
+    global main_menu_window
+    main_menu_window = MainMenu()
+    main_menu_window.show()
+
+# if __name__ == '__main__':
+#     open_app()
+
+open_app()

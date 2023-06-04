@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+import sys
+sys.path.append(r'..')
 from PyQt5.QtWidgets import (
                             QVBoxLayout,
                             QHBoxLayout,
@@ -16,11 +19,10 @@ from PyQt5.QtGui import (
                         )
 
 from PyQt5.QtCore import Qt
-
-import sys
-sys.path.append(r'..')
 from db_handle import postgres_conn
 import register
+import main_menu
+
 
 
 class LogIn(QWidget):
@@ -104,6 +106,7 @@ class LogIn(QWidget):
         def login():
             try:
                 postgres_conn.customer_client(username_textbox.text(), password_textbox.text())
+                open_main_menu()
             except (Exception) as error:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
@@ -114,6 +117,10 @@ class LogIn(QWidget):
         
         def open_register():
             register.start_window()
+            login_window.hide()
+            
+        def open_main_menu():
+            main_menu.start_window()
             login_window.hide()
             
 def init_app():
@@ -128,6 +135,8 @@ def start_window():
     login_window = LogIn()
     login_window.show()
 
-def open_user_registration(user):
-    return f"You clicked me, {user}!"
+
+
+    
+
 # init_app()

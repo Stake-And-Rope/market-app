@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+import sys
+sys.path.append(r'..')
 
 # Import PyQt5 Engine 
 from PyQt5.QtWidgets import (QApplication, 
@@ -14,11 +16,9 @@ from PyQt5.QtWidgets import (QApplication,
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys
-sys.path.append(r'..')
 from db_handle import postgres_conn, register_user
 import login
-import random, re, string
+import random, re
 
 """CREATE THE QWIDGET CLASS AND INIT THE OBJECTS"""
 class Register(QWidget):
