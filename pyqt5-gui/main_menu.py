@@ -306,19 +306,20 @@ class MainMenu(QWidget):
             def hide_user_update_settings():
                 update_user_settings_groupbox.hide()
                 categories_groupbox.show()
+        
+        def open_payment_options():
+            payment_options_groupbox = QGroupBox("Payment Options")
             
             
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
             pass
 
-        
         """OPEN SUBCATEGORIES WINDOW"""
         def open_subcategories():
             subcategories.start_window(subcategory_name)
             main_window.hide()
         
-        # Not fully implemented, fucntion is still taking old data from qlineedit's
         def update_user():
             # Make this query dynamically accepting the username in production
             update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
