@@ -286,6 +286,7 @@ class MainMenu(QWidget):
             reset_button.setText("Reset to defaults")
             reset_button.setFont(QFont(fonts[0], 12))
             reset_button.setFixedWidth(200)
+            reset_button.clicked.connect(lambda: update_user_settings_groupbox.hide())
             reset_button.clicked.connect(lambda: open_update_account())
             
             update_user_setting_button = QPushButton()
