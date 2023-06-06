@@ -115,6 +115,7 @@ class MainMenu(QWidget):
 
         
         buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
+        buttons = deque([])
         while buttons_text:
             button = QPushButton()
             button_text = buttons_text.popleft()
@@ -125,6 +126,8 @@ class MainMenu(QWidget):
             button.setFixedWidth(250)
             button.setFixedHeight(30)
             button.clicked.connect(left_layout_buttons_dict[button_function])
+            buttons.appendleft(button)
+
             
             left_buttons_layout.addWidget(button)
 
@@ -302,11 +305,17 @@ class MainMenu(QWidget):
 
             categories_groupbox.hide()
             main_layout.addWidget(update_user_settings_groupbox, 1, 1)
+            # Disable the button to avoid calling again the function
+                # Not the best approach, but for now it will do
+            buttons[-1].setEnabled(False)
 
             global hide_user_update_settings
             def hide_user_update_settings():
                 update_user_settings_groupbox.hide()
                 categories_groupbox.show()
+                # Activate back the button
+                buttons[-1].setEnabled(True)
+
         
         def open_payment_options():
             payment_options_groupbox = QGroupBox("Payment Options")
