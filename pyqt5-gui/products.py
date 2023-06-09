@@ -41,22 +41,23 @@ def products_menu(subcategory_name):
     print(products_names)
 
     for col in range(3):
-        current_groupbox = QGroupBox()
-        current_groupbox.setMaximumWidth(400)
-        current_groupbox.setMaximumHeight(500)
 
         current_vertical_layout = QVBoxLayout()
 
         product_name = products_names.popleft()
 
         product_image = QLabel()
-        product_image.setPixmap(QPixmap("../img/products/Sunglasses/Sunglasses1.png"))
+        product_image.setFixedSize(325, 220)
+        product_image.setPixmap(QPixmap(f"../img/products/Sunglasses/{product_name}.png"))
         product_image.setScaledContents(True)
 
-        current_vertical_layout.addWidget(product_image)
-        current_groupbox.setLayout(current_vertical_layout)
+        current_description = QLabel()
+        current_description.setText("Test description")
 
-        products_grid_layout.addWidget(current_groupbox, 0, col)
+        current_vertical_layout.insertWidget(0, product_image)
+        current_vertical_layout.addWidget(current_description)
+
+        products_grid_layout.addLayout(current_vertical_layout, 0, col)
     
     products_groupbox.setLayout(products_grid_layout)
     return products_groupbox

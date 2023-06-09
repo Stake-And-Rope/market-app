@@ -10,7 +10,7 @@ class MainWindow(QWidget):
         self.setWindowTitle('Painter Board')
 
         self.label = QLabel(self)
-        self.label.setGeometry(0, 200, 400, 400)
+        self.label.setGeometry(0, 200, 200, 200)
         self.label.setPixmap(QPixmap("../img/products/Sunglasses/Sunglasses1.png"))
         self.label.setScaledContents(True)
 
