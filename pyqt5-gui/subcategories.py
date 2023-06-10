@@ -118,18 +118,25 @@ class SubcategoriesMenu(QWidget):
         favourites_button.setText("Favourites")
         favourites_button.setFont(QFont(fonts[0], 9))
         favourites_button.setFixedWidth(120)
-        favourites_button.setFixedHeight(23)
+        favourites_button.setFixedHeight(30)
+
+        about_button = QPushButton()
+        about_button.setText("About")
+        about_button.setFont(QFont(fonts[0], 9))
+        about_button.setFixedWidth(120)
+        about_button.setFixedHeight(30)
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
         log_out_button.setFont(QFont(fonts[0], 9))
         log_out_button.setFixedWidth(100)
-        log_out_button.setFixedHeight(23)
+        log_out_button.setFixedHeight(30)
 
         top_buttons_layout.addStretch(0)
         top_buttons_layout.addSpacing(1000)
 
         top_buttons_layout.addWidget(favourites_button)
+        top_buttons_layout.addWidget(about_button)
         top_buttons_layout.addWidget(log_out_button)
 
         top_buttons_groupbox.setLayout(top_buttons_layout)
@@ -221,10 +228,12 @@ class SubcategoriesMenu(QWidget):
 
             postgres_conn.admin_client()
 
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT product_name FROM products WHERE subcategory = '{cat}' ORDER BY product_name ASC;")
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT product_name, product_description, product_id FROM products WHERE subcategory = '{cat}' ORDER BY product_name ASC;")
 
             result = postgres_conn.POSTGRES_CURSOR.fetchall()
             products_names = deque([p[0] for p in result])
+            products_descriptions = deque(p[1] for p in result)
+            products_ids = deque(p[2] for p in result)
             print(products_names)
 
             for col in range(3):
@@ -235,7 +244,7 @@ class SubcategoriesMenu(QWidget):
 
                 product_image = QLabel()
                 product_image.setFixedSize(325, 220)
-                product_image.setPixmap(QPixmap(f"../img/products/Sunglasses/{product_name}.png"))
+                product_image.setPixmap(QPixmap(f"../img/products/{cat}/{product_name}.png"))
                 product_image.setScaledContents(True)
 
                 current_title = QLabel()
@@ -243,11 +252,13 @@ class SubcategoriesMenu(QWidget):
                 current_title.setFont(QFont(fonts[0], 12))
                 
                 current_sku = QLabel()
-                current_sku.setText('Test SKU: SKU=XXXXXX')
+                current_sku.setText(products_ids.popleft())
                 current_sku.setFont(QFont(fonts[0], 12))
-                
+
+                product_description = products_descriptions.popleft()
+
                 current_description = QLabel()
-                current_description.setText("Test description")
+                current_description.setText(product_description)
                 current_description.setFont(QFont(fonts[0], 12))
                 
                 current_buttons_layout = QHBoxLayout()
@@ -260,7 +271,7 @@ class SubcategoriesMenu(QWidget):
                 current_favorites_button.setIconSize(QSize(30, 30))
                 # current_favorites_button.setText("Add to Favorites")
                 current_favorites_button.setFont(QFont(fonts[0], 12))
-                
+
                 current_basket_button = QPushButton()
                 # current_basket_button.setText("Add to basket")
                 current_basket_button.setFixedWidth(50)
@@ -268,7 +279,7 @@ class SubcategoriesMenu(QWidget):
                 current_basket_button.setIcon(QIcon(r'../img/shoppingcart.png'))
                 current_basket_button.setIconSize(QSize(30, 30))
                 current_basket_button.setFont(QFont(fonts[0], 12))
-                
+
                 current_buttons_layout.addWidget(current_favorites_button)
                 current_buttons_layout.addWidget(current_basket_button)
 
@@ -277,12 +288,12 @@ class SubcategoriesMenu(QWidget):
                 current_vertical_layout.addWidget(current_sku)
                 current_vertical_layout.addWidget(current_description)
                 current_vertical_layout.addLayout(current_buttons_layout)
-                
+
                 current_vertical_layout.addStretch()
                 current_vertical_layout.addSpacing(10)
 
                 products_grid_layout.addLayout(current_vertical_layout, 0, col)
-                
+
                 products_groupbox.setLayout(products_grid_layout)
                 
                 
