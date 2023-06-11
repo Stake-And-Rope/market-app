@@ -257,8 +257,8 @@ class SubcategoriesMenu(QWidget):
 
                 product_description = products_descriptions.popleft()
 
-                current_description = QLabel()
-                current_description.setText(product_description)
+                current_description = QPlainTextEdit()
+                current_description.insertPlainText(product_description)
                 current_description.setFont(QFont(fonts[0], 12))
                 
                 current_buttons_layout = QHBoxLayout()
