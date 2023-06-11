@@ -115,6 +115,7 @@ class MainMenu(QWidget):
 
         
         buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
+        buttons = deque([])
         while buttons_text:
             button = QPushButton()
             button_text = buttons_text.popleft()
@@ -125,6 +126,8 @@ class MainMenu(QWidget):
             button.setFixedWidth(250)
             button.setFixedHeight(30)
             button.clicked.connect(left_layout_buttons_dict[button_function])
+            buttons.appendleft(button)
+
             
             left_buttons_layout.addWidget(button)
 
@@ -246,6 +249,8 @@ class MainMenu(QWidget):
 
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
+            global user_data
+            user_data = []
             # Change to dynamic query in implementation
             postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
             result = postgres_conn.POSTGRES_CURSOR.fetchone()
@@ -270,6 +275,8 @@ class MainMenu(QWidget):
                 # Disables user_id and username modification
                 if i < 2:
                     current_line_edit.setReadOnly(True)
+                else:
+                    user_data.append(current_line_edit)
 
                 update_user_settings_layout.addWidget(current_text_label)
                 update_user_settings_layout.addWidget(current_line_edit)
@@ -282,6 +289,7 @@ class MainMenu(QWidget):
             reset_button.setText("Reset to defaults")
             reset_button.setFont(QFont(fonts[0], 12))
             reset_button.setFixedWidth(200)
+            reset_button.clicked.connect(lambda: update_user_settings_groupbox.hide())
             reset_button.clicked.connect(lambda: open_update_account())
             
             update_user_setting_button = QPushButton()
@@ -297,29 +305,35 @@ class MainMenu(QWidget):
 
             categories_groupbox.hide()
             main_layout.addWidget(update_user_settings_groupbox, 1, 1)
+            # Disable the button to avoid calling again the function
+                # Not the best approach, but for now it will do
+            buttons[-1].setEnabled(False)
 
             global hide_user_update_settings
             def hide_user_update_settings():
                 update_user_settings_groupbox.hide()
                 categories_groupbox.show()
+                # Activate back the button
+                buttons[-1].setEnabled(True)
+
+        
+        def open_payment_options():
+            payment_options_groupbox = QGroupBox("Payment Options")
             
             
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
             pass
 
-        
         """OPEN SUBCATEGORIES WINDOW"""
         def open_subcategories():
             subcategories.start_window(subcategory_name)
             main_window.hide()
         
-        # Not fully implemented, fucntion is still taking old data from qlineedit's
         def update_user():
-            user_data = []
             # Make this query dynamically accepting the username in production
             update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
-            postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0], user_data[1], user_data[2], user_data[3]))
+            postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
             postgres_conn.POSTGRES_CONNECTION.commit()
 
 

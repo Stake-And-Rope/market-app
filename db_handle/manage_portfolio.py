@@ -81,8 +81,8 @@ def create_new_items():
         """Enter unit of measure"""
         measure = input("Enter unit of measure: ")
 
-        """Enter image url"""
-        image_url = input("Enter an image url: ")
+        """Enter product description"""
+        item_description = input("Enter item's description: ")
         
         """Set the item parent and child categories"""
         while True:
@@ -95,8 +95,8 @@ def create_new_items():
                     postgres_conn.POSTGRES_CURSOR.execute(f"SELECT subcategory_name FROM subcategories WHERE subcategory_name = '{child_category}'")
                     subcategory_result = postgres_conn.POSTGRES_CURSOR.fetchone()
                     if subcategory_result:
-                        postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO products (product_id, product_name, category, subcategory, single_price, quantity, unit_of_measure, image_url) "
-                                                              f"VALUES ('{item_id}', '{item_name}', '{parent_category}', '{child_category}', '{single_price}', '{quantity}', '{measure}', '{image_url}')")
+                        postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO products (product_id, product_name, category, subcategory, single_price, quantity, unit_of_measure, product_description) "
+                                                              f"VALUES ('{item_id}', '{item_name}', '{parent_category}', '{child_category}', '{single_price}', '{quantity}', '{measure}', '{item_description}')")
                         postgres_conn.POSTGRES_CURSOR.execute(f"UPDATE subcategories SET total_items = total_items + 1 WHERE subcategory_name = '{child_category}'")
                         postgres_conn.POSTGRES_CURSOR.execute(f"UPDATE categories SET total_items = total_items + 1 WHERE category_name = '{parent_category}'")
                         postgres_conn.POSTGRES_CONNECTION.commit()
