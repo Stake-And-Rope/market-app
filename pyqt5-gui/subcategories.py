@@ -54,6 +54,8 @@ class SubcategoriesMenu(QWidget):
         def drinks_open():
             print("I am drinking some drinks")
 
+
+
         functions_dict = {
             'food_open': lambda: food_open(),
             'books_open': lambda: books_open(),
@@ -158,12 +160,9 @@ class SubcategoriesMenu(QWidget):
         subcategories = deque([x[0] for x in result])
         subcategories_len = len(subcategories)
         # print(subcategories)
-        
-        subcats_dict = {
-            'Sunglasses': lambda: open_products('Sunglasses'),
-            'Wallets': lambda: open_products('Wallets'),
-            'Watches': lambda: open_products('Watches')
-        }
+
+        def subcats_func(subcat_name):
+            return lambda: open_products(subcat_name)
 
         for row in range(3):
             # for col in range(4):
@@ -195,7 +194,7 @@ class SubcategoriesMenu(QWidget):
             subcategory_button.setText(subcategory_name.text())
             subcategory_button.setFont(QFont(fonts[0], 11))
             subcategory_button.setMaximumWidth(150)
-            subcategory_button.clicked.connect(subcats_dict[subcategory_name.text()])
+            subcategory_button.clicked.connect(subcats_func(subcategory_name.text()))
 
 
             current_vertical_layout.addWidget(subcategory_button)
