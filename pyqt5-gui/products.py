@@ -54,6 +54,8 @@ def products_menu(subcategory_name):
         product_name = products_names.popleft()
 
         product_image = QLabel()
+        product_image.setFixedHeight(300)
+        product_image.setFixedWidth(300)
         product_image.setFixedSize(325, 220)
         product_image.setPixmap(QPixmap(f"../img/products/{subcategory_name}/{product_name}.png"))
         product_image.setScaledContents(True)

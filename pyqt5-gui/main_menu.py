@@ -235,6 +235,7 @@ class MainMenu(QWidget):
         categories_groupbox.setLayout(categories_grid_layout)
 
         """INIT THE MAIN LAYOUT"""
+        global main_layout
         main_layout = QGridLayout()
         main_layout.addWidget(user_info_groupbox, 0, 0)
         main_layout.addWidget(left_buttons_groupbox, 1, 0)
@@ -348,6 +349,8 @@ class MainMenu(QWidget):
             main_layout.addWidget(subcategories_layout, 1, 1)
             # subcategories.start_window(subcategory_name)
             # main_window.hide()
+        
+        
 
 
 
@@ -365,7 +368,7 @@ def start_window():
     main_menu_window = MainMenu()
     main_menu_window.show()
 
-# if __name__ == '__main__':
-#     open_app()
+if __name__ == '__main__':
+    open_app()
 
-open_app()
+# open_app()
