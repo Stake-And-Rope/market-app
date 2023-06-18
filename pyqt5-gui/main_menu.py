@@ -52,7 +52,7 @@ class MainMenu(QWidget):
         def open_func(subcat_name):
             global subcategory_name
             subcategory_name = subcat_name
-            open_subcategories()
+            open_subcategories(subcategory_name)
 
 
         """SUBCATEGORIES CALL FUNCTION"""
@@ -250,8 +250,6 @@ class MainMenu(QWidget):
         """BRING BACK THE CATEGORIES"""
         def open_categories():
             hide_user_update_settings()
-
-        
         
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
@@ -336,16 +334,20 @@ class MainMenu(QWidget):
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
             pass
-
+        
         """OPEN ABOUT WINDOW"""
         def open_about():
             about.start_window()
             main_window.hide()
         
         """OPEN SUBCATEGORIES WINDOW"""
-        def open_subcategories():
-            subcategories.start_window(subcategory_name)
-            main_window.hide()
+        def open_subcategories(sub_cat_name):
+            global subcategories_layout
+            subcategories_layout = subcategories.open_subcategory(sub_cat_name)
+            categories_groupbox.hide()
+            main_layout.addWidget(subcategories_layout, 1, 1)
+            # subcategories.start_window(subcategory_name)
+            # main_window.hide()
 
 
 
