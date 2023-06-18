@@ -58,7 +58,6 @@ class About(QWidget):
 
         our_story_layout.addWidget(our_story_header)
         our_story_layout.addWidget(our_story)
-        # our_story_layout.addStretch()
         our_story_layout.addSpacing(0)
 
         """CONTRIBUTORS LAYOUT"""
@@ -123,7 +122,8 @@ class About(QWidget):
             url=str(r'https://github.com/Stake-And-Rope/market-app')
             webbrowser.open(url)
 
-app = QApplication(sys.argv)
-about_window = About()
-about_window.show()
-app.exec_()
+
+def start_window():
+    global about_window
+    about_window = About()
+    about_window.show()

@@ -24,7 +24,10 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+import about
 import subcategories
+
+
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -41,15 +44,15 @@ class MainMenu(QWidget):
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
-        
 
-        
+
+
         """OPEN THE PROPER SUBCATEGORY"""
         def open_func(subcat_name):
             global subcategory_name
             subcategory_name = subcat_name
             open_subcategories()
-        
+
 
         """SUBCATEGORIES CALL FUNCTION"""
         functions_dict = {
@@ -66,8 +69,8 @@ class MainMenu(QWidget):
             'cosmetics_open': lambda: open_func("Cosmetics"),
             'clothes_open': lambda: open_func("Clothes"),
         }
-        
-        
+
+
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
             'edit_account': lambda: open_update_account(),
@@ -75,9 +78,9 @@ class MainMenu(QWidget):
             'payment_options': lambda: open_payment_options(),
             'back': lambda: open_categories(),
         }
-        
 
-        """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
+
+        """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font < 0:
             print('Error loading fonts!')
@@ -93,11 +96,11 @@ class MainMenu(QWidget):
 
         user_name = QLabel(f"Hello, {user_info[1]} {user_info[2]}")
         user_name.setFont(QFont(fonts[0], 12))
-        
+
         user_id = QLabel(f"Your ID is {user_info[0]}")
         user_id.setFont(QFont(fonts[0], 12))
         user_info_layout = QVBoxLayout()
-        
+
         user_total_orders = QLabel(f"Total orders: {user_info[3]}")
         user_total_orders.setFont(QFont(fonts[0], 12))
 
@@ -113,7 +116,7 @@ class MainMenu(QWidget):
         left_buttons_groupbox = QGroupBox('User Actions')
         left_buttons_layout = QVBoxLayout()
 
-        
+
         buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
         buttons = deque([])
         while buttons_text:
@@ -128,7 +131,7 @@ class MainMenu(QWidget):
             button.clicked.connect(left_layout_buttons_dict[button_function])
             buttons.appendleft(button)
 
-            
+
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -144,12 +147,13 @@ class MainMenu(QWidget):
         favourites_button.setFont(QFont(fonts[0], 9))
         favourites_button.setFixedWidth(120)
         favourites_button.setFixedHeight(30)
-        
+
         about_button = QPushButton()
         about_button.setText("About")
         about_button.setFont(QFont(fonts[0], 9))
         about_button.setFixedWidth(120)
         about_button.setFixedHeight(30)
+        about_button.clicked.connect(lambda: open_about())
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
@@ -254,7 +258,7 @@ class MainMenu(QWidget):
             # Change to dynamic query in implementation
             postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
             result = postgres_conn.POSTGRES_CURSOR.fetchone()
-            
+
             update_user_settings_groupbox = QGroupBox("Update Account Settings")
             update_user_settings_layout = QVBoxLayout()
             update_user_settings_layout.addStretch()
@@ -262,7 +266,7 @@ class MainMenu(QWidget):
 
             text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
             text_labels_length = len(text_labels)
-            
+
             for i in range(text_labels_length):
                 current_text_label = QLabel()
                 current_text_label.setText(text_labels.popleft())
@@ -281,23 +285,23 @@ class MainMenu(QWidget):
                 update_user_settings_layout.addWidget(current_text_label)
                 update_user_settings_layout.addWidget(current_line_edit)
 
-                
+
             update_user_settings_layout.addStretch()
             update_user_settings_layout.addSpacing(20)
-            
+
             reset_button = QPushButton()
             reset_button.setText("Reset to defaults")
             reset_button.setFont(QFont(fonts[0], 12))
             reset_button.setFixedWidth(200)
             reset_button.clicked.connect(lambda: update_user_settings_groupbox.hide())
             reset_button.clicked.connect(lambda: open_update_account())
-            
+
             update_user_setting_button = QPushButton()
             update_user_setting_button.setText("Update Info")
             update_user_setting_button.setFont(QFont(fonts[0], 12))
             update_user_setting_button.clicked.connect(lambda: update_user())
             update_user_setting_button.setFixedWidth(200)
-            
+
             update_user_settings_layout.addWidget(reset_button)
             update_user_settings_layout.addWidget(update_user_setting_button)
 
@@ -323,9 +327,9 @@ class MainMenu(QWidget):
             result = postgres_conn.POSTGRES_CURSOR.fetchone()
             text_labels = deque(['Payment Name', 'Payment Type', 'Card Number', 'Card Holder', 'CCV Code', 'Expire Date'])
             text_labels_len = len(text_labels)
-            
+
             payment_options_groupbox = QGroupBox("Payment Options")
-       
+
             payment_options_layout = QVBoxLayout()
             payment_options_layout.addStretch()
             payment_options_layout.addSpacing(5)
@@ -333,36 +337,36 @@ class MainMenu(QWidget):
                 inner_horizontal_layout = QHBoxLayout()
                 inner_horizontal_layout.addStretch()
                 inner_horizontal_layout.addSpacing(0)
-                
+
                 current_text_label = QLabel()
                 current_text_label.setText(text_labels.popleft())
                 current_text_label.setFont(QFont(fonts[0], 12))
                 current_text_label.setAlignment(Qt.AlignLeft)
-                
+
                 current_info_label = QLineEdit()
                 current_info_label.setText(str(result[i]))
                 current_info_label.setFont(QFont(fonts[0], 12))
                 current_info_label.setMaximumWidth(250)
-                
+
                 inner_horizontal_layout.addWidget(current_text_label)
                 inner_horizontal_layout.addWidget(current_info_label)
-                
+
                 payment_options_layout.addLayout(inner_horizontal_layout)
-                
+
             payment_options_groupbox.setLayout(payment_options_layout)
-            
-            
+
+
             categories_groupbox.hide()
             main_layout.addWidget(payment_options_groupbox, 1, 1)
             buttons[-1].setEnabled(False)
-            
+
             global hide_payment_options
             def hide_payment_options():
                 payment_options_groupbox.hide()
                 categories_groupbox.show()
                 buttons[-1].setEnabled(True)
-            
-            
+
+
             # payment_type_layout = QHBoxLayout()
             # payment_type = QLabel()
             # payment_type.setText('Visa Debit')
@@ -379,23 +383,21 @@ class MainMenu(QWidget):
             #     payment_icon.setPixmap(revolut_img)
             # payment_icon.setFixedHeight(10)
             # payment_icon.setFixedWidth(10)
-            
-            
-            
-            
-            
-            
-            
-            
+
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
             pass
 
+        """OPEN ABOUT WINDOW"""
+        def open_about():
+            about.start_window()
+            main_window.hide()
+        
         """OPEN SUBCATEGORIES WINDOW"""
         def open_subcategories():
             subcategories.start_window(subcategory_name)
             main_window.hide()
-        
+
         def update_user():
             # Make this query dynamically accepting the username in production
             update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")

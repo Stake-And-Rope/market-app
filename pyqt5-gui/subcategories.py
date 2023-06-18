@@ -45,22 +45,9 @@ class SubcategoriesMenu(QWidget):
         """INIT CONNECTION TO THE DATABASE"""
         postgres_conn.admin_client()
 
-        def food_open():
-            print("I am eating some food")
-
-        def books_open():
-            print("I am reading books")
-
-        def drinks_open():
-            print("I am drinking some drinks")
-
-
-
-        functions_dict = {
-            'food_open': lambda: food_open(),
-            'books_open': lambda: books_open(),
-            'drinks_open': lambda: drinks_open(),
-        }
+        """OPEN THE PRODUCTS BASED ON THE SUBCATEGORY CALLED BY THE USER"""
+        def subcats_func(subcat_name):
+            return lambda: open_products(subcat_name)
 
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -161,8 +148,6 @@ class SubcategoriesMenu(QWidget):
         subcategories_len = len(subcategories)
         # print(subcategories)
 
-        def subcats_func(subcat_name):
-            return lambda: open_products(subcat_name)
 
         for row in range(3):
             # for col in range(4):
