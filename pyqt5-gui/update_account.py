@@ -26,71 +26,70 @@ from db_handle import postgres_conn
 
 
 def open_update_account():
-        
-            """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
-            font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
-            if font < 0:
-                print('Error loading fonts!')
-            fonts = QFontDatabase.applicationFontFamilies(font)
-            
-            
-            global user_data
-            user_data = []
-            # Change to dynamic query in implementation
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
-            result = postgres_conn.POSTGRES_CURSOR.fetchone()
+    """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
+    font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
+    if font < 0:
+        print('Error loading fonts!')
+    fonts = QFontDatabase.applicationFontFamilies(font)
+    
+    
+    global user_data
+    user_data = []
+    # Change to dynamic query in implementation
+    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
+    result = postgres_conn.POSTGRES_CURSOR.fetchone()
 
-            
-            global update_user_settings_groupbox
-            update_user_settings_groupbox = QGroupBox("Update Account Settings")
-            update_user_settings_layout = QVBoxLayout()
-            update_user_settings_layout.addStretch()
-            update_user_settings_layout.addSpacing(10)
+    
+    global update_user_settings_groupbox
+    update_user_settings_groupbox = QGroupBox("Update Account Settings")
+    update_user_settings_layout = QVBoxLayout()
+    update_user_settings_layout.addStretch()
+    update_user_settings_layout.addSpacing(10)
 
-            text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
-            text_labels_length = len(text_labels)
+    text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
+    text_labels_length = len(text_labels)
 
-            for i in range(text_labels_length):
-                current_text_label = QLabel()
-                current_text_label.setText(text_labels.popleft())
-                current_text_label.setFont(QFont(fonts[0], 12))
+    for i in range(text_labels_length):
+        current_text_label = QLabel()
+        current_text_label.setText(text_labels.popleft())
+        current_text_label.setFont(QFont(fonts[0], 12))
 
-                current_line_edit = QLineEdit()
-                current_line_edit.setText(str(result[i]))
-                current_line_edit.setFont(QFont(fonts[0], 12))
-                current_line_edit.setMaximumWidth(250)
-                # Disables user_id and username modification
-                if i < 2:
-                    current_line_edit.setReadOnly(True)
-                else:
-                    user_data.append(current_line_edit)
+        current_line_edit = QLineEdit()
+        current_line_edit.setText(str(result[i]))
+        current_line_edit.setFont(QFont(fonts[0], 12))
+        current_line_edit.setMaximumWidth(250)
+        # Disables user_id and username modification
+        if i < 2:
+            current_line_edit.setReadOnly(True)
+        else:
+            user_data.append(current_line_edit)
 
-                update_user_settings_layout.addWidget(current_text_label)
-                update_user_settings_layout.addWidget(current_line_edit)
+        update_user_settings_layout.addWidget(current_text_label)
+        update_user_settings_layout.addWidget(current_line_edit)
 
 
-            update_user_settings_layout.addStretch()
-            update_user_settings_layout.addSpacing(20)
+    update_user_settings_layout.addStretch()
+    update_user_settings_layout.addSpacing(20)
 
-            reset_button = QPushButton()
-            reset_button.setText("Reset to defaults")
-            reset_button.setFont(QFont(fonts[0], 12))
-            reset_button.setFixedWidth(200)
-            reset_button.clicked.connect(lambda: update_user_settings_groupbox.hide())
-            reset_button.clicked.connect(lambda: open_update_account())
+    reset_button = QPushButton()
+    reset_button.setText("Reset to defaults")
+    reset_button.setFont(QFont(fonts[0], 12))
+    reset_button.setFixedWidth(200)
+    reset_button.clicked.connect(lambda: update_user_settings_groupbox.hide())
+    reset_button.clicked.connect(lambda: open_update_account())
 
-            update_user_setting_button = QPushButton()
-            update_user_setting_button.setText("Update Info")
-            update_user_setting_button.setFont(QFont(fonts[0], 12))
-            update_user_setting_button.clicked.connect(lambda: update_user())
-            update_user_setting_button.setFixedWidth(200)
+    update_user_setting_button = QPushButton()
+    update_user_setting_button.setText("Update Info")
+    update_user_setting_button.setFont(QFont(fonts[0], 12))
+    update_user_setting_button.clicked.connect(lambda: update_user())
+    update_user_setting_button.setFixedWidth(200)
 
-            update_user_settings_layout.addWidget(reset_button)
-            update_user_settings_layout.addWidget(update_user_setting_button)
+    update_user_settings_layout.addWidget(reset_button)
+    update_user_settings_layout.addWidget(update_user_setting_button)
 
-            update_user_settings_groupbox.setLayout(update_user_settings_layout)
+    update_user_settings_groupbox.setLayout(update_user_settings_layout)
 
-            return update_user_settings_groupbox
+    return update_user_settings_groupbox
 
 
 def update_user():
