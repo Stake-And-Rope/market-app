@@ -2,21 +2,21 @@
 
 ##### In progress
 
- - [ ] Products Window  <span style="color:#f43431">@rayapetkova</span>
-  - [ ] Creating the products menu
-  - [ ] Populating products from the database
-  - [ ] `Favorites` and `Add to basket` buttons functionality
-  - [ ] Optimizing products description/product names/overall products data IF needed
+ - [ ] Products Window  [@rayapetkova](https://github.com/rayapetkova)
+	 - [ ] Creating the products menu
+	 - [ ] Populating products from the database
+	 - [ ] `Favorites` and `Add to basket` buttons functionality
+	 - [ ] Optimizing products description/product names/overall products data IF needed
 
- - [ ] Left Layout User Buttons <span style="color:#f43431">@karastoyanov</span>
-  - [ ] Edit User Data menu implementation 
+ - [ ] Left Layout User Buttons [@karastoyanov](https://github.com/karastoyanov)
+	- [ ] Edit User Data menu implementation 
 	  * `Reset to defaults` button needs to be fixed :warning: Rest of the feature is functional
-  - [ ] Payment Options menu implementation
+	- [ ] Payment Options menu implementation
 	  * Basic functionality is written, major fixes are needed
 	  * Re-work the layout positioning
 	  * Layouts structure to be re-defined
 
- - [ ] Windows and GUI objects styling <span style="color:#f43431">@nikichhh</span>, <span style="color:#f43431">@DobromirMD</span>
+ - [ ] Windows and GUI objects styling [@nikichhh](https://github.com/nikichhh/SoftUni-Python), [@DobromirMD](https://github.com/DobromirMD)
 	- [ ] Basic styling for the GUI objects - shadows, text colors, background, etc. 
 	- [ ] Final styling to be defined in group with all members
 
