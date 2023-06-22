@@ -49,28 +49,13 @@ class MainMenu(QWidget):
 
 
         """OPEN THE PROPER SUBCATEGORY"""
-        def open_func(subcat_name):
+        def open_func(curr_subcat_name):
             global subcategory_name
-            subcategory_name = subcat_name
+            subcategory_name = curr_subcat_name
             open_subcategories(subcategory_name)
 
-
-        """SUBCATEGORIES CALL FUNCTION"""
-        functions_dict = {
-            'food_open': lambda: open_func("Food"),
-            'books_open': lambda: open_func("Books"),
-            'drinks_open': lambda: open_func("Drinks"),
-            'accessories_open': lambda: open_func("Accessories"),
-            'homeandliving_open': lambda: open_func("Home and Living"),
-            'hair_open': lambda: open_func("Hair"),
-            'sports_open': lambda: open_func("Sports"),
-            'beachwear_open': lambda: open_func("Beachwear"),
-            'shoes_open': lambda: open_func("Shoes"),
-            'electronics_open': lambda: open_func("Electronics"),
-            'cosmetics_open': lambda: open_func("Cosmetics"),
-            'clothes_open': lambda: open_func("Clothes"),
-        }
-
+        def open_category_func(subcat_name):
+            return lambda: open_func(subcat_name)
 
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
@@ -180,7 +165,6 @@ class MainMenu(QWidget):
         result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
         categories = deque([x[0] for x in result[0:12]])
         categories_description = deque([x[1] for x in result[0:12]])
-        categories_functions = deque([x[2] for x in result[0:12]])
 
         for row in range(3):
             for col in range(4):
@@ -192,7 +176,8 @@ class MainMenu(QWidget):
                     current_vertical_layout = QVBoxLayout()
                     current_vertical_layout.setAlignment(Qt.AlignBottom)
 
-                    category_name = QLabel(categories.popleft())
+                    current_category = categories.popleft()
+                    category_name = QLabel(current_category)
                     category_name.setFont(QFont(fonts[0], 9))
                     cat_name_shadow_effect = QGraphicsDropShadowEffect()
                     cat_name_shadow_effect.setBlurRadius(2)
@@ -224,8 +209,7 @@ class MainMenu(QWidget):
                     category_button.setFont(QFont(fonts[0], 11))
                     category_button.setMaximumWidth(150)
 
-                    current_function_name = categories_functions.popleft() + "_open"
-                    category_button.clicked.connect(functions_dict[current_function_name])
+                    category_button.clicked.connect(open_category_func(current_category))
 
                     current_vertical_layout.addWidget(category_button)
 
