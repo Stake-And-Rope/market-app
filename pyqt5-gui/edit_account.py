@@ -25,7 +25,7 @@ from db_handle import postgres_conn
 
 
 
-def open_update_account():
+def open_edit_account():
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
     if font < 0:
@@ -40,11 +40,11 @@ def open_update_account():
     result = postgres_conn.POSTGRES_CURSOR.fetchone()
 
     
-    global update_user_settings_groupbox
-    update_user_settings_groupbox = QGroupBox("Update Account Settings")
-    update_user_settings_layout = QVBoxLayout()
-    update_user_settings_layout.addStretch()
-    update_user_settings_layout.addSpacing(10)
+    global edit_user_settings_groupbox
+    edit_user_settings_groupbox = QGroupBox("Edit Account Settings")
+    edit_user_settings_layout = QVBoxLayout()
+    edit_user_settings_layout.addStretch()
+    edit_user_settings_layout.addSpacing(10)
 
     text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
     text_labels_length = len(text_labels)
@@ -64,38 +64,38 @@ def open_update_account():
         else:
             user_data.append(current_line_edit)
 
-        update_user_settings_layout.addWidget(current_text_label)
-        update_user_settings_layout.addWidget(current_line_edit)
+        edit_user_settings_layout.addWidget(current_text_label)
+        edit_user_settings_layout.addWidget(current_line_edit)
 
 
-    update_user_settings_layout.addStretch()
-    update_user_settings_layout.addSpacing(20)
+    edit_user_settings_layout.addStretch()
+    edit_user_settings_layout.addSpacing(20)
 
     reset_button = QPushButton()
     reset_button.setText("Reset to defaults")
     reset_button.setFont(QFont(fonts[0], 12))
     reset_button.setFixedWidth(200)
-    reset_button.clicked.connect(lambda: update_user_settings_groupbox.hide())
-    reset_button.clicked.connect(lambda: open_update_account())
+    reset_button.clicked.connect(lambda: edit_user_settings_groupbox.hide())
+    reset_button.clicked.connect(lambda: open_edit_account())
 
-    update_user_setting_button = QPushButton()
-    update_user_setting_button.setText("Update Info")
-    update_user_setting_button.setFont(QFont(fonts[0], 12))
-    update_user_setting_button.clicked.connect(lambda: update_user())
-    update_user_setting_button.setFixedWidth(200)
+    edit_user_setting_button = QPushButton()
+    edit_user_setting_button.setText("Update Info")
+    edit_user_setting_button.setFont(QFont(fonts[0], 12))
+    edit_user_setting_button.clicked.connect(lambda: edit_user())
+    edit_user_setting_button.setFixedWidth(200)
 
-    update_user_settings_layout.addWidget(reset_button)
-    update_user_settings_layout.addWidget(update_user_setting_button)
+    edit_user_settings_layout.addWidget(reset_button)
+    edit_user_settings_layout.addWidget(edit_user_setting_button)
 
-    update_user_settings_groupbox.setLayout(update_user_settings_layout)
+    edit_user_settings_groupbox.setLayout(edit_user_settings_layout)
 
-    return update_user_settings_groupbox
+    return edit_user_settings_groupbox
 
 
-def update_user():
+def edit_user():
     # Make this query dynamically accepting the username in production
-    update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
-    postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
+    edit_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
+    postgres_conn.POSTGRES_CURSOR.execute(edit_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
     postgres_conn.POSTGRES_CONNECTION.commit()
 
 
