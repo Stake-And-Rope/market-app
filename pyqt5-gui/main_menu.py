@@ -245,24 +245,41 @@ class MainMenu(QWidget):
                 
             categories_groupbox.show()
             buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
         
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
             global edit_account_layout
             edit_account_layout = edit_account.open_edit_account()
             categories_groupbox.hide()
+            try:
+                payment_options_layout.hide()
+            except Exception as error:
+                print("Payment Options Not Opened")
             main_layout.addWidget(edit_account_layout, 1, 1)
             # Disable the button to avoid calling again the function
                 # Not the best approach, but for now it will do
             buttons[-1].setEnabled(False)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
 
         """OPEN PAYMENT OPTIONS LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_payment_options():
             global payment_options_layout
             payment_options_layout = payment_options.open_payment_options()
             categories_groupbox.hide()
+            try:
+                edit_account_layout.hide()
+            except Exception as error:
+                print("Edit Account Not Opened")
             main_layout.addWidget(payment_options_layout, 1, 1)
-            buttons[-1].setEnabled(False)
+            buttons[-3].setEnabled(False)
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-4].setEnabled(True)
         
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
