@@ -70,8 +70,13 @@ def products_menu(subcategory_name):
 
         product_description = products_descriptions.popleft()
 
-        current_description = QPlainTextEdit()
-        current_description.insertPlainText(product_description)
+        # current_description = QPlainTextEdit()
+        # current_description.insertPlainText(product_description)
+        # current_description.setFont(QFont(fonts[0], 12))
+
+        current_description = QLabel(product_description)
+        # current_description.insertPlainText(product_description)
+        current_description.setWordWrap(True)
         current_description.setFont(QFont(fonts[0], 12))
         
         current_buttons_layout = QHBoxLayout()
