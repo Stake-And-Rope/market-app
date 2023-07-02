@@ -3,8 +3,8 @@
 ##### In progress
 
  - [ ] Products Window  [@rayapetkova](https://github.com/rayapetkova)
-	 - [ ] Creating the products menu
-	 - [ ] Populating products from the database
+	 - [x] Creating the products menu
+	 - [x] Populating products from the database
 	 - [ ] `Favorites` and `Add to basket` buttons functionality
 	 - [ ] Optimizing products description/product names/overall products data IF needed
 
