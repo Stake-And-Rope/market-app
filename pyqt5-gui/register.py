@@ -41,7 +41,6 @@ class Register(QWidget):
         image_layout.addStretch()
         image_layout.addSpacing(2)
         image_widget = QLabel()
-        # image_widget.setGeometry(0, 0, 200, 100)
         image_widget.setText("Image will appear here")
         pixmap = QPixmap(r'../img/store-banner2.png')
         image_widget.setPixmap(pixmap)

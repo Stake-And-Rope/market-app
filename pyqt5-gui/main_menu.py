@@ -24,7 +24,7 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import subcategories
+import about, subcategories, edit_account, payment_options, products
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -41,33 +41,18 @@ class MainMenu(QWidget):
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
-        
 
-        
+
+
         """OPEN THE PROPER SUBCATEGORY"""
-        def open_func(subcat_name):
+        def open_func(curr_subcat_name):
             global subcategory_name
-            subcategory_name = subcat_name
-            open_subcategories()
-        
+            subcategory_name = curr_subcat_name
+            open_subcategories(subcategory_name)
 
-        """SUBCATEGORIES CALL FUNCTION"""
-        functions_dict = {
-            'food_open': lambda: open_func("Food"),
-            'books_open': lambda: open_func("Books"),
-            'drinks_open': lambda: open_func("Drinks"),
-            'accessories_open': lambda: open_func("Accessories"),
-            'homeandliving_open': lambda: open_func("Home and Living"),
-            'hair_open': lambda: open_func("Hair"),
-            'sports_open': lambda: open_func("Sports"),
-            'beachwear_open': lambda: open_func("Beachwear"),
-            'shoes_open': lambda: open_func("Shoes"),
-            'electronics_open': lambda: open_func("Electronics"),
-            'cosmetics_open': lambda: open_func("Cosmetics"),
-            'clothes_open': lambda: open_func("Clothes"),
-        }
-        
-        
+        def open_category_func(subcat_name):
+            return lambda: open_func(subcat_name)
+
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
             'edit_account': lambda: open_update_account(),
@@ -75,9 +60,9 @@ class MainMenu(QWidget):
             'payment_options': lambda: open_payment_options(),
             'back': lambda: open_categories(),
         }
-        
 
-        """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT""" 
+
+        """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font < 0:
             print('Error loading fonts!')
@@ -93,11 +78,11 @@ class MainMenu(QWidget):
 
         user_name = QLabel(f"Hello, {user_info[1]} {user_info[2]}")
         user_name.setFont(QFont(fonts[0], 12))
-        
+
         user_id = QLabel(f"Your ID is {user_info[0]}")
         user_id.setFont(QFont(fonts[0], 12))
         user_info_layout = QVBoxLayout()
-        
+
         user_total_orders = QLabel(f"Total orders: {user_info[3]}")
         user_total_orders.setFont(QFont(fonts[0], 12))
 
@@ -113,7 +98,7 @@ class MainMenu(QWidget):
         left_buttons_groupbox = QGroupBox('User Actions')
         left_buttons_layout = QVBoxLayout()
 
-        
+
         buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
         buttons = deque([])
         while buttons_text:
@@ -128,7 +113,7 @@ class MainMenu(QWidget):
             button.clicked.connect(left_layout_buttons_dict[button_function])
             buttons.appendleft(button)
 
-            
+
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -144,12 +129,13 @@ class MainMenu(QWidget):
         favourites_button.setFont(QFont(fonts[0], 9))
         favourites_button.setFixedWidth(120)
         favourites_button.setFixedHeight(30)
-        
+
         about_button = QPushButton()
         about_button.setText("About")
         about_button.setFont(QFont(fonts[0], 9))
         about_button.setFixedWidth(120)
         about_button.setFixedHeight(30)
+        about_button.clicked.connect(lambda: open_about())
 
         log_out_button = QPushButton()
         log_out_button.setText("Log Out")
@@ -175,7 +161,6 @@ class MainMenu(QWidget):
         result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
         categories = deque([x[0] for x in result[0:12]])
         categories_description = deque([x[1] for x in result[0:12]])
-        categories_functions = deque([x[2] for x in result[0:12]])
 
         for row in range(3):
             for col in range(4):
@@ -187,7 +172,8 @@ class MainMenu(QWidget):
                     current_vertical_layout = QVBoxLayout()
                     current_vertical_layout.setAlignment(Qt.AlignBottom)
 
-                    category_name = QLabel(categories.popleft())
+                    current_category = categories.popleft()
+                    category_name = QLabel(current_category)
                     category_name.setFont(QFont(fonts[0], 9))
                     cat_name_shadow_effect = QGraphicsDropShadowEffect()
                     cat_name_shadow_effect.setBlurRadius(2)
@@ -219,8 +205,7 @@ class MainMenu(QWidget):
                     category_button.setFont(QFont(fonts[0], 11))
                     category_button.setMaximumWidth(150)
 
-                    current_function_name = categories_functions.popleft() + "_open"
-                    category_button.clicked.connect(functions_dict[current_function_name])
+                    category_button.clicked.connect(open_category_func(current_category))
 
                     current_vertical_layout.addWidget(category_button)
 
@@ -230,6 +215,7 @@ class MainMenu(QWidget):
         categories_groupbox.setLayout(categories_grid_layout)
 
         """INIT THE MAIN LAYOUT"""
+        global main_layout
         main_layout = QGridLayout()
         main_layout.addWidget(user_info_groupbox, 0, 0)
         main_layout.addWidget(left_buttons_groupbox, 1, 0)
@@ -244,165 +230,77 @@ class MainMenu(QWidget):
 
         """BRING BACK THE CATEGORIES"""
         def open_categories():
-            hide_user_update_settings()
-
-
+            # Not the best approach, that could be improved
+            try:
+                edit_account_layout.hide()
+            except Exception as error:
+                print("Edit Account Not Opened")
+            try:
+                payment_options_layout.hide()
+            except Exception as error:
+                print("Payment Options Not Opened")
+            
+            try:
+                products.products_groupbox.hide()
+                subcategories.subcategories_groupbox.hide()
+            except Exception as error:
+                print("Product Not Opened")    
+                
+            categories_groupbox.show()
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
+        
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
-            global user_data
-            user_data = []
-            # Change to dynamic query in implementation
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
-            result = postgres_conn.POSTGRES_CURSOR.fetchone()
-            
-            update_user_settings_groupbox = QGroupBox("Update Account Settings")
-            update_user_settings_layout = QVBoxLayout()
-            update_user_settings_layout.addStretch()
-            update_user_settings_layout.addSpacing(10)
-
-            text_labels = deque(['ID', 'Username', 'First Name', 'Last Name', 'Phone Number', 'Email Address'])
-            text_labels_length = len(text_labels)
-            
-            for i in range(text_labels_length):
-                current_text_label = QLabel()
-                current_text_label.setText(text_labels.popleft())
-                current_text_label.setFont(QFont(fonts[0], 12))
-
-                current_line_edit = QLineEdit()
-                current_line_edit.setText(str(result[i]))
-                current_line_edit.setFont(QFont(fonts[0], 12))
-                current_line_edit.setMaximumWidth(250)
-                # Disables user_id and username modification
-                if i < 2:
-                    current_line_edit.setReadOnly(True)
-                else:
-                    user_data.append(current_line_edit)
-
-                update_user_settings_layout.addWidget(current_text_label)
-                update_user_settings_layout.addWidget(current_line_edit)
-
-                
-            update_user_settings_layout.addStretch()
-            update_user_settings_layout.addSpacing(20)
-            
-            reset_button = QPushButton()
-            reset_button.setText("Reset to defaults")
-            reset_button.setFont(QFont(fonts[0], 12))
-            reset_button.setFixedWidth(200)
-            reset_button.clicked.connect(lambda: update_user_settings_groupbox.hide())
-            reset_button.clicked.connect(lambda: open_update_account())
-            
-            update_user_setting_button = QPushButton()
-            update_user_setting_button.setText("Update Info")
-            update_user_setting_button.setFont(QFont(fonts[0], 12))
-            update_user_setting_button.clicked.connect(lambda: update_user())
-            update_user_setting_button.setFixedWidth(200)
-            
-            update_user_settings_layout.addWidget(reset_button)
-            update_user_settings_layout.addWidget(update_user_setting_button)
-
-            update_user_settings_groupbox.setLayout(update_user_settings_layout)
-
+            global edit_account_layout
+            edit_account_layout = edit_account.open_edit_account()
             categories_groupbox.hide()
-            main_layout.addWidget(update_user_settings_groupbox, 1, 1)
+            try:
+                payment_options_layout.hide()
+            except Exception as error:
+                print("Payment Options Not Opened")                
+            main_layout.addWidget(edit_account_layout, 1, 1)
             # Disable the button to avoid calling again the function
                 # Not the best approach, but for now it will do
             buttons[-1].setEnabled(False)
-
-            global hide_user_update_settings
-            def hide_user_update_settings():
-                update_user_settings_groupbox.hide()
-                categories_groupbox.show()
-                # Activate back the button
-                buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
 
         """OPEN PAYMENT OPTIONS LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_payment_options():
-            # change the query to dinamyc in production
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT payment_name, payment_type, card_number, card_holder, ccv, expire_date FROM payment_options WHERE username = 'pesho'")
-            result = postgres_conn.POSTGRES_CURSOR.fetchone()
-            text_labels = deque(['Payment Name', 'Payment Type', 'Card Number', 'Card Holder', 'CCV Code', 'Expire Date'])
-            text_labels_len = len(text_labels)
-            
-            payment_options_groupbox = QGroupBox("Payment Options")
-       
-            payment_options_layout = QVBoxLayout()
-            payment_options_layout.addStretch()
-            payment_options_layout.addSpacing(5)
-            for i in range(text_labels_len):
-                inner_horizontal_layout = QHBoxLayout()
-                inner_horizontal_layout.addStretch()
-                inner_horizontal_layout.addSpacing(0)
-                
-                current_text_label = QLabel()
-                current_text_label.setText(text_labels.popleft())
-                current_text_label.setFont(QFont(fonts[0], 12))
-                current_text_label.setAlignment(Qt.AlignLeft)
-                
-                current_info_label = QLineEdit()
-                current_info_label.setText(str(result[i]))
-                current_info_label.setFont(QFont(fonts[0], 12))
-                current_info_label.setMaximumWidth(250)
-                
-                inner_horizontal_layout.addWidget(current_text_label)
-                inner_horizontal_layout.addWidget(current_info_label)
-                
-                payment_options_layout.addLayout(inner_horizontal_layout)
-                
-            payment_options_groupbox.setLayout(payment_options_layout)
-            
-            
+            global payment_options_layout
+            payment_options_layout = payment_options.open_payment_options()
             categories_groupbox.hide()
-            main_layout.addWidget(payment_options_groupbox, 1, 1)
-            buttons[-1].setEnabled(False)
-            
-            global hide_payment_options
-            def hide_payment_options():
-                payment_options_groupbox.hide()
-                categories_groupbox.show()
-                buttons[-1].setEnabled(True)
-            
-            
-            # payment_type_layout = QHBoxLayout()
-            # payment_type = QLabel()
-            # payment_type.setText('Visa Debit')
-            # payment_type.setFont(QFont(fonts[0], 12))
-            # visa_img = r'../img/visa.png'
-            # mastercard_img = r'../img/mastercard.png'
-            # revolut_img = r'../img/revolut.png'
-            # payment_icon = QLabel()
-            # if 'Visa' in payment_type.text():
-            #     payment_icon.setPixmap(visa_img)
-            # elif 'Mastercard' in payment_type.text():
-            #     payment_icon.setPixmap(mastercard_img)
-            # elif 'Revolut' in payment_type.text():
-            #     payment_icon.setPixmap(revolut_img)
-            # payment_icon.setFixedHeight(10)
-            # payment_icon.setFixedWidth(10)
-            
-            
-            
-            
-            
-            
-            
-            
+            try:
+                edit_account_layout.hide()
+            except Exception as error:
+                print("Edit Account Not Opened")            
+            main_layout.addWidget(payment_options_layout, 1, 1)
+            buttons[-3].setEnabled(False)
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-4].setEnabled(True)
+        
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
             pass
-
-        """OPEN SUBCATEGORIES WINDOW"""
-        def open_subcategories():
-            subcategories.start_window(subcategory_name)
-            main_window.hide()
         
-        def update_user():
-            # Make this query dynamically accepting the username in production
-            update_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
-            postgres_conn.POSTGRES_CURSOR.execute(update_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
-            postgres_conn.POSTGRES_CONNECTION.commit()
-
-
+        """OPEN ABOUT WINDOW"""
+        def open_about():
+            about.start_window()
+            # main_window.hide()
+        
+        """OPEN SUBCATEGORIES WINDOW"""
+        def open_subcategories(sub_cat_name):
+            global subcategories_layout
+            subcategories_layout = subcategories.open_subcategory(sub_cat_name)
+            categories_groupbox.hide()
+            main_layout.addWidget(subcategories_layout, 1, 1)
+        
+        
 """OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
 def open_app():
     app = QApplication(sys.argv)
@@ -417,7 +315,7 @@ def start_window():
     main_menu_window = MainMenu()
     main_menu_window.show()
 
-# if __name__ == '__main__':
-#     open_app()
+if __name__ == '__main__':
+    open_app()
 
-open_app()
+# open_app()
