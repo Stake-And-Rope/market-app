@@ -23,8 +23,6 @@ sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
 
-
-
 def open_edit_account():
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')

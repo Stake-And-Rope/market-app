@@ -29,15 +29,15 @@ from db_handle import postgres_conn
 import products, main_menu
 
 
-global subcategory_name
-subcategory_name = ''
+
 
 def open_subcategory(subcatname):
+    global subcategory_name
+    global subcategories_groupbox
+    # subcategory_name = ''
+    
     """INIT CONNECTION TO THE DATABASE"""
     postgres_conn.admin_client()
-
-
-    
     
     """OPEN THE PRODUCTS BASED ON THE SUBCATEGORY CALLED BY THE USER"""
     def subcats_func(subcat_name):
@@ -68,8 +68,6 @@ def open_subcategory(subcatname):
     subcategories = deque([x[0] for x in result])
 
     for row in range(3):
-        # for col in range(4):
-        # if subcategories:
         current_groupbox = QGroupBox()
         current_groupbox.setMaximumWidth(400)
         current_groupbox.setMaximumHeight(150)
@@ -109,7 +107,6 @@ def open_subcategory(subcatname):
     subcategories_groupbox.setLayout(main_grid_layout)
     
     def open_products(cat):
-        # subcategories_groupbox.hide()
         product_layout = products.products_menu(cat)
         main_grid_layout.addWidget(product_layout, 1, 0)
         subcategories_groupbox.setLayout(main_grid_layout)

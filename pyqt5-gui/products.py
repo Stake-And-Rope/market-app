@@ -28,6 +28,8 @@ from db_handle import postgres_conn
 
 
 def products_menu(subcategory_name):
+    global products_groupbox
+    
     products_groupbox = QGroupBox("Products")
     products_grid_layout = QGridLayout()
     
@@ -54,9 +56,7 @@ def products_menu(subcategory_name):
         product_name = products_names.popleft()
 
         product_image = QLabel()
-        product_image.setFixedHeight(300)
-        product_image.setFixedWidth(300)
-        product_image.setFixedSize(325, 220)
+        product_image.setFixedSize(250, 200)
         product_image.setPixmap(QPixmap(f"../img/products/{subcategory_name}/{product_name}.png"))
         product_image.setScaledContents(True)
 
@@ -66,7 +66,7 @@ def products_menu(subcategory_name):
         
         current_sku = QLabel()
         current_sku.setText(products_ids.popleft())
-        current_sku.setFont(QFont(fonts[0], 12))
+        current_sku.setFont(QFont(fonts[0], 10))
 
         product_description = products_descriptions.popleft()
 
@@ -75,25 +75,22 @@ def products_menu(subcategory_name):
         # current_description.setFont(QFont(fonts[0], 12))
 
         current_description = QLabel(product_description)
-        # current_description.insertPlainText(product_description)
         current_description.setWordWrap(True)
-        current_description.setFont(QFont(fonts[0], 12))
+        current_description.setFont(QFont(fonts[0], 9))
         
         current_buttons_layout = QHBoxLayout()
         current_buttons_layout.setAlignment(Qt.AlignLeft)
         
         current_favorites_button = QPushButton()
-        current_favorites_button.setFixedWidth(50)
-        current_favorites_button.setFixedHeight(50)
+        current_favorites_button.setFixedWidth(35)
+        current_favorites_button.setFixedHeight(35)
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
         current_favorites_button.setIconSize(QSize(30, 30))
-        # current_favorites_button.setText("Add to Favorites")
         current_favorites_button.setFont(QFont(fonts[0], 12))
 
         current_basket_button = QPushButton()
-        # current_basket_button.setText("Add to basket")
-        current_basket_button.setFixedWidth(50)
-        current_basket_button.setFixedHeight(50)
+        current_basket_button.setFixedWidth(35)
+        current_basket_button.setFixedHeight(35)
         current_basket_button.setIcon(QIcon(r'../img/shoppingcart.png'))
         current_basket_button.setIconSize(QSize(30, 30))
         current_basket_button.setFont(QFont(fonts[0], 12))

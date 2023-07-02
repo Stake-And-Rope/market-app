@@ -24,10 +24,7 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import about, subcategories, edit_account, payment_options
-
-
-
+import about, subcategories, edit_account, payment_options, products
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -242,6 +239,12 @@ class MainMenu(QWidget):
                 payment_options_layout.hide()
             except Exception as error:
                 print("Payment Options Not Opened")
+            
+            try:
+                products.products_groupbox.hide()
+                subcategories.subcategories_groupbox.hide()
+            except Exception as error:
+                print("Product Not Opened")    
                 
             categories_groupbox.show()
             buttons[-1].setEnabled(True)
@@ -257,7 +260,7 @@ class MainMenu(QWidget):
             try:
                 payment_options_layout.hide()
             except Exception as error:
-                print("Payment Options Not Opened")
+                print("Payment Options Not Opened")                
             main_layout.addWidget(edit_account_layout, 1, 1)
             # Disable the button to avoid calling again the function
                 # Not the best approach, but for now it will do
@@ -274,7 +277,7 @@ class MainMenu(QWidget):
             try:
                 edit_account_layout.hide()
             except Exception as error:
-                print("Edit Account Not Opened")
+                print("Edit Account Not Opened")            
             main_layout.addWidget(payment_options_layout, 1, 1)
             buttons[-3].setEnabled(False)
             buttons[-1].setEnabled(True)
@@ -288,7 +291,7 @@ class MainMenu(QWidget):
         """OPEN ABOUT WINDOW"""
         def open_about():
             about.start_window()
-            main_window.hide()
+            # main_window.hide()
         
         """OPEN SUBCATEGORIES WINDOW"""
         def open_subcategories(sub_cat_name):
@@ -296,13 +299,8 @@ class MainMenu(QWidget):
             subcategories_layout = subcategories.open_subcategory(sub_cat_name)
             categories_groupbox.hide()
             main_layout.addWidget(subcategories_layout, 1, 1)
-            # subcategories.start_window(subcategory_name)
-            # main_window.hide()
         
         
-
-
-
 """OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
 def open_app():
     app = QApplication(sys.argv)
