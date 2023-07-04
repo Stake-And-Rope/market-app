@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import sys
-import requests
+import inspect
+from collections import deque
+
 # Import PyQt5 Engine
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
@@ -30,6 +32,10 @@ from db_handle import postgres_conn
 def products_menu(subcategory_name):
     global products_groupbox
     
+    """THIS FUNCTION WILL REDIRECT THE CURRENT PROD ID AND PROD NAME TO THE INSERT TO THE POSTGRE DB FUNCTION"""
+    def redirect_to_insert_to_postgre_func(prod_id, prod_name):
+        return lambda: insert_into_favourite_products(prod_id, prod_name)
+
     products_groupbox = QGroupBox("Products")
     products_grid_layout = QGridLayout()
     
@@ -48,6 +54,7 @@ def products_menu(subcategory_name):
     products_descriptions = deque(p[1] for p in result)
     products_ids = deque(p[2] for p in result)
     print(products_names)
+
 
     for col in range(3):
 
@@ -88,7 +95,7 @@ def products_menu(subcategory_name):
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
         current_favorites_button.setIconSize(QSize(30, 30))
         current_favorites_button.setFont(QFont(fonts[0], 12))
-        current_favorites_button.clicked.connect(lambda: insert_into_favourite_products(product_id, product_name))
+        current_favorites_button.clicked.connect(redirect_to_insert_to_postgre_func(product_id, product_name))
 
         current_basket_button = QPushButton()
         current_basket_button.setFixedWidth(35)
@@ -112,11 +119,12 @@ def products_menu(subcategory_name):
         products_grid_layout.addLayout(current_vertical_layout, 0, col)
 
         products_groupbox.setLayout(products_grid_layout)
-
+        
         def insert_into_favourite_products(curr_id, curr_product_name):
             postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
                                                   f"('pesho', '{curr_id}', '{curr_product_name}')")
             postgres_conn.POSTGRES_CONNECTION.commit()
-            print("Done")  # this line is only to check if the function is executing
+            print("Done") # this line is only to check if the function is executing
+
         
     return products_groupbox
