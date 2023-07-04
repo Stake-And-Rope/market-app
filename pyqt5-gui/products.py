@@ -54,6 +54,7 @@ def products_menu(subcategory_name):
         current_vertical_layout = QVBoxLayout()
 
         product_name = products_names.popleft()
+        product_id = products_ids.popleft()
 
         product_image = QLabel()
         product_image.setFixedSize(250, 200)
@@ -65,7 +66,7 @@ def products_menu(subcategory_name):
         current_title.setFont(QFont(fonts[0], 12))
         
         current_sku = QLabel()
-        current_sku.setText(products_ids.popleft())
+        current_sku.setText(product_id)
         current_sku.setFont(QFont(fonts[0], 10))
 
         product_description = products_descriptions.popleft()
@@ -87,6 +88,7 @@ def products_menu(subcategory_name):
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
         current_favorites_button.setIconSize(QSize(30, 30))
         current_favorites_button.setFont(QFont(fonts[0], 12))
+        current_favorites_button.clicked.connect(lambda: insert_into_favourite_products(product_id, product_name))
 
         current_basket_button = QPushButton()
         current_basket_button.setFixedWidth(35)
@@ -110,5 +112,11 @@ def products_menu(subcategory_name):
         products_grid_layout.addLayout(current_vertical_layout, 0, col)
 
         products_groupbox.setLayout(products_grid_layout)
+
+        def insert_into_favourite_products(curr_id, curr_product_name):
+            postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
+                                                  f"('pesho', '{curr_id}', '{curr_product_name}')")
+            postgres_conn.POSTGRES_CONNECTION.commit()
+            print("Done")  # this line is only to check if the function is executing
         
     return products_groupbox
