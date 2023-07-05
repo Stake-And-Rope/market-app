@@ -24,7 +24,7 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import about, subcategories, edit_account, payment_options, products
+import about, subcategories, edit_account, payment_options, products, favourites
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -52,6 +52,9 @@ class MainMenu(QWidget):
 
         def open_category_func(subcat_name):
             return lambda: open_func(subcat_name)
+
+        def open_favourites_func():
+            return lambda: open_favourites()
 
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
@@ -113,7 +116,6 @@ class MainMenu(QWidget):
             button.clicked.connect(left_layout_buttons_dict[button_function])
             buttons.appendleft(button)
 
-
             left_buttons_layout.addWidget(button)
 
         left_buttons_layout.addStretch(0)
@@ -129,6 +131,7 @@ class MainMenu(QWidget):
         favourites_button.setFont(QFont(fonts[0], 9))
         favourites_button.setFixedWidth(120)
         favourites_button.setFixedHeight(30)
+        favourites_button.clicked.connect(open_favourites_func())
 
         about_button = QPushButton()
         about_button.setText("About")
@@ -299,6 +302,11 @@ class MainMenu(QWidget):
             subcategories_layout = subcategories.open_subcategory(sub_cat_name)
             categories_groupbox.hide()
             main_layout.addWidget(subcategories_layout, 1, 1)
+
+        def open_favourites():
+            favourites_layout = favourites.favourites_menu()
+            categories_groupbox.hide()
+            main_layout.addWidget(favourites_layout, 1, 1)
         
         
 """OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
