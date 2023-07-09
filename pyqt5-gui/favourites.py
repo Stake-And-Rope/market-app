@@ -33,7 +33,6 @@ from db_handle import postgres_conn
 def favourites_menu():
     global products_groupbox
 
-    products_groupbox = QGroupBox("Favourites")
     products_grid_layout = QGridLayout()
 
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
@@ -110,6 +109,4 @@ def favourites_menu():
 
                 products_grid_layout.addLayout(current_vertical_layout, 0, col)
 
-    products_groupbox.setLayout(products_grid_layout)
-
-    return products_groupbox
+    return products_grid_layout
