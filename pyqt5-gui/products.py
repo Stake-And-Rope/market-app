@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import sys
-import requests
+import inspect
+from collections import deque
+
 # Import PyQt5 Engine
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
@@ -23,6 +25,8 @@ from PyQt5.QtCore import *
 
 sys.path.append(r'.')
 sys.path.append(r'..')
+
+
 from collections import deque
 from db_handle import postgres_conn
 
@@ -30,6 +34,10 @@ from db_handle import postgres_conn
 def products_menu(subcategory_name):
     global products_groupbox
     
+    """THIS FUNCTION WILL REDIRECT THE CURRENT PROD ID AND PROD NAME TO THE INSERT TO THE POSTGRE DB FUNCTION"""
+    def redirect_to_insert_to_postgre_func(prod_id, prod_name):
+        return lambda: insert_into_favourite_products(prod_id, prod_name)
+
     products_groupbox = QGroupBox("Products")
     products_grid_layout = QGridLayout()
     
@@ -49,11 +57,13 @@ def products_menu(subcategory_name):
     products_ids = deque(p[2] for p in result)
     print(products_names)
 
+
     for col in range(3):
 
         current_vertical_layout = QVBoxLayout()
 
         product_name = products_names.popleft()
+        product_id = products_ids.popleft()
 
         product_image = QLabel()
         product_image.setFixedSize(250, 200)
@@ -65,14 +75,10 @@ def products_menu(subcategory_name):
         current_title.setFont(QFont(fonts[0], 12))
         
         current_sku = QLabel()
-        current_sku.setText(products_ids.popleft())
+        current_sku.setText(product_id)
         current_sku.setFont(QFont(fonts[0], 10))
 
         product_description = products_descriptions.popleft()
-
-        # current_description = QPlainTextEdit()
-        # current_description.insertPlainText(product_description)
-        # current_description.setFont(QFont(fonts[0], 12))
 
         current_description = QLabel(product_description)
         current_description.setWordWrap(True)
@@ -87,6 +93,7 @@ def products_menu(subcategory_name):
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
         current_favorites_button.setIconSize(QSize(30, 30))
         current_favorites_button.setFont(QFont(fonts[0], 12))
+        current_favorites_button.clicked.connect(redirect_to_insert_to_postgre_func(product_id, product_name))
 
         current_basket_button = QPushButton()
         current_basket_button.setFixedWidth(35)
@@ -110,5 +117,27 @@ def products_menu(subcategory_name):
         products_grid_layout.addLayout(current_vertical_layout, 0, col)
 
         products_groupbox.setLayout(products_grid_layout)
+        
+        def insert_into_favourite_products(curr_id, curr_product_name):
+
+            postgres_conn.POSTGRES_CURSOR.execute("SELECT current_user;")
+            current_user = postgres_conn.POSTGRES_CURSOR.fetchone()[0]
+
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM favourite_products WHERE product_id = '{curr_id}' AND username = 'pesho'")
+            result = postgres_conn.POSTGRES_CURSOR.fetchall()
+            
+            if result:
+                error_msg_box = QMessageBox()
+                error_msg_box.setIcon(QMessageBox.Warning)
+                error_msg_box.setText("Product already exists in favorites.")
+                error_msg_box.setWindowTitle("Info Message")
+                error_msg_box.setStandardButtons(QMessageBox.Ok)
+                msg_box = error_msg_box.exec()
+            else:                      
+                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
+                                                    f"('pesho', '{curr_id}', '{curr_product_name}')")
+                postgres_conn.POSTGRES_CONNECTION.commit()
+                print("Done") # this line is only to check if the function is executing
+
         
     return products_groupbox

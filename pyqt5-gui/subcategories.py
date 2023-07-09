@@ -110,7 +110,7 @@ def open_subcategory(subcatname):
         product_layout = products.products_menu(cat)
         main_grid_layout.addWidget(product_layout, 1, 0)
         subcategories_groupbox.setLayout(main_grid_layout)
-        print(5)
+
     
     return subcategories_groupbox
 
