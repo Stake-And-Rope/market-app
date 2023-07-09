@@ -29,6 +29,7 @@ import about, subcategories, edit_account, payment_options, products, favourites
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
 subcategory_name = ''
+layouts_list = []
 
 """INIT CONNECTION TO THE DATABASE"""
 postgres_conn.admin_client()
@@ -43,7 +44,7 @@ class MainMenu(QWidget):
         self.setMaximumHeight(700)
 
 
-
+    
         """OPEN THE PROPER SUBCATEGORY"""
         def open_func(curr_subcat_name):
             global subcategory_name
@@ -231,41 +232,17 @@ class MainMenu(QWidget):
         self.setLayout(main_layout)
         self.show()
 
-        """BRING BACK THE CATEGORIES"""
-        def open_categories():
-            # Not the best approach, that could be improved
-            try:
-                edit_account_layout.hide()
-            except Exception as error:
-                print("Edit Account Not Opened")
-            try:
-                payment_options_layout.hide()
-            except Exception as error:
-                print("Payment Options Not Opened")
-            
-            try:
-                products.products_groupbox.hide()
-                subcategories.subcategories_groupbox.hide()
-            except Exception as error:
-                print("Product Not Opened")    
-            try:
-                favourites.products_grid_groupbox.hide()
-            except Exception as error:
-                print('Favorites Not Opened')
-                
-            categories_groupbox.show()
-            buttons[-1].setEnabled(True)
-            buttons[-2].setEnabled(True)
-            buttons[-3].setEnabled(True)
-            buttons[-4].setEnabled(True)
         
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_update_account():
             global edit_account_layout
+            global layouts_list
             edit_account_layout = edit_account.open_edit_account()
+            layouts_list.append(edit_account_layout)
             categories_groupbox.hide()
             try:
                 payment_options_layout.hide()
+                subcategories_layout.hide()
             except Exception as error:
                 print("Payment Options Not Opened")                
             main_layout.addWidget(edit_account_layout, 1, 1)
@@ -275,14 +252,18 @@ class MainMenu(QWidget):
             buttons[-2].setEnabled(True)
             buttons[-3].setEnabled(True)
             buttons[-4].setEnabled(True)
+        open_update_account()
 
         """OPEN PAYMENT OPTIONS LAYOUT/REPLACE CATEGORIES LAYOUT"""
         def open_payment_options():
             global payment_options_layout
+            global layouts_list
             payment_options_layout = payment_options.open_payment_options()
+            layouts_list.append(payment_options_layout)
             categories_groupbox.hide()
             try:
                 edit_account_layout.hide()
+                subcategories_layout.hide()
             except Exception as error:
                 print("Edit Account Not Opened")            
             main_layout.addWidget(payment_options_layout, 1, 1)
@@ -290,6 +271,7 @@ class MainMenu(QWidget):
             buttons[-1].setEnabled(True)
             buttons[-2].setEnabled(True)
             buttons[-4].setEnabled(True)
+        open_payment_options()
         
         """OPEN USER ORDERS HISTORY/REPLACE CATEGORIES LAYOUT"""
         def open_user_orders():
@@ -298,20 +280,40 @@ class MainMenu(QWidget):
         """OPEN ABOUT WINDOW"""
         def open_about():
             about.start_window()
-            # main_window.hide()
         
         """OPEN SUBCATEGORIES WINDOW"""
         def open_subcategories(sub_cat_name):
             global subcategories_layout
+            global layouts_list
             subcategories_layout = subcategories.open_subcategory(sub_cat_name)
+            layouts_list.append(subcategories_layout)
             categories_groupbox.hide()
             main_layout.addWidget(subcategories_layout, 1, 1)
 
         def open_favourites():
             global favourites_layout
+            global layouts_list
             favourites_layout = favourites.favourites_menu()
+            layouts_list.append(favourites_layout)
             categories_groupbox.hide()
             main_layout.addWidget(favourites_layout, 1, 1)
+        
+        
+        
+        """BRING BACK THE CATEGORIES"""
+        def open_categories():
+            # Not the best approach, that could be improved
+            for i in layouts_list:
+                try:
+                    i.hide()
+                except Exception as error:
+                    print(f"{i} is not opened")
+            categories_groupbox.show()
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
+        open_categories()
         
         
 """OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""

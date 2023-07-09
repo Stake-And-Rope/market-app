@@ -25,6 +25,8 @@ from PyQt5.QtCore import *
 
 sys.path.append(r'.')
 sys.path.append(r'..')
+
+
 from collections import deque
 from db_handle import postgres_conn
 
