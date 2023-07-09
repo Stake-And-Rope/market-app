@@ -78,10 +78,6 @@ def products_menu(subcategory_name):
 
         product_description = products_descriptions.popleft()
 
-        # current_description = QPlainTextEdit()
-        # current_description.insertPlainText(product_description)
-        # current_description.setFont(QFont(fonts[0], 12))
-
         current_description = QLabel(product_description)
         current_description.setWordWrap(True)
         current_description.setFont(QFont(fonts[0], 9))
@@ -121,10 +117,25 @@ def products_menu(subcategory_name):
         products_groupbox.setLayout(products_grid_layout)
         
         def insert_into_favourite_products(curr_id, curr_product_name):
-            postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
-                                                  f"('pesho', '{curr_id}', '{curr_product_name}')")
-            postgres_conn.POSTGRES_CONNECTION.commit()
-            print("Done") # this line is only to check if the function is executing
+
+            postgres_conn.POSTGRES_CURSOR.execute("SELECT current_user;")
+            current_user = postgres_conn.POSTGRES_CURSOR.fetchone()[0]
+
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM favourite_products WHERE product_id = '{curr_id}' AND username = 'pesho'")
+            result = postgres_conn.POSTGRES_CURSOR.fetchall()
+            
+            if result:
+                error_msg_box = QMessageBox()
+                error_msg_box.setIcon(QMessageBox.Warning)
+                error_msg_box.setText("Product already exists in favorites.")
+                error_msg_box.setWindowTitle("Info Message")
+                error_msg_box.setStandardButtons(QMessageBox.Ok)
+                msg_box = error_msg_box.exec()
+            else:                      
+                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
+                                                    f"('pesho', '{curr_id}', '{curr_product_name}')")
+                postgres_conn.POSTGRES_CONNECTION.commit()
+                print("Done") # this line is only to check if the function is executing
 
         
     return products_groupbox
