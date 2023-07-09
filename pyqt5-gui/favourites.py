@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (QApplication,
                              QPushButton,
                              QGridLayout,
                              QLabel,
+                             QScrollArea,
                              QFrame,
                              QGroupBox,
                              QLineEdit,
@@ -31,9 +32,9 @@ from db_handle import postgres_conn
 
 
 def favourites_menu():
-    global products_groupbox
-
-    products_grid_layout = QGridLayout()
+    favorites_scroll = QScrollArea()
+    favorites_widget = QWidget()
+    products_grid_layout = QVBoxLayout()
 
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -53,7 +54,9 @@ def favourites_menu():
     result = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
     print(result)
 
-    for row in range(math.ceil(len(result) / 3)):
+    res_len = math.ceil(len(result) / 3)
+    for row in range(res_len):
+        horizontal_products_layout = QHBoxLayout()
         for col in range(3):
             if result:
                 current_product = result.popleft()
@@ -107,6 +110,15 @@ def favourites_menu():
                 current_vertical_layout.addStretch()
                 current_vertical_layout.addSpacing(10)
 
-                products_grid_layout.addLayout(current_vertical_layout, 0, col)
+                horizontal_products_layout.addLayout(current_vertical_layout)
 
-    return products_grid_layout
+        products_grid_layout.addLayout(horizontal_products_layout)
+        
+        favorites_widget.setLayout(products_grid_layout)
+        
+    favorites_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+    favorites_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+    favorites_scroll.setWidgetResizable(True)
+    favorites_scroll.setWidget(favorites_widget)
+   
+    return favorites_scroll

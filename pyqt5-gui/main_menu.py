@@ -248,6 +248,10 @@ class MainMenu(QWidget):
                 subcategories.subcategories_groupbox.hide()
             except Exception as error:
                 print("Product Not Opened")    
+            try:
+                favourites.products_grid_groupbox.hide()
+            except Exception as error:
+                print('Favorites Not Opened')
                 
             categories_groupbox.show()
             buttons[-1].setEnabled(True)
@@ -304,6 +308,7 @@ class MainMenu(QWidget):
             main_layout.addWidget(subcategories_layout, 1, 1)
 
         def open_favourites():
+            global favourites_layout
             favourites_layout = favourites.favourites_menu()
             categories_groupbox.hide()
             main_layout.addWidget(favourites_layout, 1, 1)
