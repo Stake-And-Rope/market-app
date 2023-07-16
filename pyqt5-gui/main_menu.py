@@ -65,6 +65,13 @@ class MainMenu(QWidget):
             'back': lambda: open_categories(),
         }
 
+        """TOP LAYOUT BUTTONS CALL FUNCTIONS"""
+        top_layout_buttons_dict = {
+            'Favourites': open_favourites_func(),
+            'About': lambda: open_about(),
+            # TODO: need to add the log out button function
+        }
+
 
         """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -97,11 +104,9 @@ class MainMenu(QWidget):
         user_info_layout.addSpacing(100)
         user_info_groupbox.setLayout(user_info_layout)
 
-
         """CREATE THE LEFT BUTTONS LAYOUT"""
         left_buttons_groupbox = QGroupBox('User Actions')
         left_buttons_layout = QVBoxLayout()
-
 
         buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
         buttons = deque([])
@@ -114,6 +119,7 @@ class MainMenu(QWidget):
             button.setFont(QFont(fonts[0], 12))
             button.setFixedWidth(250)
             button.setFixedHeight(30)
+            button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             button.clicked.connect(left_layout_buttons_dict[button_function])
             buttons.appendleft(button)
 
@@ -127,32 +133,22 @@ class MainMenu(QWidget):
         top_buttons_groupbox = QGroupBox("Top menu")
         top_buttons_layout = QHBoxLayout()
 
-        favourites_button = QPushButton()
-        favourites_button.setText("Favourites")
-        favourites_button.setFont(QFont(fonts[0], 9))
-        favourites_button.setFixedWidth(120)
-        favourites_button.setFixedHeight(30)
-        favourites_button.clicked.connect(open_favourites_func())
-
-        about_button = QPushButton()
-        about_button.setText("About")
-        about_button.setFont(QFont(fonts[0], 9))
-        about_button.setFixedWidth(120)
-        about_button.setFixedHeight(30)
-        about_button.clicked.connect(lambda: open_about())
-
-        log_out_button = QPushButton()
-        log_out_button.setText("Log Out")
-        log_out_button.setFont(QFont(fonts[0], 9))
-        log_out_button.setFixedWidth(100)
-        log_out_button.setFixedHeight(30)
-
         top_buttons_layout.addStretch(0)
         top_buttons_layout.addSpacing(1000)
 
-        top_buttons_layout.addWidget(favourites_button)
-        top_buttons_layout.addWidget(about_button)
-        top_buttons_layout.addWidget(log_out_button)
+        top_buttons_text = deque(['Favourites', 'About'])  # TODO: need to add the 'Log Out' button
+
+        while top_buttons_text:
+            curr_top_button = top_buttons_text.popleft()
+            top_button = QPushButton()
+            top_button.setText(curr_top_button)
+            top_button.setFont(QFont(fonts[0], 9))
+            top_button.setFixedWidth(120)
+            top_button.setFixedHeight(30)
+            top_button.setCursor(QCursor(QCursor(Qt.CursorShape.PointingHandCursor)))
+            top_button.clicked.connect(top_layout_buttons_dict[curr_top_button])
+
+            top_buttons_layout.addWidget(top_button)
 
         top_buttons_groupbox.setLayout(top_buttons_layout)
 
@@ -208,6 +204,7 @@ class MainMenu(QWidget):
                     category_button.setText(category_name.text())
                     category_button.setFont(QFont(fonts[0], 11))
                     category_button.setMaximumWidth(150)
+                    category_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
                     category_button.clicked.connect(open_category_func(current_category))
 
