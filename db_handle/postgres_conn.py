@@ -49,7 +49,7 @@ def admin_client():
                 )
         cursor = db_client.cursor()
         cursor.execute("SELECT version()")
-        # print(cursor.fetchone())
+        print("Admin database connection established!")
     except (Exception) as error:
         print("Database connection failed!")
 
@@ -59,9 +59,7 @@ def admin_client():
     POSTGRES_CONNECTION = db_client
 
 
-    """Close connection to the Linux Server and the Postgres DB. This two lines should be commented in production environment"""    
-    # db_client.close()
-    # tunnel.close()
+    """Close connection to the Linux Server and the Postgres DB. This two lines should be commented in production environment"""
 
 def customer_client(username, passwd):
     global USER_POSTGRES_CURSOR
@@ -100,8 +98,8 @@ def customer_client(username, passwd):
                 dbname = str(database_name)
                 )
         user_cursor = user_db_client.cursor()
-        cursor.execute("SELECT version()")
-        print(cursor.fetchone())
+        # user_cursor.execute("SELECT version()")
+        print("Client database connection established!")
     except (Exception) as error:
         raise Exception("Database connection failed!")
         
@@ -111,5 +109,5 @@ def customer_client(username, passwd):
     USER_POSTGRES_CONNECTION = user_db_client
 
 
-admin_client()
+# admin_client()
 

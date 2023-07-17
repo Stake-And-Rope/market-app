@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+import sys
+sys.path.append(r'..')
 
 # Import PyQt5 Engine 
 from PyQt5.QtWidgets import (QApplication, 
@@ -14,14 +16,16 @@ from PyQt5.QtWidgets import (QApplication,
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys
-sys.path.append(r'..')
 from db_handle import postgres_conn, register_user
 import login
-import random, re, string
+import random, re
 
+<<<<<<< HEAD
 
 """Create the QWidget class and initiate the objects inside"""
+=======
+"""CREATE THE QWIDGET CLASS AND INIT THE OBJECTS"""
+>>>>>>> experimental
 class Register(QWidget):
     def __init__(self):
         super().__init__()
@@ -30,19 +34,18 @@ class Register(QWidget):
         self.setGeometry(650, 300, 400, 500)
         self.setMaximumWidth(400)
         self.setMaximumHeight(500)
-        
-        """Add customer font to array, ready to be loaded to any text object"""
+
+        """ADD CUSTOM FONTS"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font < 0 :
             print('Error loading fonts!')
         fonts = QFontDatabase.applicationFontFamilies(font)
-        
-        """Init the top Image Layout"""
+
+        """INIT THE TOP IMAGE LAYOUT"""
         image_layout = QVBoxLayout()
         image_layout.addStretch()
         image_layout.addSpacing(2)
         image_widget = QLabel()
-        # image_widget.setGeometry(0, 0, 200, 100)
         image_widget.setText("Image will appear here")
         pixmap = QPixmap(r'../img/store-banner2.png')
         image_widget.setPixmap(pixmap)
@@ -51,7 +54,7 @@ class Register(QWidget):
         
         image_layout.addWidget(image_widget)
 
-        """Init the main horizontal layout"""
+        """INIT THE MAIN HORIZONTAL LAYOUT"""
         main_horizontal_layout = QHBoxLayout()
         main_horizontal_layout.addStretch()
         main_horizontal_layout.addSpacing(2)
@@ -59,8 +62,12 @@ class Register(QWidget):
         qlabels_list = []
         qlineedit_list = []
 
+<<<<<<< HEAD
         """Init the labels, containing textboxes in them"""
 
+=======
+        """INIT THE LEFT VERTICAL LAYOUT"""
+>>>>>>> experimental
         left_vertical_layout = QVBoxLayout()
         left_vertical_layout.addStretch()
         left_vertical_layout.addSpacing(2)
@@ -84,6 +91,7 @@ class Register(QWidget):
                 """)
         name_layout.addWidget(first_name_label)
 
+<<<<<<< HEAD
         last_name_label = QLineEdit()
         last_name_label.setPlaceholderText("Last name")
         last_name_label.setStyleSheet("""
@@ -180,6 +188,121 @@ class Register(QWidget):
         form_layout.addWidget(password_label_repeat)
         
         """Buttons Layout"""
+=======
+        phone_number_label = QLabel()
+        phone_number_label.setText("Phone Number")
+        phone_number_label.setFont(QFont(fonts[0], 12))
+        phone_number_label.setFixedHeight(25)
+        phone_number_label.setAlignment(Qt.AlignLeft)
+        phone_number_label.setStyleSheet("color: #003366")
+        qlabels_list.append(phone_number_label)
+
+        password_label = QLabel()
+        password_label.setText("Password")
+        password_label.setFont(QFont(fonts[0], 12))
+        password_label.setFixedHeight(25)
+        password_label.setAlignment(Qt.AlignLeft)
+        password_label.setStyleSheet("color: #003366")
+        qlabels_list.append(password_label)
+        password_label_repeat = QLabel()
+        password_label_repeat.setText("Repeat Password")
+        password_label_repeat.setFont(QFont(fonts[0], 12))
+        password_label_repeat.setFixedHeight(25)
+        password_label_repeat.setAlignment(Qt.AlignLeft)
+        password_label_repeat.setStyleSheet("color: #003366")
+        qlabels_list.append(password_label_repeat)
+
+        """APPLY SHADOW EFFECTS TO ALL QLABES IN qlabels_list ARRAY"""
+        for i in range(len(qlabels_list)):
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setOffset(2, 1)
+            shadow.setColor(QColor(255, 255, 255))
+            qlabels_list[i].setGraphicsEffect(shadow)
+
+        """ADD THE OBJECTS TO THE LEFT VERTICAL LAYOUT"""
+        left_vertical_layout.addWidget(user_name_label)
+        left_vertical_layout.addWidget(first_name_label)
+        left_vertical_layout.addWidget(last_name_label)
+        left_vertical_layout.addWidget(phone_number_label)
+        left_vertical_layout.addWidget(email_address_label)
+        left_vertical_layout.addWidget(password_label)
+        left_vertical_layout.addWidget(password_label_repeat)
+
+        """INIT THE RIGHT VERTICAL LAYOUT"""
+        right_vertical_layout = QVBoxLayout()
+        right_vertical_layout.addStretch()
+        right_vertical_layout.addSpacing(2)
+        
+        user_name_textbox = QLineEdit()
+        user_name_textbox.setFont(QFont(fonts[0], 12))
+        user_name_textbox.setFixedWidth(300)
+        user_name_textbox.setFixedHeight(25)
+        user_name_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(user_name_textbox)
+        
+        first_name_textbox = QLineEdit()
+        first_name_textbox.setFont(QFont(fonts[0], 12))
+        first_name_textbox.setFixedWidth(300)
+        first_name_textbox.setFixedHeight(25)
+        first_name_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(first_name_textbox)
+
+        last_name_textbox = QLineEdit()
+        last_name_textbox.setFont(QFont(fonts[0], 12))
+        last_name_textbox.setFixedWidth(300)
+        last_name_textbox.setFixedHeight(25)
+        last_name_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(last_name_textbox)
+
+        email_address_textbox = QLineEdit()
+        email_address_textbox.setFont(QFont(fonts[0], 12))
+        email_address_textbox.setFixedWidth(300)
+        email_address_textbox.setFixedHeight(25)
+        email_address_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(email_address_textbox)
+        
+        phone_number_textbox = QLineEdit()
+        phone_number_textbox.setFont(QFont(fonts[0], 12))
+        phone_number_textbox.setFixedWidth(300)
+        phone_number_textbox.setFixedHeight(25)
+        phone_number_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(phone_number_textbox)
+
+        password_textbox = QLineEdit()
+        password_textbox.setEchoMode(QLineEdit.Password)
+        password_textbox.setFixedWidth(300)
+        password_textbox.setFixedHeight(25)
+        password_textbox.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(password_textbox)
+        password_textbox_repeat = QLineEdit()
+        password_textbox_repeat.setEchoMode(QLineEdit.Password)
+        password_textbox_repeat.setFixedWidth(300)
+        password_textbox_repeat.setFixedHeight(25)
+        password_textbox_repeat.setAlignment(Qt.AlignLeft)
+        qlineedit_list.append(password_textbox_repeat)
+
+        """APPLY SHADOW EFFECTS TO qlabels_list ARRAY"""
+        for i in range(len(qlineedit_list)):
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setOffset(2, 1)
+            shadow.setColor(QColor(0, 51, 102))
+            qlineedit_list[i].setGraphicsEffect(shadow)
+
+        """ADD THE OBJECTS TO THE RIGHT VERTICAL LAYOUT"""
+        right_vertical_layout.addWidget(user_name_textbox)
+        right_vertical_layout.addWidget(first_name_textbox)
+        right_vertical_layout.addWidget(last_name_textbox)
+        right_vertical_layout.addWidget(phone_number_textbox)
+        right_vertical_layout.addWidget(email_address_textbox)
+        right_vertical_layout.addWidget(password_textbox)
+        right_vertical_layout.addWidget(password_textbox_repeat)
+
+        """ADD RIGHT AND LEFT LAYOUTS TO THE MAIN HORIZONTAL LAYOUT"""
+        main_horizontal_layout.addLayout(left_vertical_layout)
+        main_horizontal_layout.addLayout(right_vertical_layout)
+
+        """BUTTONS LAYOUT"""
+>>>>>>> experimental
         buttons_layout = QHBoxLayout()
 
         register_button = QPushButton()
@@ -228,7 +351,7 @@ class Register(QWidget):
         buttons_layout.addWidget(register_button)
         buttons_layout.addWidget(back_button)
 
-        """Init the Main Layout which loads all objects above"""
+        """INIT THE MAIN LAYOUT """
         main_layout = QVBoxLayout()
         main_layout.addLayout(form_layout)
         main_layout.addLayout(main_horizontal_layout)
