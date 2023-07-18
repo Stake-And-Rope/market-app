@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (QApplication,
                              QHBoxLayout,
                              QVBoxLayout,
                              QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
+                             QGraphicsOpacityEffect, QSpinBox,
                              )
 
 from PyQt5.QtGui import *
@@ -26,21 +26,21 @@ from PyQt5.QtCore import *
 sys.path.append(r'.')
 sys.path.append(r'..')
 
-
 from collections import deque
 from db_handle import postgres_conn
 
 
 def products_menu(subcategory_name):
     global products_groupbox
-    
+
     """THIS FUNCTION WILL REDIRECT THE CURRENT PROD ID AND PROD NAME TO THE INSERT TO THE POSTGRE DB FUNCTION"""
-    def redirect_to_insert_to_postgre_func(prod_id, prod_name):
-        return lambda: insert_into_favourite_products(prod_id, prod_name)
+
+    def redirect_to_insert_to_postgre_func(prod_id, prod_name, spin_box):
+        return lambda: insert_into_favourite_products(prod_id, prod_name, spin_box)
 
     products_groupbox = QGroupBox("Products")
     products_grid_layout = QGridLayout()
-    
+
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
     if font < 0:
@@ -49,14 +49,14 @@ def products_menu(subcategory_name):
 
     postgres_conn.admin_client()
 
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT product_name, product_description, product_id FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
+    postgres_conn.POSTGRES_CURSOR.execute(
+        f"SELECT product_name, product_description, product_id FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
 
     result = postgres_conn.POSTGRES_CURSOR.fetchall()
     products_names = deque([p[0] for p in result])
     products_descriptions = deque(p[1] for p in result)
     products_ids = deque(p[2] for p in result)
     print(products_names)
-
 
     for col in range(3):
 
@@ -73,7 +73,7 @@ def products_menu(subcategory_name):
         current_title = QLabel()
         current_title.setText('Test Title')
         current_title.setFont(QFont(fonts[0], 12))
-        
+
         current_sku = QLabel()
         current_sku.setText(product_id)
         current_sku.setFont(QFont(fonts[0], 10))
@@ -83,17 +83,21 @@ def products_menu(subcategory_name):
         current_description = QLabel(product_description)
         current_description.setWordWrap(True)
         current_description.setFont(QFont(fonts[0], 9))
-        
+
         current_buttons_layout = QHBoxLayout()
         current_buttons_layout.setAlignment(Qt.AlignLeft)
-        
+
+        current_spin_box = QSpinBox()
+        # current_spin_box.setBaseSize(40, 30)  # this doesn't work
+
         current_favorites_button = QPushButton()
         current_favorites_button.setFixedWidth(35)
         current_favorites_button.setFixedHeight(35)
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
         current_favorites_button.setIconSize(QSize(30, 30))
         current_favorites_button.setFont(QFont(fonts[0], 12))
-        current_favorites_button.clicked.connect(redirect_to_insert_to_postgre_func(product_id, product_name))
+        current_favorites_button.clicked.connect(
+            redirect_to_insert_to_postgre_func(product_id, product_name, current_spin_box))
 
         current_basket_button = QPushButton()
         current_basket_button.setFixedWidth(35)
@@ -104,6 +108,7 @@ def products_menu(subcategory_name):
 
         current_buttons_layout.addWidget(current_favorites_button)
         current_buttons_layout.addWidget(current_basket_button)
+        current_buttons_layout.addWidget(current_spin_box)
 
         current_vertical_layout.insertWidget(0, product_image)
         current_vertical_layout.addWidget(current_title)
@@ -117,27 +122,41 @@ def products_menu(subcategory_name):
         products_grid_layout.addLayout(current_vertical_layout, 0, col)
 
         products_groupbox.setLayout(products_grid_layout)
-        
-        def insert_into_favourite_products(curr_id, curr_product_name):
+
+        def insert_into_favourite_products(curr_id, curr_product_name, curr_spin_box):
 
             postgres_conn.POSTGRES_CURSOR.execute("SELECT current_user;")
             current_user = postgres_conn.POSTGRES_CURSOR.fetchone()[0]
 
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM favourite_products WHERE product_id = '{curr_id}' AND username = 'pesho'")
+            postgres_conn.POSTGRES_CURSOR.execute(
+                f"SELECT * FROM favourite_products WHERE product_id = '{curr_id}' AND username = 'pesho'")
             result = postgres_conn.POSTGRES_CURSOR.fetchall()
-            
-            if result:
-                error_msg_box = QMessageBox()
-                error_msg_box.setIcon(QMessageBox.Warning)
-                error_msg_box.setText("Product already exists in favorites.")
-                error_msg_box.setWindowTitle("Info Message")
-                error_msg_box.setStandardButtons(QMessageBox.Ok)
-                msg_box = error_msg_box.exec()
-            else:                      
-                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
-                                                    f"('pesho', '{curr_id}', '{curr_product_name}')")
-                postgres_conn.POSTGRES_CONNECTION.commit()
-                print("Done") # this line is only to check if the function is executing
 
-        
+            """HERE WE SELECT THE AVAILABLE QUANTITY OF THE PRODUCT AND SEE IF WE CAN ADD IT TO FAVOURITES"""
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT quantity FROM products WHERE product_id='{curr_id}';")
+            available_quantity = postgres_conn.POSTGRES_CURSOR.fetchone()
+
+            if result:
+                error_message_box("Product already exists in favorites.")
+
+            elif int(str(curr_spin_box.value())) > int(available_quantity[0]):
+                error_message_box("You have exceeded the available quantity of this product. "
+                                  "Please choose a smaller quantity!")
+
+            else:
+                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
+                                                      f"('pesho', '{curr_id}', '{curr_product_name}')")
+                postgres_conn.POSTGRES_CONNECTION.commit()
+                print("Done")  # this line is only to check if the function is executing
+
+        def error_message_box(message):
+            error_msg_box = QMessageBox()
+            error_msg_box.setIcon(QMessageBox.Warning)
+            error_msg_box.setText(message)
+            error_msg_box.setWindowTitle("Info Message")
+            error_msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box = error_msg_box.exec()
+
+            return msg_box
+
     return products_groupbox
