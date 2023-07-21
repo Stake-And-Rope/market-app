@@ -19,6 +19,7 @@ from PyQt5.QtGui import (
                         )
 
 from PyQt5.QtCore import Qt
+from pathlib import Path
 from db_handle import postgres_conn
 import register
 import main_menu
@@ -130,12 +131,9 @@ class LogIn(QWidget):
         
         def login():
             try:
-<<<<<<< HEAD
                 postgres_conn.customer_client(username_label.text(), password_label.text())
-=======
                 postgres_conn.customer_client(username_textbox.text(), password_textbox.text())
                 open_main_menu()
->>>>>>> experimental
             except (Exception) as error:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
@@ -154,6 +152,7 @@ class LogIn(QWidget):
             
 def init_app():
     app = QApplication(sys.argv)
+    app.setStyleSheet(Path('styles.qss').read_text())
     global login_window
     login_window = LogIn()
     login_window.show()

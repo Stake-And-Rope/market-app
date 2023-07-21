@@ -1,0 +1,10 @@
+.usernamelabel {
+    color: #FF55DD;
+    width: 370px;
+    height: 30px;
+}
+
+.buttons {
+    color: #665533;
+    background-color: aqua;
+}
