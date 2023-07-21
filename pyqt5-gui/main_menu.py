@@ -172,19 +172,9 @@ class MainMenu(QWidget):
                     current_vertical_layout = QVBoxLayout()
                     current_vertical_layout.setAlignment(Qt.AlignBottom)
 
-                    current_category = categories.popleft()
-                    category_name = QLabel(current_category)
-                    category_name.setFont(QFont(fonts[0], 9))
-                    cat_name_shadow_effect = QGraphicsDropShadowEffect()
-                    cat_name_shadow_effect.setBlurRadius(2)
-                    cat_name_shadow_effect.setOffset(1, 1)
-                    cat_name_shadow_effect.setColor(QColor("blue"))
-                    category_name.setGraphicsEffect(cat_name_shadow_effect)
-                    category_name.setAlignment(Qt.AlignCenter)
-                    category_name.setStyleSheet("background-color: rgba(255, 255, 255, 255);" \
-                                                "border-radius: 10px;")
+                    category_name = categories.popleft()
 
-                    image = f"../img/categories/{category_name.text()}.png"
+                    image = f"../img/categories/{category_name}.png"
                     groupbox_stylesheet = f"QGroupBox {{ background-image: url({image});" \
                                           f"border-radius: 10px;" \
                                           f"}}"
@@ -201,12 +191,12 @@ class MainMenu(QWidget):
                     category_description.setGraphicsEffect(cat_desc_shadow_effect)
 
                     category_button = QPushButton()
-                    category_button.setText(category_name.text())
+                    category_button.setText(category_name)
                     category_button.setFont(QFont(fonts[0], 11))
                     category_button.setMaximumWidth(150)
                     category_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
-                    category_button.clicked.connect(open_category_func(current_category))
+                    category_button.clicked.connect(open_category_func(category_name))
 
                     current_vertical_layout.addWidget(category_button)
 
