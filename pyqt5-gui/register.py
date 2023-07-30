@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 import sys
+
 sys.path.append(r'..')
 
 # Import PyQt5 Engine 
-from PyQt5.QtWidgets import (QApplication, 
-                             QWidget, 
-                             QPushButton, 
-                             QLabel, 
-                             QLineEdit, 
-                             QMessageBox, 
-                             QPlainTextEdit, 
-                             QHBoxLayout, 
+from PyQt5.QtWidgets import (QApplication,
+                             QWidget,
+                             QPushButton,
+                             QLabel,
+                             QLineEdit,
+                             QMessageBox,
+                             QPlainTextEdit,
+                             QHBoxLayout,
                              QVBoxLayout,
                              QGraphicsDropShadowEffect)
 
@@ -25,6 +26,7 @@ from collections import deque
 
 """CREATE THE QWIDGET CLASS AND INIT THE OBJECTS"""
 
+
 class Register(QWidget):
     def __init__(self):
         super().__init__()
@@ -36,7 +38,7 @@ class Register(QWidget):
 
         """ADD CUSTOM FONTS"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
-        if font < 0 :
+        if font < 0:
             print('Error loading fonts!')
         fonts = QFontDatabase.applicationFontFamilies(font)
 
@@ -50,16 +52,16 @@ class Register(QWidget):
         image_widget.setPixmap(pixmap)
         image_widget.resize(self.width(), self.height())
         image_widget.setScaledContents(True)
-        
+
         image_layout.addWidget(image_widget)
 
         """INIT THE MAIN HORIZONTAL LAYOUT"""
         main_horizontal_layout = QHBoxLayout()
         main_horizontal_layout.addStretch()
         main_horizontal_layout.addSpacing(2)
-        
-        qlabels_list = []
-        qlineedit_list = []
+
+        font = QFont("Arial", 12)
+        user_data = []
 
         """Init the labels, containing textboxes in them"""
         form_layout = QVBoxLayout()
@@ -68,62 +70,48 @@ class Register(QWidget):
         name_layout_texts = deque(["First name", "Last name"])
         for i in range(2):
             current_label = QLineEdit()
-            current_label.setText(name_layout_texts.popleft())
-            current_label.setProperty("class", "usernamelabel")
-        
+            current_label.setPlaceholderText(name_layout_texts.popleft())
+            current_label.setFont(font)
+            current_label.setProperty("class", "username_label")
+
+            user_data.append(current_label.text())
+
             name_layout.addWidget(current_label)
 
         form_layout.addLayout(name_layout)
 
-        user_name_label = QLineEdit()
-        user_name_label.setProperty("class", "usernamelabel")
-        user_name_label.setText("Username")
-        user_name_label.setProperty("class", "usernamelabel")
-        form_layout.addWidget(user_name_label)
+        other_important_texts = deque(["Username", "Phone Number", "Email Address", "Password", "Repeat Password"])
 
-        phone_number_label = QLineEdit()
-        phone_number_label.setText("Phone Number")
-        phone_number_label.setProperty("class", "usernamelabel")
-        form_layout.addWidget(phone_number_label)
+        for i in range(5):
+            current_label = QLineEdit()
+            current_label.setPlaceholderText(other_important_texts.popleft())
+            current_label.setFont(font)
+            current_label.setProperty("class", "username_label")
 
-        email_address_label = QLineEdit()
-        email_address_label.setText("Email Address")
-        email_address_label.setProperty("class", "usernamelabel")
-        form_layout.addWidget(email_address_label)
-        
-        """Password Label is initialized two times"""
+            if i >= 3:
+                current_label.setEchoMode(QLineEdit.Password)
 
-        password_label = QLineEdit()
-        password_label.setText("Password")
-        password_label.setEchoMode(QLineEdit.Password)
-        password_label.setProperty("class", "usernamelabel")
-        form_layout.addWidget(password_label)
+            user_data.append(current_label.text())
 
-        password_label_repeat = QLineEdit()
-        password_label_repeat.setText("Repeat Password")
-        password_label_repeat.setEchoMode(QLineEdit.Password)
-        password_label_repeat.setProperty("class", "usernamelabel")
-        form_layout.addWidget(password_label_repeat)
-        
+            form_layout.addWidget(current_label)
 
         """BUTTONS LAYOUT"""
         buttons_layout = QHBoxLayout()
 
-        register_button = QPushButton()
-        register_button.setGeometry(50, 50, 200, 50)
-        register_button.setProperty("class", "buttons")
-        register_button.clicked.connect(lambda : create_new_account())
-        register_button.setText('Register')
-        register_button.setFont(QFont("Arial", 12))
+        buttons_layout_texts = deque(["Register", "Back"])
 
-        back_button = QPushButton()
-        back_button.clicked.connect(lambda: open_login())
-        back_button.setText('Back')
-        back_button.setFont(QFont("Arial", 12))
-        back_button.setProperty("class", "buttons")
+        for i in range(2):
+            current_label = QPushButton(buttons_layout_texts.popleft())
+            current_label.setFont(font)
 
-        buttons_layout.addWidget(register_button)
-        buttons_layout.addWidget(back_button)
+            if i == 0:
+                current_label.setProperty("class", "login_register_button")
+                current_label.clicked.connect((lambda: create_new_account()))
+            else:
+                current_label.setProperty("class", "back_button")
+                current_label.clicked.connect(lambda: open_login())
+
+            buttons_layout.addWidget(current_label)
 
         """INIT THE MAIN LAYOUT """
         main_layout = QVBoxLayout()
@@ -142,27 +130,31 @@ class Register(QWidget):
                 user_id = [str(random.randint(0, 9)) for x in range(10)]
                 user_id = ''.join(user_id)
                 postgres_conn.admin_client()
-                postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
+                postgres_conn.POSTGRES_CURSOR.execute(
+                    f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
                 current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()
                 if user_id not in current_ids:
                     break
-            
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT username FROM customers WHERE username = '{user_name_label.text()}'")
+
+            postgres_conn.POSTGRES_CURSOR.execute(
+                f"SELECT username FROM customers WHERE username = '{user_name_label.text()}'")
             if postgres_conn.POSTGRES_CURSOR.fetchall():
                 create_account_errors.append('Username already exists')
-            
+
             email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
             if not re.match(email_pattern, email_address_label.text()):
                 create_account_errors.append('Incorect email address')
 
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT email_address FROM customers WHERE email_address = '{email_address_label.text()}'")
+            postgres_conn.POSTGRES_CURSOR.execute(
+                f"SELECT email_address FROM customers WHERE email_address = '{email_address_label.text()}'")
             if postgres_conn.POSTGRES_CURSOR.fetchall():
                 create_account_errors.append('Email address already existing')
 
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT phone FROM customers WHERE phone = '{phone_number_label.text()}'")
+            postgres_conn.POSTGRES_CURSOR.execute(
+                f"SELECT phone FROM customers WHERE phone = '{phone_number_label.text()}'")
             if postgres_conn.POSTGRES_CURSOR.fetchall():
                 create_account_errors.append('Phone number already exists')
-                
+
             if password_label.text() != password_label_repeat.text():
                 create_account_errors.append('Password fields does not match.')
             if len(password_label.text()) < 8:
@@ -173,13 +165,13 @@ class Register(QWidget):
                 create_account_errors.append("Password must contain at least one uppercase letter.")
             if not re.search(re.compile('[0-9]'), password_label.text()):
                 create_account_errors.append("Password must contain at least one number.")
-            
+
             if len(create_account_errors) == 0:
-                    """Create new record inside customers table"""
-                    postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO customers (customer_id, username, first_name, last_name, email_address, phone) \
+                """Create new record inside customers table"""
+                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO customers (customer_id, username, first_name, last_name, email_address, phone) \
                                                           VALUES ({user_id}, '{user_name_label.text().lower()}', '{first_name_label.text()}', '{last_name_label.text()}',\
                                                               '{email_address_label.text()}', '{phone_number_label.text()}')")
-                    register_user.create_user(user_name_label.text(), password_label.text())
+                register_user.create_user(user_name_label.text(), password_label.text())
             else:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
@@ -188,11 +180,12 @@ class Register(QWidget):
                 error_msg_box.setWindowTitle("Error during creating new account")
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
-                
+
         def open_login():
             login.start_window()
             register_window.hide()
-                    
+
+
 def start_window():
     global register_window
     register_window = Register()
