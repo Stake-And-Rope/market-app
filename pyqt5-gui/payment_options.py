@@ -32,38 +32,43 @@ def open_payment_options():
     
     
     # change the query to dinamyc in production
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT payment_name, payment_type, card_number, card_holder, ccv, expire_date FROM payment_options WHERE username = 'pesho'")
-    result = postgres_conn.POSTGRES_CURSOR.fetchone()
-    text_labels = deque(['Payment Name', 'Payment Type', 'Card Number', 'Card Holder', 'CCV Code', 'Expire Date'])
-    text_labels_len = len(text_labels)
+    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM payment_options WHERE username = 'pesho'")
+    result = postgres_conn.POSTGRES_CURSOR.fetchall()
+    len_result = len(result)
 
     global payment_options_groupbox
     payment_options_groupbox = QGroupBox("Payment Options")
+    payment_options_groupbox.setAlignment(Qt.AlignLeft)
 
-    payment_options_layout = QVBoxLayout()
-    payment_options_layout.addStretch()
-    payment_options_layout.addSpacing(5)
-    for i in range(text_labels_len):
-        inner_horizontal_layout = QHBoxLayout()
-        inner_horizontal_layout.addStretch()
-        inner_horizontal_layout.addSpacing(0)
 
-        current_text_label = QLabel()
-        current_text_label.setText(text_labels.popleft())
-        current_text_label.setFont(QFont(fonts[0], 12))
-        current_text_label.setAlignment(Qt.AlignLeft)
-
-        current_info_label = QLineEdit()
-        current_info_label.setText(str(result[i]))
-        current_info_label.setFont(QFont(fonts[0], 12))
-        current_info_label.setMaximumWidth(250)
-
-        inner_horizontal_layout.addWidget(current_text_label)
-        inner_horizontal_layout.addWidget(current_info_label)
-
-        payment_options_layout.addLayout(inner_horizontal_layout)
-
-    payment_options_groupbox.setLayout(payment_options_layout)
+    main_payment_layout = QHBoxLayout()
+    main_payment_layout.addStretch()
+    main_payment_layout.addSpacing(10)
+    main_payment_layout.setAlignment(Qt.AlignCenter)
+    
+    for i in result:
+        current_payment_option = QVBoxLayout()
+        current_payment_option.setAlignment(Qt.AlignRight)
+        text_labels = deque(['Payment Code', 'Payment Name', 'Payment Type', 'Card Number', 'Card Holder', 'CCV', 'Expire Date', 'Default', 'Username'])
+        for j in range(len(i)):
+            current_line = QHBoxLayout()
+            current_line.addStretch()
+            current_line.addSpacing(2)
+            left_side = QLabel(text_labels.popleft() + ": ")
+            left_side.setFont(QFont(fonts[0], 12))
+            left_side.setAlignment(Qt.AlignCenter)
+            
+            right_side = QLabel(str(i[j]))
+            right_side.setAlignment(Qt.AlignCenter)
+            
+            current_line.addWidget(left_side)
+            current_line.addWidget(right_side)
+            
+            current_payment_option.addLayout(current_line)
+        main_payment_layout.addLayout(current_payment_option)
+            
+    payment_options_groupbox.setLayout(main_payment_layout)
+    
 
     return payment_options_groupbox
 

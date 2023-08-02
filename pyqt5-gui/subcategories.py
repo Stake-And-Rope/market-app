@@ -95,6 +95,8 @@ def open_subcategory(subcatname):
         subcategory_button.setText(subcategory_name.text())
         subcategory_button.setFont(QFont(fonts[0], 11))
         subcategory_button.setMaximumWidth(150)
+        subcategory_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+
         subcategory_button.clicked.connect(subcats_func(subcategory_name.text()))
 
 

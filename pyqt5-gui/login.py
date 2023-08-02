@@ -1,28 +1,30 @@
 #!/usr/bin/python3
 import sys
+from collections import deque
+
 sys.path.append(r'..')
 from PyQt5.QtWidgets import (
-                            QVBoxLayout,
-                            QHBoxLayout,
-                            QPushButton,
-                            QLabel,
-                            QWidget,
-                            QLineEdit,
-                            QMessageBox,
-                            QApplication
-                            )
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QLabel,
+    QWidget,
+    QLineEdit,
+    QMessageBox,
+    QApplication
+)
 
 from PyQt5.QtGui import (
-                        QIcon,
-                        QFontDatabase,
-                        QFont
-                        )
+    QIcon,
+    QFontDatabase,
+    QFont
+)
 
 from PyQt5.QtCore import Qt
+from pathlib import Path
 from db_handle import postgres_conn
 import register
 import main_menu
-
 
 
 class LogIn(QWidget):
@@ -42,25 +44,28 @@ class LogIn(QWidget):
             print("Error loading fonts!")
 
         """INIT THE TITLE LAYOUT"""
+
+        user_data = []
+
         title_layout = QVBoxLayout()
-        
+
         title_label = QLabel()
         title_label.setText("Log In")
-        title_label.setFont(QFont(fonts[0], 23))
+        title_label.setFont(QFont("Arial", 23))
         title_label.setAlignment(Qt.AlignCenter)
-        
+
         new_user_label = QLabel()
         new_user_label.setText("New user?")
-        new_user_label.setFont(QFont(fonts[0], 9))
+        new_user_label.setFont(QFont("Arial", 9))
         new_user_label.setAlignment(Qt.AlignCenter)
         new_user_label.setStyleSheet("color: #003366")
-        
+
         create_an_account_button = QPushButton()
-        create_an_account_button.clicked.connect(lambda : open_register())
+        create_an_account_button.clicked.connect(lambda: open_register())
         create_an_account_button.setText("Create an account")
-        create_an_account_button.setFont(QFont(fonts[0], 9))
+        create_an_account_button.setFont(QFont("Arial", 9))
         create_an_account_button.setFlat(True)
-        
+
         title_layout.addWidget(title_label)
         title_layout.addWidget(new_user_label)
         title_layout.addWidget(create_an_account_button)
@@ -68,32 +73,25 @@ class LogIn(QWidget):
         """INIT THE FIRST CENTERED VERTICAL LAYOUT"""
         first_center_vertical_layout = QVBoxLayout()
 
-        username_label = QLabel()
-        username_label.setText("Username")
-        username_label.setFont(QFont(fonts[0], 12))
+        user_texts = deque(["Username", "Password"])
 
-        username_textbox = QLineEdit()
-        username_textbox.setFont(QFont(fonts[0], 11))
+        for i in range(2):
+            current_label = QLineEdit()
+            current_label.setPlaceholderText(user_texts.popleft())
+            current_label.setFont(QFont("Arial", 9))
+            current_label.setProperty("class", "username_label")
 
-        password_label = QLabel()
-        password_label.setText("Password")
-        password_label.setFont(QFont(fonts[0], 12))
+            if i == 1:
+                current_label.setEchoMode(QLineEdit.Password)
 
-        password_textbox = QLineEdit()
-        password_textbox.setFont(QFont(fonts[0], 11))
-        password_textbox.setEchoMode(QLineEdit.Password)
-        
-        log_in_button = QPushButton()
-        log_in_button.clicked.connect(lambda : login())
-        log_in_button.setText("Log in")
-        log_in_button.setFont(QFont(fonts[0], 11))
-        log_in_button.setStyleSheet("background-color : lightBlue")
+            user_data.append(current_label.text())
+            first_center_vertical_layout.addWidget(current_label)
+
+        log_in_button = QPushButton("Log in")
+        log_in_button.clicked.connect(lambda: login())
+        log_in_button.setProperty("class", "login_register_button")
 
         """ADD LABEL TO THE CENTERED VERTICAL LAYOUT"""
-        first_center_vertical_layout.addWidget(username_label)
-        first_center_vertical_layout.addWidget(username_textbox)
-        first_center_vertical_layout.addWidget(password_label)
-        first_center_vertical_layout.addWidget(password_textbox)
         first_center_vertical_layout.addWidget(log_in_button)
 
         """INIT THE MAIN LAYOUT"""
@@ -102,9 +100,10 @@ class LogIn(QWidget):
         main_layout.addLayout(first_center_vertical_layout)
         self.setLayout(main_layout)
         self.show()
-        
+
         def login():
             try:
+                postgres_conn.customer_client(username_label.text(), password_label.text())
                 postgres_conn.customer_client(username_textbox.text(), password_textbox.text())
                 open_main_menu()
             except (Exception) as error:
@@ -114,29 +113,28 @@ class LogIn(QWidget):
                 error_msg_box.setWindowTitle("LoigIn unsuccessfull")
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
-        
+
         def open_register():
             register.start_window()
             login_window.hide()
-            
+
         def open_main_menu():
             main_menu.start_window()
             login_window.hide()
-            
+
+
 def init_app():
     app = QApplication(sys.argv)
+    app.setStyleSheet(Path('styles.qss').read_text())
     global login_window
     login_window = LogIn()
     login_window.show()
     app.exec()
 
+
 def start_window():
     global login_window
     login_window = LogIn()
     login_window.show()
-
-
-
-    
 
 # init_app()

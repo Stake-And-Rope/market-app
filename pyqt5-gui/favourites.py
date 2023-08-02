@@ -36,6 +36,9 @@ def favourites_menu():
     favorites_widget = QWidget()
     products_grid_layout = QVBoxLayout()
 
+    def redirect_to_delete_postgres_func(c_product_name):
+        return lambda: delete_from_favourite_products(c_product_name)
+
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
     if font < 0:
@@ -90,6 +93,7 @@ def favourites_menu():
                 current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
                 current_favorites_button.setIconSize(QSize(30, 30))
                 current_favorites_button.setFont(QFont(fonts[0], 12))
+                current_favorites_button.clicked.connect(redirect_to_delete_postgres_func(product_name))
 
                 current_basket_button = QPushButton()
                 current_basket_button.setFixedWidth(35)
@@ -115,6 +119,11 @@ def favourites_menu():
         products_grid_layout.addLayout(horizontal_products_layout)
         
         favorites_widget.setLayout(products_grid_layout)
+
+    def delete_from_favourite_products(curr_product_name):
+        postgres_conn.POSTGRES_CURSOR.execute(f"delete from favourite_products where product_name = '{curr_product_name}';")
+        postgres_conn.POSTGRES_CONNECTION.commit()
+        print('Deleted')
         
     favorites_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
     favorites_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
