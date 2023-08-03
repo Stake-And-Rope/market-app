@@ -33,6 +33,7 @@ def open_edit_account():
     
     global user_data
     user_data = []
+    current_user = postgres_conn.POSTGRES_CURSOR("SELECT current_user")
     # Change to dynamic query in implementation
     postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
     result = postgres_conn.POSTGRES_CURSOR.fetchone()

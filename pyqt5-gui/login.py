@@ -1,11 +1,8 @@
 #!/usr/bin/python3
-import sys
-from collections import deque
 
-sys.path.append(r'..')
+"""IMPORT QT FRAMEWORK"""
 from PyQt5.QtWidgets import (
     QVBoxLayout,
-    QHBoxLayout,
     QPushButton,
     QLabel,
     QWidget,
@@ -19,13 +16,21 @@ from PyQt5.QtGui import (
     QFontDatabase,
     QFont
 )
-
 from PyQt5.QtCore import Qt
 from pathlib import Path
-from db_handle import postgres_conn
-import register
-import main_menu
+from collections import deque
 
+"""DIRECTORY IMPORTS"""
+import sys
+sys.path.append(r'..')
+from db_handle import postgres_conn
+import register, main_menu
+
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+
+# admin_database = postgres_conn.admin_client
 
 class LogIn(QWidget):
     def __init__(self):
@@ -44,11 +49,7 @@ class LogIn(QWidget):
             print("Error loading fonts!")
 
         """INIT THE TITLE LAYOUT"""
-
-        user_data = []
-
         title_layout = QVBoxLayout()
-
         title_label = QLabel()
         title_label.setText("Log In")
         title_label.setFont(QFont("Arial", 23))
@@ -72,20 +73,19 @@ class LogIn(QWidget):
 
         """INIT THE FIRST CENTERED VERTICAL LAYOUT"""
         first_center_vertical_layout = QVBoxLayout()
-
         user_texts = deque(["Username", "Password"])
 
+        user_data = []
         for i in range(2):
             current_label = QLineEdit()
             current_label.setPlaceholderText(user_texts.popleft())
             current_label.setFont(QFont("Arial", 9))
             current_label.setProperty("class", "username_label")
-
             if i == 1:
                 current_label.setEchoMode(QLineEdit.Password)
-
-            user_data.append(current_label.text())
+            user_data.append(current_label)
             first_center_vertical_layout.addWidget(current_label)
+        print(user_data[0].text(), user_data[1].text())
 
         log_in_button = QPushButton("Log in")
         log_in_button.clicked.connect(lambda: login())
@@ -103,9 +103,11 @@ class LogIn(QWidget):
 
         def login():
             try:
-                postgres_conn.customer_client(username_label.text(), password_label.text())
-                postgres_conn.customer_client(username_textbox.text(), password_textbox.text())
-                open_main_menu()
+                postgres_conn.user_client(user_data[0].text(), user_data[1].text())
+                global user_cursos, user_connection
+                user_cursor = postgres_conn.USER_POSTGRES_CURSOR
+                user_connection = postgres_conn.USER_POSTGRES_CONNECTION
+                # open_main_menu()
             except (Exception) as error:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
@@ -114,15 +116,17 @@ class LogIn(QWidget):
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
 
+        """OPENS THE REGISTER MENU"""
         def open_register():
             register.start_window()
             login_window.hide()
 
+        """OPENS THE MAIN MENU WINDOW"""
         def open_main_menu():
             main_menu.start_window()
             login_window.hide()
 
-
+"""INIT THE MAIN APP - THIS FUNCTION IS USED IN MAIN TO OPEN THE LOGIN"""
 def init_app():
     app = QApplication(sys.argv)
     app.setStyleSheet(Path('styles.qss').read_text())
@@ -131,10 +135,8 @@ def init_app():
     login_window.show()
     app.exec()
 
-
+"""OPENS THE LOGIN MENU - USED TO GO BACK FROM REGISTER OR WHEN USER IS LOGGING OUT"""
 def start_window():
     global login_window
     login_window = LogIn()
     login_window.show()
-
-# init_app()

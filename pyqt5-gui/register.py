@@ -1,32 +1,28 @@
 #!/usr/bin/python3
-import sys
-
-sys.path.append(r'..')
 
 # Import PyQt5 Engine 
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (QWidget,
                              QPushButton,
                              QLabel,
                              QLineEdit,
                              QMessageBox,
-                             QPlainTextEdit,
                              QHBoxLayout,
-                             QVBoxLayout,
-                             QGraphicsDropShadowEffect)
+                             QVBoxLayout)
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from db_handle import postgres_conn, register_user
+
+import sys
+sys.path.append(r'..')
+from db_handle import postgres_conn
 import login
 import random, re
 from collections import deque
 
-"""Create the QWidget class and initiate the objects inside"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
 
 """CREATE THE QWIDGET CLASS AND INIT THE OBJECTS"""
-
-
 class Register(QWidget):
     def __init__(self):
         super().__init__()
@@ -97,20 +93,16 @@ class Register(QWidget):
 
         """BUTTONS LAYOUT"""
         buttons_layout = QHBoxLayout()
-
         buttons_layout_texts = deque(["Register", "Back"])
-
         for i in range(2):
             current_label = QPushButton(buttons_layout_texts.popleft())
             current_label.setFont(font)
-
             if i == 0:
                 current_label.setProperty("class", "login_register_button")
                 current_label.clicked.connect((lambda: create_new_account()))
             else:
                 current_label.setProperty("class", "back_button")
                 current_label.clicked.connect(lambda: open_login())
-
             buttons_layout.addWidget(current_label)
 
         """INIT THE MAIN LAYOUT """
@@ -129,7 +121,7 @@ class Register(QWidget):
             while True:
                 user_id = [str(random.randint(0, 9)) for x in range(10)]
                 user_id = ''.join(user_id)
-                postgres_conn.admin_client()
+                # postgres_conn.admin_client()
                 postgres_conn.POSTGRES_CURSOR.execute(
                     f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
                 current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()

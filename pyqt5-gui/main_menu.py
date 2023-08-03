@@ -32,7 +32,7 @@ subcategory_name = ''
 layouts_list = []
 
 """INIT CONNECTION TO THE DATABASE"""
-postgres_conn.admin_client()
+# postgres_conn.admin_client()
 
 class MainMenu(QWidget):
     def __init__(self):

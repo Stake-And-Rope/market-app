@@ -2,7 +2,7 @@ import sys
 sys.path.append(r'.')
 from db_handle import postgres_conn
 
-postgres_conn.admin_client()
+# postgres_conn.admin_client()
 
 """Create new user in pg_user table and grant him customers_marketapp role with privileges to read and update tables on the database(only public schemas)."""
 def create_user(username, passwd):
