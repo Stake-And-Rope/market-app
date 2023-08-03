@@ -29,9 +29,6 @@ import register, main_menu
 admin_cursor = postgres_conn.POSTGRES_CURSOR
 admin_connection = postgres_conn.POSTGRES_CONNECTION
 
-
-# admin_database = postgres_conn.admin_client
-
 class LogIn(QWidget):
     def __init__(self):
         super().__init__()
@@ -41,7 +38,7 @@ class LogIn(QWidget):
         self.setMaximumWidth(400)
         self.setMaximumHeight(150)
 
-        """Add custom font to array, ready to be loaded to any text object"""
+        """ADD CUSTOM FONTS"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font >= 0:
             fonts = QFontDatabase.applicationFontFamilies(font)
