@@ -57,11 +57,9 @@ class Register(QWidget):
         main_horizontal_layout.addSpacing(2)
 
         font = QFont("Arial", 12)
-        user_data = []
 
-        """Init the labels, containing textboxes in them"""
+        """INIT THE LABELS FOR THE TEXTBOXES"""
         form_layout = QVBoxLayout()
-
         name_layout = QHBoxLayout()
         name_layout_texts = deque(["First name", "Last name"])
         for i in range(2):
@@ -69,26 +67,20 @@ class Register(QWidget):
             current_label.setPlaceholderText(name_layout_texts.popleft())
             current_label.setFont(font)
             current_label.setProperty("class", "username_label")
-
             user_data.append(current_label.text())
-
             name_layout.addWidget(current_label)
-
         form_layout.addLayout(name_layout)
 
         other_important_texts = deque(["Username", "Phone Number", "Email Address", "Password", "Repeat Password"])
-
+        user_data = []
         for i in range(5):
             current_label = QLineEdit()
             current_label.setPlaceholderText(other_important_texts.popleft())
             current_label.setFont(font)
             current_label.setProperty("class", "username_label")
-
             if i >= 3:
                 current_label.setEchoMode(QLineEdit.Password)
-
             user_data.append(current_label.text())
-
             form_layout.addWidget(current_label)
 
         """BUTTONS LAYOUT"""
@@ -115,22 +107,17 @@ class Register(QWidget):
         self.show()
 
         def create_new_account():
-            # Insert code here
-            """This function should verify the user data and execute series of queries to create the new user inside the DB"""
             create_account_errors = []
             while True:
                 user_id = [str(random.randint(0, 9)) for x in range(10)]
                 user_id = ''.join(user_id)
-                # postgres_conn.admin_client()
-                postgres_conn.POSTGRES_CURSOR.execute(
-                    f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
-                current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()
-                if user_id not in current_ids:
+                admin_cursor.execute(f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
+                existing_ids = admin_cursor.fetchall()
+                if user_id not in existing_ids:
                     break
 
-            postgres_conn.POSTGRES_CURSOR.execute(
-                f"SELECT username FROM customers WHERE username = '{user_name_label.text()}'")
-            if postgres_conn.POSTGRES_CURSOR.fetchall():
+            admin_cursor.execute(f"SELECT username FROM customers WHERE username = '{user_name_label.text()}'")
+            if admin_cursor.POSTGRES_CURSOR.fetchall():
                 create_account_errors.append('Username already exists')
 
             email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
@@ -183,4 +170,3 @@ def start_window():
     register_window = Register()
     register_window.show()
 
-# init_app()
