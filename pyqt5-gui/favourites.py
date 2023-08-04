@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (QApplication,
                              QHBoxLayout,
                              QVBoxLayout,
                              QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
+                             QGraphicsOpacityEffect, QSpinBox,
                              )
 
 from PyQt5.QtGui import *
@@ -50,10 +50,12 @@ def favourites_menu():
     """INNER JOIN QUERY THAT WILL GIVE US EVERY PRODUCT'S DATA"""
     postgres_conn.POSTGRES_CURSOR.execute(f"select products.product_id, favourite_products.username, "
                                           f"products.product_name, products.single_price, products.quantity, "
-                                          f"products.product_description, products.subcategory"
-                                          f" from products inner join favourite_products on "
+                                          f"products.product_description, products.subcategory, "
+                                          f"favourite_products.quantity_wanted "
+                                          f"from products inner join favourite_products on "
                                           f"favourite_products.product_id=products.product_id "
                                           f"where favourite_products.username = 'pesho';")
+
     result = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
     print(result)
 
@@ -63,7 +65,7 @@ def favourites_menu():
         for col in range(3):
             if result:
                 current_product = result.popleft()
-                product_id, username, product_name, price, quantity, product_description, subcategory = current_product
+                product_id, username, product_name, price, quantity, product_description, subcategory, quantity_wanted = current_product
 
                 current_vertical_layout = QVBoxLayout()
 
@@ -87,6 +89,9 @@ def favourites_menu():
                 current_buttons_layout = QHBoxLayout()
                 current_buttons_layout.setAlignment(Qt.AlignLeft)
 
+                current_spin_box = QSpinBox()
+                current_spin_box.setValue(int(quantity_wanted))
+
                 current_favorites_button = QPushButton()
                 current_favorites_button.setFixedWidth(35)
                 current_favorites_button.setFixedHeight(35)
@@ -104,6 +109,7 @@ def favourites_menu():
 
                 current_buttons_layout.addWidget(current_favorites_button)
                 current_buttons_layout.addWidget(current_basket_button)
+                current_buttons_layout.addWidget(current_spin_box)
 
                 current_vertical_layout.insertWidget(0, product_image)
                 current_vertical_layout.addWidget(current_title)

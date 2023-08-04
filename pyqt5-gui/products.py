@@ -145,7 +145,7 @@ def products_menu(subcategory_name):
 
             else:
                 postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
-                                                      f"('pesho', '{curr_id}', '{curr_product_name}')")
+                                                      f"('pesho', '{curr_id}', '{curr_product_name}', '{curr_spin_box.value()}')")
                 postgres_conn.POSTGRES_CONNECTION.commit()
                 print("Done")  # this line is only to check if the function is executing
 
