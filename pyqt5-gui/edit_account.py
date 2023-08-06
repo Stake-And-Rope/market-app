@@ -24,7 +24,6 @@ def open_edit_account():
     login.user_cursor.execute("SELECT current_user")
     current_user = login.user_cursor.fetchone()
     current_user = current_user[0].replace("_marketapp", "")
-    print(f"The currently logged-in user is: {current_user}")
     
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')

@@ -30,10 +30,6 @@ import about, subcategories, edit_account, payment_options, products, favourites
 admin_cursor = postgres_conn.POSTGRES_CURSOR
 admin_connection = postgres_conn.POSTGRES_CONNECTION
 
-"""USER CLIENT TO THE POSTGRE DATABASE"""
-user_cursor = postgres_conn.USER_POSTGRES_CURSOR
-user_connection = postgres_conn.USER_POSTGRES_CONNECTION
-
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
 subcategory_name = ''
@@ -51,6 +47,9 @@ class MainMenu(QWidget):
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
 
+        login.user_cursor.execute("SELECT current_user")
+        current_user = login.user_cursor.fetchone()
+        current_user = current_user[0].replace("_marketapp", "")
 
     
         """OPEN THE PROPER SUBCATEGORY"""
@@ -89,10 +88,8 @@ class MainMenu(QWidget):
 
         """CREATE THE USER INFO VERTICAL LAYOUT"""
         user_info_groupbox = QGroupBox('User Information')
-        admin_cursor.execute("SELECT current_user;")
-        current_user = admin_cursor.fetchone()
         # The query below should be modified once we implement the main_menu window with rest of the application. WHERE username = {current_user}
-        admin_cursor.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = 'pesho'")
+        admin_cursor.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = '{current_user}'")
         user_info = admin_cursor.fetchone()
 
         user_name = QLabel(f"Hello, {user_info[1]} {user_info[2]}")
