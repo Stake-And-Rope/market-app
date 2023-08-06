@@ -30,14 +30,10 @@ sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
 
-
-def favourites_menu():
-    favorites_scroll = QScrollArea()
-    favorites_widget = QWidget()
-    products_grid_layout = QVBoxLayout()
-
-    def redirect_to_delete_postgres_func(c_product_name):
-        return lambda: delete_from_favourite_products(c_product_name)
+def basket_menu():
+    basket_menu_scroll = QScrollArea()
+    basket_widget = QWidget()
+    basket_menu_h_layout = QVBoxLayout()  # Vertical Layout
 
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -47,40 +43,39 @@ def favourites_menu():
 
     postgres_conn.admin_client()
 
-    """INNER JOIN QUERY THAT WILL GIVE US EVERY PRODUCT'S DATA"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"select products.product_id, favourite_products.username, "
-                                          f"products.product_name, products.single_price, products.quantity, "
-                                          f"products.product_description, products.subcategory, "
-                                          f"favourite_products.quantity_wanted "
-                                          f"from products inner join favourite_products on "
-                                          f"favourite_products.product_id=products.product_id "
-                                          f"where favourite_products.username = 'pesho';")
+    """INNER JOIN QUERY THAT WILL GIVE US THE PRODUCTS' DESCRIPTIONS AND SUBCATEGORIES"""
+    postgres_conn.POSTGRES_CURSOR.execute(f"select products.product_description, products.subcategory from products "
+                                          f"inner join basket on basket.product_id=products.product_id "
+                                          f"where basket.username = 'pesho';")
+    products_descriptions_and_subcats = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
 
+    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM basket;")
     result = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
-    print(result)
 
-    res_len = math.ceil(len(result) / 3)
-    for row in range(res_len):
+    rows = math.ceil(len(products_descriptions_and_subcats) / 3)
+    for row in range(rows):
         horizontal_products_layout = QHBoxLayout()
-        for col in range(3):
-            if result:
-                current_product = result.popleft()
-                product_id, username, product_name, price, quantity, product_description, subcategory, quantity_wanted = current_product
 
-                current_vertical_layout = QVBoxLayout()
+        for col in range(3):
+            if products_descriptions_and_subcats and result:
+                current_product = result.popleft()
+                username, product_id, product_name, quantity, single_price, total_value_price = current_product
+                product_description, product_subcategory = products_descriptions_and_subcats.popleft()
+
+                current_vertical_layout = QVBoxLayout()  # Vertical layout for the product
 
                 product_image = QLabel()
                 product_image.setFixedSize(250, 200)
-                product_image.setPixmap(QPixmap(f"../img/products/{subcategory}/{product_name}.png"))
+                product_image.setPixmap(QPixmap(f"../img/products/{product_subcategory}/{product_name}.png"))
                 product_image.setScaledContents(True)
 
                 current_title = QLabel()
-                current_title.setText('Test Title')
+                current_title.setText("Test Title")
                 current_title.setFont(QFont(fonts[0], 12))
 
                 current_sku = QLabel()
                 current_sku.setText(product_id)
-                current_sku.setFont(QFont(fonts[0], 10))
+                current_title.setFont(QFont(fonts[0], 10))
 
                 current_description = QLabel(product_description)
                 current_description.setWordWrap(True)
@@ -90,14 +85,13 @@ def favourites_menu():
                 current_buttons_layout.setAlignment(Qt.AlignLeft)
 
                 current_spin_box = QSpinBox()
-                current_spin_box.setValue(int(quantity_wanted))
+                current_spin_box.setValue(int(quantity))
 
-                current_favorites_button = QPushButton()
-                current_favorites_button.setFixedWidth(35)
-                current_favorites_button.setFixedHeight(35)
-                current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
-                current_favorites_button.setIconSize(QSize(30, 30))
-                current_favorites_button.clicked.connect(redirect_to_delete_postgres_func(product_name))
+                current_favourites_button = QPushButton()
+                current_favourites_button.setFixedWidth(35)
+                current_favourites_button.setFixedHeight(35)
+                current_favourites_button.setIcon(QIcon(r'../img/favorite.png'))
+                current_favourites_button.setIconSize(QSize(30, 30))
 
                 current_basket_button = QPushButton()
                 current_basket_button.setFixedWidth(35)
@@ -105,7 +99,7 @@ def favourites_menu():
                 current_basket_button.setIcon(QIcon(r'../img/shoppingcart.png'))
                 current_basket_button.setIconSize(QSize(30, 30))
 
-                current_buttons_layout.addWidget(current_favorites_button)
+                current_buttons_layout.addWidget(current_favourites_button)
                 current_buttons_layout.addWidget(current_basket_button)
                 current_buttons_layout.addWidget(current_spin_box)
 
@@ -120,18 +114,12 @@ def favourites_menu():
 
                 horizontal_products_layout.addLayout(current_vertical_layout)
 
-        products_grid_layout.addLayout(horizontal_products_layout)
-        
-        favorites_widget.setLayout(products_grid_layout)
+        basket_menu_h_layout.addLayout(horizontal_products_layout)
+        basket_widget.setLayout(basket_menu_h_layout)
 
-    def delete_from_favourite_products(curr_product_name):
-        postgres_conn.POSTGRES_CURSOR.execute(f"delete from favourite_products where product_name = '{curr_product_name}';")
-        postgres_conn.POSTGRES_CONNECTION.commit()
-        print('Deleted')
-        
-    favorites_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-    favorites_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-    favorites_scroll.setWidgetResizable(True)
-    favorites_scroll.setWidget(favorites_widget)
-   
-    return favorites_scroll
+    basket_menu_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+    basket_menu_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+    basket_menu_scroll.setWidgetResizable(True)
+    basket_menu_scroll.setWidget(basket_widget)
+
+    return basket_menu_scroll
