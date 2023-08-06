@@ -1,29 +1,31 @@
 #!/usr/bin/python3
 """IMPORT PyQt5 ENGINE"""
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
-                             QPushButton,
-                             QGridLayout,
+from PyQt5.QtWidgets import (QPushButton,
                              QLabel,
-                             QFrame,
                              QGroupBox,
-                             QLineEdit,
-                             QMessageBox,
-                             QPlainTextEdit,
-                             QHBoxLayout,
-                             QVBoxLayout,
-                             QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
-                             )
-
+                             QLineEdit,                             
+                             QVBoxLayout)
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+import login
+
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+
+
 
 def open_edit_account():
+    login.user_cursor.execute("SELECT current_user")
+    current_user = login.user_cursor.fetchone()
+    current_user = current_user[0].replace("_marketapp", "")
+    print(f"The currently logged-in user is: {current_user}")
+    
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
     if font < 0:
@@ -33,10 +35,9 @@ def open_edit_account():
     
     global user_data
     user_data = []
-    current_user = postgres_conn.POSTGRES_CURSOR("SELECT current_user")
     # Change to dynamic query in implementation
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = 'pesho'")
-    result = postgres_conn.POSTGRES_CURSOR.fetchone()
+    admin_cursor.execute(f"SELECT customer_id, username, first_name, last_name, phone, email_address FROM customers WHERE username = '{current_user}'")
+    result = admin_cursor.fetchone()
 
     
     global edit_user_settings_groupbox
@@ -94,7 +95,6 @@ def open_edit_account():
 def edit_user():
     # Make this query dynamically accepting the username in production
     edit_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
-    postgres_conn.POSTGRES_CURSOR.execute(edit_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
-    postgres_conn.POSTGRES_CONNECTION.commit()
-
+    admin_cursor.execute(edit_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
+    admin_connection.commit()
 

@@ -101,7 +101,7 @@ class LogIn(QWidget):
         def login():
             try:
                 postgres_conn.user_client(user_data[0].text(), user_data[1].text())
-                global user_cursos, user_connection
+                global user_cursor, user_connection
                 user_cursor = postgres_conn.USER_POSTGRES_CURSOR
                 user_connection = postgres_conn.USER_POSTGRES_CONNECTION
                 open_main_menu()
@@ -113,15 +113,7 @@ class LogIn(QWidget):
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
 
-        """OPENS THE REGISTER MENU"""
-        def open_register():
-            register.start_window()
-            login_window.hide()
 
-        """OPENS THE MAIN MENU WINDOW"""
-        def open_main_menu():
-            main_menu.start_window()
-            login_window.hide()
 
 """INIT THE MAIN APP - THIS FUNCTION IS USED IN MAIN TO OPEN THE LOGIN"""
 def init_app():
@@ -137,3 +129,13 @@ def start_window():
     global login_window
     login_window = LogIn()
     login_window.show()
+    
+"""OPENS THE REGISTER MENU"""
+def open_register():
+    register.start_window()
+    login_window.hide()
+
+"""OPENS THE MAIN MENU WINDOW"""
+def open_main_menu():
+    main_menu.start_window()
+    login_window.hide()

@@ -24,7 +24,15 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import about, subcategories, edit_account, payment_options, products, favourites
+import about, subcategories, edit_account, payment_options, products, favourites, login
+
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+"""USER CLIENT TO THE POSTGRE DATABASE"""
+user_cursor = postgres_conn.USER_POSTGRES_CURSOR
+user_connection = postgres_conn.USER_POSTGRES_CONNECTION
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -81,11 +89,11 @@ class MainMenu(QWidget):
 
         """CREATE THE USER INFO VERTICAL LAYOUT"""
         user_info_groupbox = QGroupBox('User Information')
-        postgres_conn.POSTGRES_CURSOR.execute("SELECT current_user;")
-        current_user = postgres_conn.POSTGRES_CURSOR.fetchone()
+        admin_cursor.execute("SELECT current_user;")
+        current_user = admin_cursor.fetchone()
         # The query below should be modified once we implement the main_menu window with rest of the application. WHERE username = {current_user}
-        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = 'pesho'")
-        user_info = postgres_conn.POSTGRES_CURSOR.fetchone()
+        admin_cursor.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = 'pesho'")
+        user_info = admin_cursor.fetchone()
 
         user_name = QLabel(f"Hello, {user_info[1]} {user_info[2]}")
         user_name.setFont(QFont(fonts[0], 12))
@@ -157,8 +165,8 @@ class MainMenu(QWidget):
 
         categories_grid_layout = QGridLayout()
 
-        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description, category_function, image_url FROM categories ORDER BY category_name ASC;")
-        result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
+        admin_cursor.execute(f"SELECT category_name, category_description, category_function, image_url FROM categories ORDER BY category_name ASC;")
+        result = admin_cursor.fetchmany(12)
         categories = deque([x[0] for x in result[0:12]])
         categories_description = deque([x[1] for x in result[0:12]])
 

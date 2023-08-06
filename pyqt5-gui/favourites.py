@@ -30,6 +30,16 @@ sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
 
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+"""USER CLIENT TO THE POSTGRE DATABASE"""
+user_cursor = postgres_conn.USER_POSTGRES_CURSOR
+user_connection = postgres_conn.USER_POSTGRES_CONNECTION
+
+admin_cursor.execute("SELECT current_user")
+current_user = admin_cursor.fetchone()
 
 def favourites_menu():
     favorites_scroll = QScrollArea()
@@ -45,16 +55,14 @@ def favourites_menu():
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
 
-    postgres_conn.admin_client()
-
     """INNER JOIN QUERY THAT WILL GIVE US EVERY PRODUCT'S DATA"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"select products.product_id, favourite_products.username, "
+    admin_cursor.execute(f"select products.product_id, favourite_products.username, "
                                           f"products.product_name, products.single_price, products.quantity, "
                                           f"products.product_description, products.subcategory"
                                           f" from products inner join favourite_products on "
                                           f"favourite_products.product_id=products.product_id "
-                                          f"where favourite_products.username = 'pesho';")
-    result = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
+                                          f"where favourite_products.username = '{current_user}';")
+    result = deque(admin_cursor.fetchall())
     print(result)
 
     res_len = math.ceil(len(result) / 3)
@@ -121,8 +129,8 @@ def favourites_menu():
         favorites_widget.setLayout(products_grid_layout)
 
     def delete_from_favourite_products(curr_product_name):
-        postgres_conn.POSTGRES_CURSOR.execute(f"delete from favourite_products where product_name = '{curr_product_name}';")
-        postgres_conn.POSTGRES_CONNECTION.commit()
+        admin_cursor.execute(f"delete from favourite_products where product_name = '{curr_product_name}' and username = '{current_user}';")
+        admin_connection.commit()
         print('Deleted')
         
     favorites_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
