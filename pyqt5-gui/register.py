@@ -151,6 +151,13 @@ class Register(QWidget):
                                                           VALUES ({user_id}, '{user_data_two[0].text().lower()}', '{user_data_one[0].text()}', '{user_data_one[1].text()}',\
                                                               '{user_data_two[2].text()}', '{user_data_two[1].text()}')")
                 register_user.create_user(user_data_two[0].text(), user_data_two[3].text())
+                registration_confirm_msg_box = QMessageBox()
+                registration_confirm_msg_box.setIcon(QMessageBox.Warning)
+                registration_message = 'Congratulations! Your account has been created successfully!'
+                registration_confirm_msg_box.setText(registration_message)
+                registration_confirm_msg_box.setWindowTitle("Account created successfully!")
+                registration_confirm_msg_box.setStandardButtons(QMessageBox.Ok)
+                registration_confirm_msg_box.exec()
             else:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
