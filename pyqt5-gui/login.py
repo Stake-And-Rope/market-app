@@ -104,12 +104,12 @@ class LogIn(QWidget):
                 global user_cursos, user_connection
                 user_cursor = postgres_conn.USER_POSTGRES_CURSOR
                 user_connection = postgres_conn.USER_POSTGRES_CONNECTION
-                # open_main_menu()
+                open_main_menu()
             except (Exception) as error:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
                 error_msg_box.setText("Wrong username and/or password!")
-                error_msg_box.setWindowTitle("LoigIn unsuccessfull")
+                error_msg_box.setWindowTitle("LogIn unsuccessfull")
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
 
