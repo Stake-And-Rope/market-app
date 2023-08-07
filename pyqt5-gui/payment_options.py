@@ -38,7 +38,6 @@ def open_payment_options():
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
     
-    
     # change the query to dinamyc in production
     admin_cursor.execute(f"SELECT * FROM payment_options WHERE username = 'pesho'")
     result = admin_cursor.fetchall()

@@ -35,9 +35,6 @@ global subcategory_name
 subcategory_name = ''
 layouts_list = []
 
-"""INIT CONNECTION TO THE DATABASE"""
-# postgres_conn.admin_client()
-
 class MainMenu(QWidget):
     def __init__(self):
         super().__init__()
@@ -47,6 +44,7 @@ class MainMenu(QWidget):
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
 
+        """USER CLIENT TO THE POSTGRE DATABASE"""
         login.user_cursor.execute("SELECT current_user")
         current_user = login.user_cursor.fetchone()
         current_user = current_user[0].replace("_marketapp", "")
@@ -88,7 +86,6 @@ class MainMenu(QWidget):
 
         """CREATE THE USER INFO VERTICAL LAYOUT"""
         user_info_groupbox = QGroupBox('User Information')
-        # The query below should be modified once we implement the main_menu window with rest of the application. WHERE username = {current_user}
         admin_cursor.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = '{current_user}'")
         user_info = admin_cursor.fetchone()
 
@@ -226,6 +223,7 @@ class MainMenu(QWidget):
 
         
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
+        global open_update_account
         def open_update_account():
             global edit_account_layout
             global layouts_list
@@ -289,8 +287,6 @@ class MainMenu(QWidget):
             layouts_list.append(favourites_layout)
             categories_groupbox.hide()
             main_layout.addWidget(favourites_layout, 1, 1)
-        
-        
         
         """BRING BACK THE CATEGORIES"""
         def open_categories():

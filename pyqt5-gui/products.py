@@ -28,15 +28,25 @@ sys.path.append(r'..')
 
 from collections import deque
 from db_handle import postgres_conn
+import login
+
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
 
 
 def products_menu(subcategory_name):
     global products_groupbox
-
+    
     """THIS FUNCTION WILL REDIRECT THE CURRENT PROD ID AND PROD NAME TO THE INSERT TO THE POSTGRE DB FUNCTION"""
-
     def redirect_to_insert_to_postgre_func(prod_id, prod_name, spin_box):
         return lambda: insert_into_favourite_products(prod_id, prod_name, spin_box)
+
+    """USER CLIENT TO THE POSTGRE DATABASE"""
+    login.user_cursor.execute("SELECT current_user")
+    current_user = login.user_cursor.fetchone()
+    current_user = current_user[0].replace("_marketapp", "")
+    
 
     products_groupbox = QGroupBox("Products")
     products_grid_layout = QGridLayout()
@@ -47,12 +57,9 @@ def products_menu(subcategory_name):
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
 
-    postgres_conn.admin_client()
+    admin_cursor.execute(f"SELECT product_name, product_description, product_id FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
 
-    postgres_conn.POSTGRES_CURSOR.execute(
-        f"SELECT product_name, product_description, product_id FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
-
-    result = postgres_conn.POSTGRES_CURSOR.fetchall()
+    result = admin_cursor.fetchall()
     products_names = deque([p[0] for p in result])
     products_descriptions = deque(p[1] for p in result)
     products_ids = deque(p[2] for p in result)
@@ -96,8 +103,7 @@ def products_menu(subcategory_name):
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
         current_favorites_button.setIconSize(QSize(30, 30))
         current_favorites_button.setFont(QFont(fonts[0], 12))
-        current_favorites_button.clicked.connect(
-            redirect_to_insert_to_postgre_func(product_id, product_name, current_spin_box))
+        current_favorites_button.clicked.connect(redirect_to_insert_to_postgre_func(product_id, product_name, current_spin_box))
 
         current_basket_button = QPushButton()
         current_basket_button.setFixedWidth(35)
@@ -124,29 +130,22 @@ def products_menu(subcategory_name):
         products_groupbox.setLayout(products_grid_layout)
 
         def insert_into_favourite_products(curr_id, curr_product_name, curr_spin_box):
-
-            postgres_conn.POSTGRES_CURSOR.execute("SELECT current_user;")
-            current_user = postgres_conn.POSTGRES_CURSOR.fetchone()[0]
-
-            postgres_conn.POSTGRES_CURSOR.execute(
-                f"SELECT * FROM favourite_products WHERE product_id = '{curr_id}' AND username = 'pesho'")
-            result = postgres_conn.POSTGRES_CURSOR.fetchall()
+            admin_cursor.execute(f"SELECT * FROM favourite_products WHERE product_id = '{curr_id}' AND username = '{current_user}'")
+            result = admin_cursor.fetchall()
 
             """HERE WE SELECT THE AVAILABLE QUANTITY OF THE PRODUCT AND SEE IF WE CAN ADD IT TO FAVOURITES"""
-            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT quantity FROM products WHERE product_id='{curr_id}';")
-            available_quantity = postgres_conn.POSTGRES_CURSOR.fetchone()
+            admin_cursor.execute(f"SELECT quantity FROM products WHERE product_id='{curr_id}';")
+            available_quantity = admin_cursor.fetchone()
 
             if result:
                 error_message_box("Product already exists in favorites.")
-
             elif int(str(curr_spin_box.value())) > int(available_quantity[0]):
                 error_message_box("You have exceeded the available quantity of this product. "
                                   "Please choose a smaller quantity!")
-
             else:
-                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
-                                                      f"('pesho', '{curr_id}', '{curr_product_name}')")
-                postgres_conn.POSTGRES_CONNECTION.commit()
+                admin_cursor.execute(f"INSERT INTO favourite_products VALUES "
+                                                      f"('{current_user}', '{curr_id}', '{curr_product_name}')")
+                admin_connection.commit()
                 print("Done")  # this line is only to check if the function is executing
 
         def error_message_box(message):

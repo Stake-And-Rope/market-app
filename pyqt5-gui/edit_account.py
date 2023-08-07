@@ -11,17 +11,16 @@ import sys
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import login
+import login, main_menu
 
 """ADMIN CLIENT TO THE POSTGRE DATABASE"""
 admin_cursor = postgres_conn.POSTGRES_CURSOR
 admin_connection = postgres_conn.POSTGRES_CONNECTION
 
 
-
-
 def open_edit_account():
     login.user_cursor.execute("SELECT current_user")
+    global current_user
     current_user = login.user_cursor.fetchone()
     current_user = current_user[0].replace("_marketapp", "")
     
@@ -66,7 +65,6 @@ def open_edit_account():
         edit_user_settings_layout.addWidget(current_text_label)
         edit_user_settings_layout.addWidget(current_line_edit)
 
-
     edit_user_settings_layout.addStretch()
     edit_user_settings_layout.addSpacing(20)
 
@@ -74,8 +72,8 @@ def open_edit_account():
     reset_button.setText("Reset to defaults")
     reset_button.setFont(QFont(fonts[0], 12))
     reset_button.setFixedWidth(200)
-    reset_button.clicked.connect(lambda: edit_user_settings_groupbox.hide())
-    reset_button.clicked.connect(lambda: open_edit_account())
+    reset_button.clicked.connect(lambda: reset_user_edit_groupbox())
+    # reset_button.clicked.connect(lambda: main_menu.open_update_account())
 
     edit_user_setting_button = QPushButton()
     edit_user_setting_button.setText("Update Info")
@@ -93,7 +91,10 @@ def open_edit_account():
 
 def edit_user():
     # Make this query dynamically accepting the username in production
-    edit_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = 'pesho'")
+    edit_user_query = (f"UPDATE customers SET first_name = %s, last_name = %s, phone = %s, email_address = %s WHERE username = '{current_user}'")
     admin_cursor.execute(edit_user_query, (user_data[0].text(), user_data[1].text(), user_data[2].text(), user_data[3].text()))
     admin_connection.commit()
 
+def reset_user_edit_groupbox():
+    edit_user_settings_groupbox.hide()
+    main_menu.open_update_account()

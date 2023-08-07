@@ -29,22 +29,21 @@ sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+import login
 
 """ADMIN CLIENT TO THE POSTGRE DATABASE"""
 admin_cursor = postgres_conn.POSTGRES_CURSOR
 admin_connection = postgres_conn.POSTGRES_CONNECTION
 
-"""USER CLIENT TO THE POSTGRE DATABASE"""
-user_cursor = postgres_conn.USER_POSTGRES_CURSOR
-user_connection = postgres_conn.USER_POSTGRES_CONNECTION
 
-admin_cursor.execute("SELECT current_user")
-current_user = admin_cursor.fetchone()
+
+
 
 def favourites_menu():
     favorites_scroll = QScrollArea()
     favorites_widget = QWidget()
     products_grid_layout = QVBoxLayout()
+    
 
     def redirect_to_delete_postgres_func(c_product_name):
         return lambda: delete_from_favourite_products(c_product_name)
@@ -54,7 +53,12 @@ def favourites_menu():
     if font < 0:
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
-
+    
+    """USER CLIENT TO THE POSTGRE DATABASE"""
+    login.user_cursor.execute("SELECT current_user")
+    current_user = login.user_cursor.fetchone()
+    current_user = current_user[0].replace("_marketapp", "")
+    
     """INNER JOIN QUERY THAT WILL GIVE US EVERY PRODUCT'S DATA"""
     admin_cursor.execute(f"select products.product_id, favourite_products.username, "
                                           f"products.product_name, products.single_price, products.quantity, "
