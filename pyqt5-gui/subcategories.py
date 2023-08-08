@@ -1,43 +1,42 @@
 #!/usr/bin/python3
-import sys
-import requests
+
 # Import PyQt5 Engine
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (
+
                              QPushButton,
                              QGridLayout,
                              QLabel,
-                             QFrame,
                              QGroupBox,
-                             QLineEdit,
-                             QMessageBox,
-                             QPlainTextEdit,
-                             QHBoxLayout,
                              QVBoxLayout,
                              QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
                              )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
+import sys
 sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
 # from main_menu_dev import subcategory_name
-import products, main_menu
+import products, login
 
 
 
 
 def open_subcategory(subcatname):
+    """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+    admin_cursor = postgres_conn.POSTGRES_CURSOR
+    admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+    """USER CLIENT TO THE POSTGRE DATABASE"""
+    login.user_cursor.execute("SELECT current_user")
+    current_user = login.user_cursor.fetchone()
+    current_user = current_user[0].replace("_marketapp", "")
+    
     global subcategory_name
     global subcategories_groupbox
     # subcategory_name = ''
-    
-    """INIT CONNECTION TO THE DATABASE"""
-    postgres_conn.admin_client()
     
     """OPEN THE PRODUCTS BASED ON THE SUBCATEGORY CALLED BY THE USER"""
     def subcats_func(subcat_name):
@@ -63,8 +62,8 @@ def open_subcategory(subcatname):
     
 
     global subcategory_name
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{subcatname}' ORDER BY subcategory_name ASC;")
-    result = postgres_conn.POSTGRES_CURSOR.fetchall()
+    admin_cursor.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{subcatname}' ORDER BY subcategory_name ASC;")
+    result = admin_cursor.fetchall()
     subcategories = deque([x[0] for x in result])
 
     for row in range(3):

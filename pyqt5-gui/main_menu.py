@@ -24,12 +24,10 @@ from PyQt5.QtCore import *
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import about, subcategories, edit_account, payment_options, products, favourites, basket, login
+import about, subcategories, edit_account, payment_options, favourites, basket, login
 
 
-"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
-admin_cursor = postgres_conn.POSTGRES_CURSOR
-admin_connection = postgres_conn.POSTGRES_CONNECTION
+
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -44,6 +42,10 @@ class MainMenu(QWidget):
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
+        
+        """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+        admin_cursor = postgres_conn.POSTGRES_CURSOR
+        admin_connection = postgres_conn.POSTGRES_CONNECTION
 
         """USER CLIENT TO THE POSTGRE DATABASE"""
         login.user_cursor.execute("SELECT current_user")

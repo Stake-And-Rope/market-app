@@ -5,11 +5,8 @@ from PyQt5.QtWidgets import (QWidget,
                              QPushButton,
                              QLabel,
                              QScrollArea,
-
                              QHBoxLayout,
-                             QVBoxLayout,
-                             QSpinBox
-                             )
+                             QVBoxLayout)
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -22,9 +19,6 @@ from collections import deque
 from db_handle import postgres_conn
 import login
 
-"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
-admin_cursor = postgres_conn.POSTGRES_CURSOR
-admin_connection = postgres_conn.POSTGRES_CONNECTION
 
 
 def favourites_menu():
@@ -42,6 +36,11 @@ def favourites_menu():
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
     
+    """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+    admin_cursor = postgres_conn.POSTGRES_CURSOR
+    admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+    
     """USER CLIENT TO THE POSTGRE DATABASE"""
     login.user_cursor.execute("SELECT current_user")
     current_user = login.user_cursor.fetchone()
@@ -50,12 +49,11 @@ def favourites_menu():
     """INNER JOIN QUERY THAT WILL GIVE US EVERY PRODUCT'S DATA"""
     admin_cursor.execute(f"select products.product_id, favourite_products.username, "
                                           f"products.product_name, products.single_price, products.quantity, "
-                                          f"products.product_description, products.subcategory, "
-                                          f"favourite_products.quantity_wanted "
+                                          f"products.product_description, products.subcategory "
                                           f"from products inner join favourite_products on "
                                           f"favourite_products.product_id=products.product_id "
-                                          f"where favourite_products.username = 'pesho';")
-    result = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
+                                          f"where favourite_products.username = '{current_user}';")
+    result = deque(admin_cursor.fetchall())
     print(result)
 
     res_len = math.ceil(len(result) / 3)
@@ -64,7 +62,7 @@ def favourites_menu():
         for col in range(3):
             if result:
                 current_product = result.popleft()
-                product_id, username, product_name, price, quantity, product_description, subcategory, quantity_wanted = current_product
+                product_id, username, product_name, price, quantity, product_description, subcategory = current_product
 
                 current_vertical_layout = QVBoxLayout()
 
@@ -88,9 +86,6 @@ def favourites_menu():
                 current_buttons_layout = QHBoxLayout()
                 current_buttons_layout.setAlignment(Qt.AlignLeft)
 
-                current_spin_box = QSpinBox()
-                current_spin_box.setValue(int(quantity_wanted))
-
                 current_favorites_button = QPushButton()
                 current_favorites_button.setFixedWidth(35)
                 current_favorites_button.setFixedHeight(35)
@@ -106,7 +101,6 @@ def favourites_menu():
 
                 current_buttons_layout.addWidget(current_favorites_button)
                 current_buttons_layout.addWidget(current_basket_button)
-                current_buttons_layout.addWidget(current_spin_box)
 
                 current_vertical_layout.insertWidget(0, product_image)
                 current_vertical_layout.addWidget(current_title)

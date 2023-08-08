@@ -50,7 +50,7 @@ def products_menu(subcategory_name):
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
 
-    admin_cursor.execute(f"SELECT product_name, product_description, product_id FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
+    admin_cursor.execute(f"SELECT product_name, product_description, product_id, single_price FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
 
     result = postgres_conn.POSTGRES_CURSOR.fetchall()
     products_names = deque([p[0] for p in result])
@@ -139,7 +139,7 @@ def products_menu(subcategory_name):
                 admin_connection.commit()
         
         def insert_into_basket(curr_id, curr_product_name, curr_spin_box, curr_single_price):
-            admin_cursor.execute(f"SELECT * FROM basket WHERE product_id = '{curr_id}' AND username = 'pesho'")
+            admin_cursor.execute(f"SELECT * FROM basket WHERE product_id = '{curr_id}' AND username = '{current_user}'")
             result = admin_cursor.fetchall()
             """HERE WE SELECT THE AVAILABLE QUANTITY OF THE PRODUCT AND SEE IF WE CAN ADD IT TO BASKET"""
             admin_cursor.execute(f"SELECT quantity FROM products WHERE product_id='{curr_id}';")
@@ -151,7 +151,7 @@ def products_menu(subcategory_name):
                                   "Please choose a smaller quantity!")
             else:
                 admin_cursor.execute(f"INSERT INTO basket VALUES "
-                                                      f"('pesho', '{curr_id}', '{curr_product_name}', "
+                                                      f"('{current_user}', '{curr_id}', '{curr_product_name}', "
                                                       f"'{curr_spin_box.value()}', '{curr_single_price}')")
                 admin_connection.commit()
                 print("Added to basket")

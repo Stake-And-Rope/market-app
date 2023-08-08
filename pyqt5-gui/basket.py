@@ -1,39 +1,38 @@
 #!/usr/bin/python3
-import math
-import sys
-import inspect
-from collections import deque
 
 # Import PyQt5 Engine
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (QWidget,
                              QPushButton,
-                             QGridLayout,
                              QLabel,
                              QScrollArea,
-                             QFrame,
-                             QGroupBox,
-                             QLineEdit,
-                             QMessageBox,
-                             QPlainTextEdit,
                              QHBoxLayout,
                              QVBoxLayout,
-                             QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect, QSpinBox,
+                             QSpinBox,
                              )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
+import math
+import sys
 sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
-from db_handle import postgres_conn
+from db_handle import postgres_conn 
+import login
 
 def basket_menu():
     basket_menu_scroll = QScrollArea()
     basket_widget = QWidget()
     basket_menu_h_layout = QVBoxLayout()  # Vertical Layout
+    
+    """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+    admin_cursor = postgres_conn.POSTGRES_CURSOR
+    admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+    """USER CLIENT TO THE POSTGRE DATABASE"""
+    login.user_cursor.execute("SELECT current_user")
+    current_user = login.user_cursor.fetchone()
+    current_user = current_user[0].replace("_marketapp", "")
 
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -41,16 +40,14 @@ def basket_menu():
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
 
-    postgres_conn.admin_client()
-
     """INNER JOIN QUERY THAT WILL GIVE US THE PRODUCTS' DESCRIPTIONS AND SUBCATEGORIES"""
-    postgres_conn.POSTGRES_CURSOR.execute(f"select products.product_description, products.subcategory from products "
+    admin_cursor.execute(f"select products.product_description, products.subcategory from products "
                                           f"inner join basket on basket.product_id=products.product_id "
-                                          f"where basket.username = 'pesho';")
-    products_descriptions_and_subcats = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
+                                          f"where basket.username = '{current_user}';")
+    products_descriptions_and_subcats = deque(admin_cursor.fetchall())
 
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM basket;")
-    result = deque(postgres_conn.POSTGRES_CURSOR.fetchall())
+    admin_cursor.execute(f"SELECT * FROM basket;")
+    result = deque(admin_cursor.fetchall())
 
     rows = math.ceil(len(products_descriptions_and_subcats) / 3)
     for row in range(rows):
