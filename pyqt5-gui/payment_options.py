@@ -23,6 +23,14 @@ sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
 
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+"""USER CLIENT TO THE POSTGRE DATABASE"""
+user_cursor = postgres_conn.USER_POSTGRES_CURSOR
+user_connection = postgres_conn.USER_POSTGRES_CONNECTION
+
 def open_payment_options():
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -30,10 +38,9 @@ def open_payment_options():
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
     
-    
     # change the query to dinamyc in production
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM payment_options WHERE username = 'pesho'")
-    result = postgres_conn.POSTGRES_CURSOR.fetchall()
+    admin_cursor.execute(f"SELECT * FROM payment_options WHERE username = 'pesho'")
+    result = admin_cursor.fetchall()
     len_result = len(result)
 
     global payment_options_groupbox

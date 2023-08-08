@@ -48,7 +48,7 @@ def admin_client():
                 dbname = str(database_name)
                 )
         cursor = db_client.cursor()
-        cursor.execute("SELECT version()")
+        # cursor.execute("SELECT version()")
         print("Admin database connection established!")
     except (Exception) as error:
         print("Database connection failed!")
@@ -57,11 +57,9 @@ def admin_client():
     """Export the global variables"""
     POSTGRES_CURSOR = cursor
     POSTGRES_CONNECTION = db_client
-
-
     """Close connection to the Linux Server and the Postgres DB. This two lines should be commented in production environment"""
 
-def customer_client(username, passwd):
+def user_client(username, passwd):
     global USER_POSTGRES_CURSOR
     global USER_POSTGRES_CONNECTION
     
@@ -88,7 +86,7 @@ def customer_client(username, passwd):
         tunnel.start()
     except (Exception) as error:
         print("SSH connection failed!")
-    
+
     """Initiate DB connection to Postgres(as superuser) and create DB cursor ready to execute SQL queries"""
     try:
         user_db_client = psycopg2.connect(
@@ -108,6 +106,6 @@ def customer_client(username, passwd):
     USER_POSTGRES_CURSOR = user_cursor
     USER_POSTGRES_CONNECTION = user_db_client
 
-
-# admin_client()
+admin_database = admin_client()
+# user_database = user_client()
 

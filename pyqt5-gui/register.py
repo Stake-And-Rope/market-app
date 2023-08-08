@@ -1,32 +1,28 @@
 #!/usr/bin/python3
-import sys
-
-sys.path.append(r'..')
 
 # Import PyQt5 Engine 
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (QWidget,
                              QPushButton,
                              QLabel,
                              QLineEdit,
                              QMessageBox,
-                             QPlainTextEdit,
                              QHBoxLayout,
-                             QVBoxLayout,
-                             QGraphicsDropShadowEffect)
+                             QVBoxLayout)
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+
+import sys
+sys.path.append(r'..')
 from db_handle import postgres_conn, register_user
 import login
 import random, re
 from collections import deque
 
-"""Create the QWidget class and initiate the objects inside"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
 
 """CREATE THE QWIDGET CLASS AND INIT THE OBJECTS"""
-
-
 class Register(QWidget):
     def __init__(self):
         super().__init__()
@@ -61,56 +57,45 @@ class Register(QWidget):
         main_horizontal_layout.addSpacing(2)
 
         font = QFont("Arial", 12)
-        user_data = []
 
-        """Init the labels, containing textboxes in them"""
+        """INIT THE LABELS FOR THE TEXTBOXES"""
         form_layout = QVBoxLayout()
-
         name_layout = QHBoxLayout()
         name_layout_texts = deque(["First name", "Last name"])
+        user_data_one = [] # Holds the firts name and last name QLineEdit's
         for i in range(2):
             current_label = QLineEdit()
             current_label.setPlaceholderText(name_layout_texts.popleft())
             current_label.setFont(font)
             current_label.setProperty("class", "username_label")
-
-            user_data.append(current_label.text())
-
+            user_data_one.append(current_label)
             name_layout.addWidget(current_label)
-
         form_layout.addLayout(name_layout)
 
         other_important_texts = deque(["Username", "Phone Number", "Email Address", "Password", "Repeat Password"])
-
+        user_data_two = [] # Holds rest of the user data during the registration
         for i in range(5):
             current_label = QLineEdit()
             current_label.setPlaceholderText(other_important_texts.popleft())
             current_label.setFont(font)
             current_label.setProperty("class", "username_label")
-
             if i >= 3:
                 current_label.setEchoMode(QLineEdit.Password)
-
-            user_data.append(current_label.text())
-
+            user_data_two.append(current_label)
             form_layout.addWidget(current_label)
 
         """BUTTONS LAYOUT"""
         buttons_layout = QHBoxLayout()
-
         buttons_layout_texts = deque(["Register", "Back"])
-
         for i in range(2):
             current_label = QPushButton(buttons_layout_texts.popleft())
             current_label.setFont(font)
-
             if i == 0:
                 current_label.setProperty("class", "login_register_button")
                 current_label.clicked.connect((lambda: create_new_account()))
             else:
                 current_label.setProperty("class", "back_button")
                 current_label.clicked.connect(lambda: open_login())
-
             buttons_layout.addWidget(current_label)
 
         """INIT THE MAIN LAYOUT """
@@ -123,55 +108,56 @@ class Register(QWidget):
         self.show()
 
         def create_new_account():
-            # Insert code here
-            """This function should verify the user data and execute series of queries to create the new user inside the DB"""
             create_account_errors = []
             while True:
                 user_id = [str(random.randint(0, 9)) for x in range(10)]
                 user_id = ''.join(user_id)
-                postgres_conn.admin_client()
-                postgres_conn.POSTGRES_CURSOR.execute(
-                    f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
-                current_ids = postgres_conn.POSTGRES_CURSOR.fetchall()
-                if user_id not in current_ids:
+                admin_cursor.execute(f"SELECT customer_id FROM customers WHERE customer_id = {user_id}")
+                existing_ids = admin_cursor.fetchall()
+                if user_id not in existing_ids:
                     break
 
-            postgres_conn.POSTGRES_CURSOR.execute(
-                f"SELECT username FROM customers WHERE username = '{user_name_label.text()}'")
-            if postgres_conn.POSTGRES_CURSOR.fetchall():
+            admin_cursor.execute(f"SELECT username FROM customers WHERE username = '{user_data_two[0].text()}'")
+            if admin_cursor.fetchall():
                 create_account_errors.append('Username already exists')
 
             email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-            if not re.match(email_pattern, email_address_label.text()):
+            if not re.match(email_pattern, user_data_two[2].text()):
                 create_account_errors.append('Incorect email address')
 
-            postgres_conn.POSTGRES_CURSOR.execute(
-                f"SELECT email_address FROM customers WHERE email_address = '{email_address_label.text()}'")
-            if postgres_conn.POSTGRES_CURSOR.fetchall():
-                create_account_errors.append('Email address already existing')
+            admin_cursor.execute(f"SELECT email_address FROM customers WHERE email_address = '{user_data_two[2].text()}'")
+            if admin_cursor.fetchall():
+                create_account_errors.append('Email address already exists')
 
-            postgres_conn.POSTGRES_CURSOR.execute(
-                f"SELECT phone FROM customers WHERE phone = '{phone_number_label.text()}'")
-            if postgres_conn.POSTGRES_CURSOR.fetchall():
+            admin_cursor.execute(
+                f"SELECT phone FROM customers WHERE phone = '{user_data_two[1].text()}'")
+            if admin_cursor.fetchall():
                 create_account_errors.append('Phone number already exists')
 
-            if password_label.text() != password_label_repeat.text():
+            if user_data_two[3].text() != user_data_two[4].text():
                 create_account_errors.append('Password fields does not match.')
-            if len(password_label.text()) < 8:
+            if len(user_data_two[3].text()) < 8:
                 create_account_errors.append('Password is too short. It must be at least 8 characters.')
-            if not re.search(re.compile('[!@#$%^&*()-+?_=,<>/]'), password_label.text()):
+            if not re.search(re.compile('[!@#$%^&*()-+?_=,<>/]'), user_data_two[3].text()):
                 create_account_errors.append("Password must contain at least one special character.")
-            if not re.search(re.compile('[A-Z]'), password_label.text()):
+            if not re.search(re.compile('[A-Z]'), user_data_two[3].text()):
                 create_account_errors.append("Password must contain at least one uppercase letter.")
-            if not re.search(re.compile('[0-9]'), password_label.text()):
+            if not re.search(re.compile('[0-9]'), user_data_two[3].text()):
                 create_account_errors.append("Password must contain at least one number.")
 
             if len(create_account_errors) == 0:
                 """Create new record inside customers table"""
-                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO customers (customer_id, username, first_name, last_name, email_address, phone) \
-                                                          VALUES ({user_id}, '{user_name_label.text().lower()}', '{first_name_label.text()}', '{last_name_label.text()}',\
-                                                              '{email_address_label.text()}', '{phone_number_label.text()}')")
-                register_user.create_user(user_name_label.text(), password_label.text())
+                admin_cursor.execute(f"INSERT INTO customers (customer_id, username, first_name, last_name, email_address, phone) \
+                                                          VALUES ({user_id}, '{user_data_two[0].text().lower()}', '{user_data_one[0].text()}', '{user_data_one[1].text()}',\
+                                                              '{user_data_two[2].text()}', '{user_data_two[1].text()}')")
+                register_user.create_user(user_data_two[0].text(), user_data_two[3].text())
+                registration_confirm_msg_box = QMessageBox()
+                registration_confirm_msg_box.setIcon(QMessageBox.Warning)
+                registration_message = 'Congratulations! Your account has been created successfully!'
+                registration_confirm_msg_box.setText(registration_message)
+                registration_confirm_msg_box.setWindowTitle("Account created successfully!")
+                registration_confirm_msg_box.setStandardButtons(QMessageBox.Ok)
+                registration_confirm_msg_box.exec()
             else:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
@@ -191,4 +177,3 @@ def start_window():
     register_window = Register()
     register_window.show()
 
-# init_app()
