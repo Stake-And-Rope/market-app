@@ -1,34 +1,21 @@
 #!/usr/bin/python3
-import math
-import sys
-import inspect
-from collections import deque
 
 # Import PyQt5 Engine
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (QWidget,
                              QPushButton,
-                             QGridLayout,
                              QLabel,
                              QScrollArea,
-                             QFrame,
-                             QGroupBox,
-                             QLineEdit,
-                             QMessageBox,
-                             QPlainTextEdit,
+
                              QHBoxLayout,
                              QVBoxLayout,
-<<<<<<< HEAD
                              QSpinBox
-=======
-                             QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
->>>>>>> parent of ae1039f (code cleaning and optimization)
                              )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import math
+import sys
 sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
@@ -38,9 +25,6 @@ import login
 """ADMIN CLIENT TO THE POSTGRE DATABASE"""
 admin_cursor = postgres_conn.POSTGRES_CURSOR
 admin_connection = postgres_conn.POSTGRES_CONNECTION
-
-
-
 
 
 def favourites_menu():
