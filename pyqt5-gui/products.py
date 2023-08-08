@@ -1,31 +1,24 @@
 #!/usr/bin/python3
-import sys
-import inspect
-from collections import deque
+
 
 # Import PyQt5 Engine
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (
                              QPushButton,
                              QGridLayout,
                              QLabel,
-                             QFrame,
                              QGroupBox,
-                             QLineEdit,
                              QMessageBox,
-                             QPlainTextEdit,
                              QHBoxLayout,
                              QVBoxLayout,
-                             QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect, QSpinBox,
+                             QSpinBox,
                              )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import sys
 sys.path.append(r'.')
 sys.path.append(r'..')
-
 from collections import deque
 from db_handle import postgres_conn
 import login
@@ -41,6 +34,10 @@ def products_menu(subcategory_name):
     """THIS FUNCTION WILL REDIRECT THE CURRENT PROD ID AND PROD NAME TO THE INSERT TO THE POSTGRE DB FUNCTION"""
     def redirect_to_insert_to_postgre_func(prod_id, prod_name, spin_box):
         return lambda: insert_into_favourite_products(prod_id, prod_name, spin_box)
+    
+    """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+    admin_cursor = postgres_conn.POSTGRES_CURSOR
+    admin_connection = postgres_conn.POSTGRES_CONNECTION
 
     """USER CLIENT TO THE POSTGRE DATABASE"""
     login.user_cursor.execute("SELECT current_user")

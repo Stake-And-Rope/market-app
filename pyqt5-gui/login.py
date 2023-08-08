@@ -26,8 +26,7 @@ sys.path.append(r'..')
 from db_handle import postgres_conn
 import register, main_menu
 
-admin_cursor = postgres_conn.POSTGRES_CURSOR
-admin_connection = postgres_conn.POSTGRES_CONNECTION
+
 
 class LogIn(QWidget):
     def __init__(self):
@@ -37,6 +36,10 @@ class LogIn(QWidget):
         self.setGeometry(650, 300, 400, 150)
         self.setMaximumWidth(400)
         self.setMaximumHeight(150)
+        
+        """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+        admin_cursor = postgres_conn.POSTGRES_CURSOR
+        admin_connection = postgres_conn.POSTGRES_CONNECTION
 
         """ADD CUSTOM FONTS"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
