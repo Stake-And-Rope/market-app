@@ -143,8 +143,7 @@ def products_menu(subcategory_name):
                 error_message_box("You have exceeded the available quantity of this product. "
                                   "Please choose a smaller quantity!")
             else:
-                admin_cursor.execute(f"INSERT INTO favourite_products VALUES "
-                                                      f"('{current_user}', '{curr_id}', '{curr_product_name}')")
+                admin_cursor.execute(f"INSERT INTO favourite_products VALUES ('{current_user}', '{curr_id}', '{curr_product_name}')")
                 admin_connection.commit()
                 print("Done")  # this line is only to check if the function is executing
 
