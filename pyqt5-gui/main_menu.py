@@ -20,9 +20,7 @@ import sys
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import about, subcategories, edit_account, payment_options, favourites, login
-
-
+import about, subcategories, edit_account, payment_options, products, favourites, basket, login
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -60,6 +58,9 @@ class MainMenu(QWidget):
         def open_favourites_func():
             return lambda: open_favourites()
 
+        def open_basket_func():
+            return lambda: open_basket()
+
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
             'edit_account': lambda: open_update_account(),
@@ -70,6 +71,7 @@ class MainMenu(QWidget):
 
         """TOP LAYOUT BUTTONS CALL FUNCTIONS"""
         top_layout_buttons_dict = {
+            'Basket': open_basket_func(),
             'Favourites': open_favourites_func(),
             'About': lambda: open_about(),
             # TODO: need to add the log out button function
@@ -136,7 +138,7 @@ class MainMenu(QWidget):
         top_buttons_layout.addStretch(0)
         top_buttons_layout.addSpacing(1000)
 
-        top_buttons_text = deque(['Favourites', 'About'])  # TODO: need to add the 'Log Out' button
+        top_buttons_text = deque(['Basket', 'Favourites', 'About'])  # TODO: need to add the 'Log Out' button
 
         while top_buttons_text:
             curr_top_button = top_buttons_text.popleft()
@@ -285,6 +287,15 @@ class MainMenu(QWidget):
             layouts_list.append(favourites_layout)
             categories_groupbox.hide()
             main_layout.addWidget(favourites_layout, 1, 1)
+
+        def open_basket():
+            global basket_scroll_layout
+            global layouts_list
+            basket_scroll_layout = basket.basket_menu()
+            layouts_list.append(basket_scroll_layout)
+            categories_groupbox.hide()
+            main_layout.addWidget(basket_scroll_layout, 1, 1)
+
         
         """BRING BACK THE CATEGORIES"""
         def open_categories():

@@ -45,6 +45,9 @@ def products_menu(subcategory_name):
     current_user = current_user[0].replace("_marketapp", "")
     
 
+    def redirect_to_insert_to_basket_func(prod_id, prod_name, spin_box, price_for_one):
+        return lambda : insert_into_basket(prod_id, prod_name, spin_box, price_for_one)
+
     products_groupbox = QGroupBox("Products")
     products_grid_layout = QGridLayout()
 
@@ -56,10 +59,18 @@ def products_menu(subcategory_name):
 
     admin_cursor.execute(f"SELECT product_name, product_description, product_id FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
 
+<<<<<<< HEAD
     result = admin_cursor.fetchall()
+=======
+    postgres_conn.POSTGRES_CURSOR.execute(
+        f"SELECT product_name, product_description, product_id, single_price FROM products WHERE subcategory = '{subcategory_name}' ORDER BY product_name ASC;")
+
+    result = postgres_conn.POSTGRES_CURSOR.fetchall()
+>>>>>>> experimental
     products_names = deque([p[0] for p in result])
     products_descriptions = deque(p[1] for p in result)
     products_ids = deque(p[2] for p in result)
+    single_prices = deque(p[3] for p in result)
     print(products_names)
 
     for col in range(3):
@@ -68,6 +79,7 @@ def products_menu(subcategory_name):
 
         product_name = products_names.popleft()
         product_id = products_ids.popleft()
+        single_price = single_prices.popleft()
 
         product_image = QLabel()
         product_image.setFixedSize(250, 200)
@@ -108,6 +120,7 @@ def products_menu(subcategory_name):
         current_basket_button.setIcon(QIcon(r'../img/shoppingcart.png'))
         current_basket_button.setIconSize(QSize(30, 30))
         current_basket_button.setFont(QFont(fonts[0], 12))
+        current_basket_button.clicked.connect(redirect_to_insert_to_basket_func(product_id, product_name, current_spin_box, single_price))
 
         current_buttons_layout.addWidget(current_favorites_button)
         current_buttons_layout.addWidget(current_basket_button)
@@ -130,19 +143,48 @@ def products_menu(subcategory_name):
             admin_cursor.execute(f"SELECT * FROM favourite_products WHERE product_id = '{curr_id}' AND username = '{current_user}'")
             result = admin_cursor.fetchall()
 
+<<<<<<< HEAD
             """HERE WE SELECT THE AVAILABLE QUANTITY OF THE PRODUCT AND SEE IF WE CAN ADD IT TO FAVOURITES"""
             admin_cursor.execute(f"SELECT quantity FROM products WHERE product_id='{curr_id}';")
             available_quantity = admin_cursor.fetchone()
 
             if result:
                 error_message_box("Product already exists in favorites.")
+=======
+            if result:
+                error_message_box("Product already exists in favorites.")
+            else:
+                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO favourite_products VALUES "
+                                                      f"('pesho', '{curr_id}', '{curr_product_name}', '{curr_spin_box.value()}')")
+                postgres_conn.POSTGRES_CONNECTION.commit()
+                print("Done")  # this line is only to check if the function is executing
+
+        def insert_into_basket(curr_id, curr_product_name, curr_spin_box, curr_single_price):
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT * FROM basket WHERE product_id = '{curr_id}' AND username = 'pesho'")
+            result = postgres_conn.POSTGRES_CURSOR.fetchall()
+
+            """HERE WE SELECT THE AVAILABLE QUANTITY OF THE PRODUCT AND SEE IF WE CAN ADD IT TO BASKET"""
+            postgres_conn.POSTGRES_CURSOR.execute(f"SELECT quantity FROM products WHERE product_id='{curr_id}';")
+            available_quantity = postgres_conn.POSTGRES_CURSOR.fetchone()
+
+            if result:
+                error_message_box(f"Product already exists in basket.")  # need to add two options --> "Add more" and "Cancel"
+>>>>>>> experimental
             elif int(str(curr_spin_box.value())) > int(available_quantity[0]):
                 error_message_box("You have exceeded the available quantity of this product. "
                                   "Please choose a smaller quantity!")
             else:
+<<<<<<< HEAD
                 admin_cursor.execute(f"INSERT INTO favourite_products VALUES ('{current_user}', '{curr_id}', '{curr_product_name}')")
                 admin_connection.commit()
                 print("Done")  # this line is only to check if the function is executing
+=======
+                postgres_conn.POSTGRES_CURSOR.execute(f"INSERT INTO basket VALUES "
+                                                      f"('pesho', '{curr_id}', '{curr_product_name}', "
+                                                      f"'{curr_spin_box.value()}', '{curr_single_price}')")
+                postgres_conn.POSTGRES_CONNECTION.commit()
+                print("Added to basket")
+>>>>>>> experimental
 
         def error_message_box(message):
             error_msg_box = QMessageBox()
