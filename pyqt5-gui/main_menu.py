@@ -1,26 +1,38 @@
 #!/usr/bin/python3
-
-
+import sys
+import requests
 """IMPORT PyQt5 ENGINE"""
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
                              QPushButton,
                              QGridLayout,
                              QLabel,
+                             QFrame,
                              QGroupBox,
+                             QLineEdit,
+                             QMessageBox,
+                             QPlainTextEdit,
                              QHBoxLayout,
                              QVBoxLayout,
                              QGraphicsDropShadowEffect,
+                             QGraphicsOpacityEffect,
                              )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-import sys
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
+<<<<<<< HEAD
 import about, subcategories, edit_account, payment_options, products, favourites, basket, login
+=======
+import about, subcategories, edit_account, payment_options, products, favourites, login
+
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+>>>>>>> parent of ae1039f (code cleaning and optimization)
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
@@ -35,10 +47,6 @@ class MainMenu(QWidget):
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
-        
-        """ADMIN CLIENT TO THE POSTGRE DATABASE"""
-        admin_cursor = postgres_conn.POSTGRES_CURSOR
-        admin_connection = postgres_conn.POSTGRES_CONNECTION
 
         """USER CLIENT TO THE POSTGRE DATABASE"""
         login.user_cursor.execute("SELECT current_user")

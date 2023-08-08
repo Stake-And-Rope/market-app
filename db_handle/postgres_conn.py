@@ -105,7 +105,7 @@ def user_client(username, passwd):
 
     USER_POSTGRES_CURSOR = user_cursor
     USER_POSTGRES_CONNECTION = user_db_client
-    
-admin_client()
+
+admin_database = admin_client()
 # user_database = user_client()
 

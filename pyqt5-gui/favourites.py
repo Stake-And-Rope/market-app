@@ -1,25 +1,46 @@
 #!/usr/bin/python3
+import math
+import sys
+import inspect
+from collections import deque
 
 # Import PyQt5 Engine
-from PyQt5.QtWidgets import (QWidget,
+from PyQt5.QtWidgets import (QApplication,
+                             QWidget,
                              QPushButton,
+                             QGridLayout,
                              QLabel,
                              QScrollArea,
+                             QFrame,
+                             QGroupBox,
+                             QLineEdit,
+                             QMessageBox,
+                             QPlainTextEdit,
                              QHBoxLayout,
                              QVBoxLayout,
+<<<<<<< HEAD
                              QSpinBox
+=======
+                             QGraphicsDropShadowEffect,
+                             QGraphicsOpacityEffect,
+>>>>>>> parent of ae1039f (code cleaning and optimization)
                              )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-import math
-import sys
 sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
 import login
+
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+
+
 
 
 def favourites_menu():
@@ -36,10 +57,6 @@ def favourites_menu():
     if font < 0:
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
-    
-    """ADMIN CLIENT TO THE POSTGRE DATABASE"""
-    admin_cursor = postgres_conn.POSTGRES_CURSOR
-    admin_connection = postgres_conn.POSTGRES_CONNECTION
     
     """USER CLIENT TO THE POSTGRE DATABASE"""
     login.user_cursor.execute("SELECT current_user")

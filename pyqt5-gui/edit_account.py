@@ -13,23 +13,23 @@ from collections import deque
 from db_handle import postgres_conn
 import login, main_menu
 
+"""ADMIN CLIENT TO THE POSTGRE DATABASE"""
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
+
 
 def open_edit_account():
+    login.user_cursor.execute("SELECT current_user")
+    global current_user
+    current_user = login.user_cursor.fetchone()
+    current_user = current_user[0].replace("_marketapp", "")
+    
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
     if font < 0:
         print('Error loading fonts!')
     fonts = QFontDatabase.applicationFontFamilies(font)
     
-    """ADMIN CLIENT TO THE POSTGRE DATABASE"""
-    admin_cursor = postgres_conn.POSTGRES_CURSOR
-    admin_connection = postgres_conn.POSTGRES_CONNECTION
-    
-    """USER CLIENT TO THE POSTGRE DATABASE"""
-    login.user_cursor.execute("SELECT current_user")
-    global current_user
-    current_user = login.user_cursor.fetchone()
-    current_user = current_user[0].replace("_marketapp", "")
     
     global user_data
     user_data = []
