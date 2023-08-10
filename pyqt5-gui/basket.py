@@ -33,6 +33,7 @@ def basket_menu():
     login.user_cursor.execute("SELECT current_user")
     current_user = login.user_cursor.fetchone()
     current_user = current_user[0].replace("_marketapp", "")
+    print(f"From basket print: {current_user}")
 
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -46,7 +47,7 @@ def basket_menu():
                                           f"where basket.username = '{current_user}';")
     products_descriptions_and_subcats = deque(admin_cursor.fetchall())
 
-    admin_cursor.execute(f"SELECT * FROM basket;")
+    admin_cursor.execute(f"SELECT * FROM basket WHERE username = '{current_user}';")
     result = deque(admin_cursor.fetchall())
 
     rows = math.ceil(len(products_descriptions_and_subcats) / 3)

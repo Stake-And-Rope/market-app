@@ -2,7 +2,6 @@
 
 # Import PyQt5 Engine
 from PyQt5.QtWidgets import (
-
                              QPushButton,
                              QGridLayout,
                              QLabel,
@@ -18,7 +17,6 @@ sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-# from main_menu_dev import subcategory_name
 import products, login
 
 
@@ -36,8 +34,7 @@ def open_subcategory(subcatname):
     
     global subcategory_name
     global subcategories_groupbox
-    # subcategory_name = ''
-    
+
     """OPEN THE PRODUCTS BASED ON THE SUBCATEGORY CALLED BY THE USER"""
     def subcats_func(subcat_name):
          return lambda: open_products(subcat_name)
@@ -60,7 +57,6 @@ def open_subcategory(subcatname):
     main_grid_layout = QGridLayout()
     subcategories_grid_layout = QGridLayout()
     
-
     global subcategory_name
     admin_cursor.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{subcatname}' ORDER BY subcategory_name ASC;")
     result = admin_cursor.fetchall()
