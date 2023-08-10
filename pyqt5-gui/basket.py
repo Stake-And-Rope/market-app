@@ -42,23 +42,20 @@ def basket_menu():
     fonts = QFontDatabase.applicationFontFamilies(font)
 
     """INNER JOIN QUERY THAT WILL GIVE US THE PRODUCTS' DESCRIPTIONS AND SUBCATEGORIES"""
-    admin_cursor.execute(f"select products.product_description, products.subcategory from products "
-                                          f"inner join basket on basket.product_id=products.product_id "
-                                          f"where basket.username = '{current_user}';")
-    products_descriptions_and_subcats = deque(admin_cursor.fetchall())
+    admin_cursor.execute(f"select products.product_id, products.product_name, products.product_description, "
+                         f"products.subcategory, products.single_price, basket.quantity, basket.total_value "
+                         f"from products inner join basket on basket.product_id=products.product_id "
+                         f"where basket.username = '{current_user}';")
 
-    admin_cursor.execute(f"SELECT * FROM basket WHERE username = '{current_user}';")
     result = deque(admin_cursor.fetchall())
 
-    rows = math.ceil(len(products_descriptions_and_subcats) / 3)
+    rows = math.ceil(len(result) / 3)
     for row in range(rows):
         horizontal_products_layout = QHBoxLayout()
-
         for col in range(3):
-            if products_descriptions_and_subcats and result:
+            if result:
                 current_product = result.popleft()
-                username, product_id, product_name, quantity, single_price, total_value_price = current_product
-                product_description, product_subcategory = products_descriptions_and_subcats.popleft()
+                product_id, product_name, product_description, product_subcategory, single_price, quantity, total_value = current_product
 
                 current_vertical_layout = QVBoxLayout()  # Vertical layout for the product
 
