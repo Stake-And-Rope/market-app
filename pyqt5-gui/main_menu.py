@@ -68,6 +68,9 @@ class MainMenu(QWidget):
         def open_basket_func():
             return lambda: open_basket()
 
+        def log_out_func():
+            return lambda: log_out()
+
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
             'edit_account': lambda: open_update_account(),
@@ -81,7 +84,7 @@ class MainMenu(QWidget):
             'Basket': open_basket_func(),
             'Favourites': open_favourites_func(),
             'About': lambda: open_about(),
-            # TODO: need to add the log out button function
+            'Log Out': log_out_func()
         }
 
 
@@ -145,7 +148,7 @@ class MainMenu(QWidget):
         top_buttons_layout.addStretch(0)
         top_buttons_layout.addSpacing(1000)
 
-        top_buttons_text = deque(['Basket', 'Favourites', 'About'])  # TODO: need to add the 'Log Out' button
+        top_buttons_text = deque(['Basket', 'Favourites', 'About', 'Log Out'])
 
         while top_buttons_text:
             curr_top_button = top_buttons_text.popleft()
@@ -318,6 +321,11 @@ class MainMenu(QWidget):
             buttons[-3].setEnabled(True)
             buttons[-4].setEnabled(True)
         open_categories()
+
+        """LOG OUT TO LOGIN SCREEN"""
+        def log_out():
+            login.start_window()
+            main_menu_window.hide()
         
         
 """OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
