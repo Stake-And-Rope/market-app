@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QWidget,
                              QLineEdit,
                              QMessageBox,
                              QHBoxLayout,
-                             QVBoxLayout)
+                             QVBoxLayout, QCheckBox)
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -85,6 +85,10 @@ class Register(QWidget):
             form_layout.addWidget(current_label)
 
         """BUTTONS LAYOUT"""
+        global show_password_button
+        show_password_button = QCheckBox("Show Password")
+        show_password_button.clicked.connect(lambda: show_password())
+
         buttons_layout = QHBoxLayout()
         buttons_layout_texts = deque(["Register", "Back"])
         for i in range(2):
@@ -102,6 +106,7 @@ class Register(QWidget):
         main_layout = QVBoxLayout()
         main_layout.addLayout(form_layout)
         main_layout.addLayout(main_horizontal_layout)
+        main_layout.addWidget(show_password_button)
         main_layout.addLayout(buttons_layout)
         main_layout.addLayout(image_layout)
         self.setLayout(main_layout)
@@ -170,6 +175,13 @@ class Register(QWidget):
         def open_login():
             login.start_window()
             register_window.hide()
+
+        def show_password():
+            for password_label in [user_data_two[3], user_data_two[4]]:
+                if show_password_button.isChecked():
+                    password_label.setEchoMode(QLineEdit.Normal)
+                else:
+                    password_label.setEchoMode(QLineEdit.Password)
 
 
 def start_window():

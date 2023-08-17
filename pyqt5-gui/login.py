@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QLineEdit,
     QMessageBox,
-    QApplication
+    QApplication, QCheckBox
 )
 
 from PyQt5.QtGui import (
@@ -22,12 +22,14 @@ from collections import deque
 
 """DIRECTORY IMPORTS"""
 import sys
+
 sys.path.append(r'..')
 from db_handle import postgres_conn
 import register, main_menu
 
 admin_cursor = postgres_conn.POSTGRES_CURSOR
 admin_connection = postgres_conn.POSTGRES_CONNECTION
+
 
 class LogIn(QWidget):
     def __init__(self):
@@ -88,7 +90,13 @@ class LogIn(QWidget):
         log_in_button.clicked.connect(lambda: login())
         log_in_button.setProperty("class", "login_register_button")
 
+        global show_password_button
+        show_password_button = QCheckBox("Show Password")
+        show_password_button.clicked.connect(lambda: show_password())
+        show_password_button.setFont(QFont("Arial", 9))
+
         """ADD LABEL TO THE CENTERED VERTICAL LAYOUT"""
+        first_center_vertical_layout.addWidget(show_password_button)
         first_center_vertical_layout.addWidget(log_in_button)
 
         """INIT THE MAIN LAYOUT"""
@@ -113,9 +121,16 @@ class LogIn(QWidget):
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
 
+        def show_password():
+            if show_password_button.isChecked():
+                user_data[1].setEchoMode(QLineEdit.Normal)
+            else:
+                user_data[1].setEchoMode(QLineEdit.Password)
 
 
 """INIT THE MAIN APP - THIS FUNCTION IS USED IN MAIN TO OPEN THE LOGIN"""
+
+
 def init_app():
     app = QApplication(sys.argv)
     app.setStyleSheet(Path('styles.qss').read_text())
@@ -124,16 +139,21 @@ def init_app():
     login_window.show()
     app.exec()
 
+
 """OPENS THE LOGIN MENU - USED TO GO BACK FROM REGISTER OR WHEN USER IS LOGGING OUT"""
+
+
 def start_window():
     global login_window
     login_window = LogIn()
     login_window.show()
-    
+
+
 """OPENS THE REGISTER MENU"""
 def open_register():
     register.start_window()
     login_window.hide()
+
 
 """OPENS THE MAIN MENU WINDOW"""
 def open_main_menu():

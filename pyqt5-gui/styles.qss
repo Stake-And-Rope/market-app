@@ -17,8 +17,9 @@
     border-radius: 4px;
     margin-top: 10px;
     padding: 0;
+}
 
-    hover{
+.login_register_button:hover {
     background-color: #329dd5;
     }
 }
@@ -34,8 +35,17 @@
     border-radius: 4px;
     margin-top: 10px;
     padding: 0;
+}
 
-    hover{
+.back_button:hover {
+    background-color: #999;
+}
+
+.log_out_button {
+    background-color: #3ca9e2;
+    color: #fff;
+}
+
+.log_out_button:hover {
     background-color: #329dd5;
-    }
 }
