@@ -1,27 +1,17 @@
 #!/usr/bin/python3
 """IMPORT PyQt5 ENGINE"""
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (QWidget,
                              QPushButton,
-                             QGridLayout,
                              QLabel,
-                             QFrame,
                              QGroupBox,
-                             QLineEdit,
                              QMessageBox,
                              QPlainTextEdit,
                              QHBoxLayout,
-                             QVBoxLayout,
-                             QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
-                             )
-
+                             QVBoxLayout)
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
-from datetime import datetime
 sys.path.append(r'..')
-from collections import deque
 from db_handle import postgres_conn
 import login
 
@@ -47,8 +37,6 @@ def open_payment_options():
     
     admin_cursor.execute(f"SELECT * FROM payment_options WHERE username = '{current_user}'")
     result = admin_cursor.fetchall()
-    print(result)
-    len_result = len(result)
 
     global payment_options_groupbox
     payment_options_groupbox = QGroupBox()
@@ -87,11 +75,13 @@ def open_payment_options():
         date_label = QLabel()
         date_label.setText(f'Valid until: {str(result[i][6])}')
         
+        delete_buttons_list = []
         delete_button = QPushButton()
         delete_button.setIcon(QIcon(r"../img/trash.png"))
         delete_button.setIconSize(QSize(32, 32))
         delete_button.setToolTip("Delete Card")
-
+        delete_button.clicked.connect(lambda: open_delete_card())
+        delete_buttons_list.append(delete_button)
         
         current_payment_option.addWidget(payment_type_label)
         current_payment_option.addWidget(payment_name)
@@ -100,7 +90,6 @@ def open_payment_options():
         current_payment_option.addWidget(date_label)
         current_payment_option.addWidget(delete_button)
 
-    
         payment_options_layout.addLayout(current_payment_option)
     
     
@@ -112,32 +101,56 @@ def open_payment_options():
     payment_options_layout.addWidget(add_new_card)
     
     payment_options_groupbox.setLayout(payment_options_layout)
+    
+    class DeleteCard(QWidget, payment_name):
+        def __init__(self):
+            super().__init__()
+            self.setWindowTitle("Delete Card")
+            self.setGeometry(650, 300, 300, 200)
+            self.setWindowIcon(QIcon(r'../img/market.png'))
+            self.payment_name = payment_name
+            
+            delete_window_main_layout = QVBoxLayout()
+            
+            delete_text = QLabel()
+            delete_text.setText("Are you sure you want to delete this card?")
+            delete_text.setFont(QFont(fonts[0], 12))
+            
+            confirm_button = QPushButton()
+            confirm_button.setText("Delete Card")
+            confirm_button.clicked.connect(lambda: delete_card())
+            
+            cancel_button = QPushButton()
+            cancel_button.setText("Cancel")
+            cancel_button.clicked.connect(lambda: cancel())
+            
+            delete_window_main_layout.addWidget(delete_text)
+            delete_window_main_layout.addWidget(confirm_button)
+            delete_window_main_layout.addWidget(cancel_button)
+            
+            def delete_card():
+                print()
+            
+            def cancel():
+                delete_card_window.hide()
+            
+            self.setLayout(delete_window_main_layout)
+            
 
+
+    
+    def open_create_new_card():
+        pass
+
+
+    def open_delete_card():
+        global delete_card_window
+        delete_card_window = DeleteCard()
+        delete_card_window.show()
+            
     
 
     return payment_options_groupbox
 
 
 
-
-
-    # categories_groupbox.hide()
-    # main_layout.addWidget(payment_options_groupbox, 1, 1)
-    # buttons[-1].setEnabled(False)
-    
-    # payment_type_layout = QHBoxLayout()
-    # payment_type = QLabel()
-    # payment_type.setText('Visa Debit')
-    # payment_type.setFont(QFont(fonts[0], 12))
-    # visa_img = r'../img/visa.png'
-    # mastercard_img = r'../img/mastercard.png'
-    # revolut_img = r'../img/revolut.png'
-    # payment_icon = QLabel()
-    # if 'Visa' in payment_type.text():
-    #     payment_icon.setPixmap(visa_img)
-    # elif 'Mastercard' in payment_type.text():
-    #     payment_icon.setPixmap(mastercard_img)
-    # elif 'Revolut' in payment_type.text():
-    #     payment_icon.setPixmap(revolut_img)
-    # payment_icon.setFixedHeight(10)
-    # payment_icon.setFixedWidth(10)
