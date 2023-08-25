@@ -21,7 +21,6 @@
 
 .login_register_button:hover {
     background-color: #329dd5;
-    }
 }
 
 .back_button {
@@ -48,4 +47,22 @@
 
 .log_out_button:hover {
     background-color: #329dd5;
+}
+
+.payment_label_visa {
+    background-image: url(../img/visa64.png);
+    width: 64px;
+    height: 64px;
+}
+
+.payment_label_mastercard {
+    background-image: url(../img/mastercard64.png);
+    width: 64px;
+    height: 64px;
+}
+
+.payment_label_revolut {
+    background-image: url(../img/visa32.png);
+    width: 64px;
+    height: 64px;
 }
