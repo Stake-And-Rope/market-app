@@ -41,7 +41,7 @@ def products_menu(subcategory_name):
     def redirect_to_insert_to_basket_func(prod_id, prod_name, spin_box, price_for_one):
         return lambda : insert_into_basket(prod_id, prod_name, spin_box, price_for_one)
     
-    products_groupbox = QGroupBox("Products")
+    products_groupbox = QGroupBox()
     products_grid_layout = QGridLayout()
 
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""

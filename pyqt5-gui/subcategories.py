@@ -46,7 +46,7 @@ def open_subcategory(subcatname):
     fonts = QFontDatabase.applicationFontFamilies(font)
 
     """CREATE THE SUBCATEGORIES LAYOUT"""
-    subcategories_groupbox = QGroupBox("SubCategories")
+    subcategories_groupbox = QGroupBox()
 
     image = f"../img/background.png"
     subcats_groupbox_stylesheet = f"QGroupBox {{ background-image: url({image});" \

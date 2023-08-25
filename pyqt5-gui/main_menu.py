@@ -165,7 +165,7 @@ class MainMenu(QWidget):
         top_buttons_groupbox.setLayout(top_buttons_layout)
 
         """CREATE THE CATEGORIES LAYOUT"""
-        categories_groupbox = QGroupBox("Categories")
+        categories_groupbox = QGroupBox()
 
         categories_grid_layout = QGridLayout()
 
@@ -324,6 +324,10 @@ class MainMenu(QWidget):
 
         """LOG OUT TO LOGIN SCREEN"""
         def log_out():
+            # admin_cursor.close()
+            # admin_connection.close()
+            # # login.user_cursor.close()
+            # # login.user_connection.close()
             login.start_window()
             main_menu_window.hide()
         

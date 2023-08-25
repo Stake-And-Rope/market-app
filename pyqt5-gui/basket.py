@@ -80,7 +80,8 @@ def basket_menu():
                 current_buttons_layout.setAlignment(Qt.AlignLeft)
 
                 current_spin_box = QSpinBox()
-                current_spin_box.setValue(int(quantity))
+                # current_spin_box.setValue(int(quantity))
+                current_spin_box.setValue(1)
 
                 current_favourites_button = QPushButton()
                 current_favourites_button.setFixedWidth(35)
