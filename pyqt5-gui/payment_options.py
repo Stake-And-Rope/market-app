@@ -138,7 +138,7 @@ def open_payment_options():
                 delete_card_window.hide()
             
             self.setLayout(delete_card_main_layout)
-    
+
     """CREATE NEW CARD POP-OUT WINDOW IN A SEPARATE CLASS"""
     class CreateCard(QWidget):
         def __init__(self):
@@ -192,10 +192,10 @@ def open_payment_options():
             cancel_create_button = QPushButton()
             cancel_create_button.setText("Cancel")
             cancel_create_button.setFont(QFont(fonts[0], 12))
+            cancel_create_button.clicked.connect(lambda: cancel_create())
             
             buttons_layout.addWidget(confirm_create_button)
             buttons_layout.addWidget(cancel_create_button)
-            
             
             create_card_main_layout.addWidget(payment_name_field)
             create_card_main_layout.addWidget(payment_type_field)
@@ -206,6 +206,12 @@ def open_payment_options():
             create_card_main_layout.addLayout(buttons_layout)
 
             self.setLayout(create_card_main_layout)
+            
+            def create_card():
+                pass
+            
+            def cancel_create():
+                create_card_window.hide()
 
     
     def open_create_new_card():
