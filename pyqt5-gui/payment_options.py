@@ -75,13 +75,11 @@ def open_payment_options():
         date_label = QLabel()
         date_label.setText(f'Valid until: {str(result[i][6])}')
         
-        delete_buttons_list = []
         delete_button = QPushButton()
         delete_button.setIcon(QIcon(r"../img/trash.png"))
         delete_button.setIconSize(QSize(32, 32))
         delete_button.setToolTip("Delete Card")
         delete_button.clicked.connect(lambda: open_delete_card())
-        delete_buttons_list.append(delete_button)
         
         current_payment_option.addWidget(payment_type_label)
         current_payment_option.addWidget(payment_name)
@@ -102,7 +100,7 @@ def open_payment_options():
     
     payment_options_groupbox.setLayout(payment_options_layout)
     
-    class DeleteCard(QWidget, payment_name):
+    class DeleteCard(QWidget):
         def __init__(self):
             super().__init__()
             self.setWindowTitle("Delete Card")
