@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (QWidget,
                              QVBoxLayout)
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys, random
+import sys, random, re
 sys.path.append(r'..')
 from db_handle import postgres_conn
 import login
@@ -141,7 +141,7 @@ def open_payment_options():
             create_card_main_layout.addSpacing(5)
 
             payment_name_field = QLineEdit()
-            payment_name_field.setText("Card Alias")
+            payment_name_field.setPlaceholderText("Card Alias")
             payment_name_field.setFont(QFont(fonts[0], 12))
             
             payment_type_field = QComboBox()
@@ -153,16 +153,17 @@ def open_payment_options():
             payment_type_field.addItem(revolut_icon, "Revolut")
             
             card_number_field = QLineEdit()
-            card_number_field.setText("Card Number")
+            card_number_field.setPlaceholderText("Card Number")
             card_number_field.setFont(QFont(fonts[0], 12))
             card_number_field.setMaxLength(14)
             
+            
             card_holder_field = QLineEdit()
-            card_holder_field.setText("Cardholder Name")
+            card_holder_field.setPlaceholderText("Cardholder Name")
             card_holder_field.setFont(QFont(fonts[0], 12))
             
             ccv_field = QLineEdit()
-            ccv_field.setText("CCV Number")
+            ccv_field.setPlaceholderText("CCV Number")
             ccv_field.setFont(QFont(fonts[0], 12))
             ccv_field.setMaxLength(3)
             
@@ -177,6 +178,7 @@ def open_payment_options():
             confirm_create_button = QPushButton()
             confirm_create_button.setText("Save Card")
             confirm_create_button.setFont(QFont(fonts[0], 12))
+            confirm_create_button.clicked.connect(lambda: create_card())
             
             cancel_create_button = QPushButton()
             cancel_create_button.setText("Cancel")
@@ -201,7 +203,7 @@ def open_payment_options():
                 while True:
                     card_id = [str(random.randint(0, 9)) for x in range(10)]
                     card_id = ''.join(card_id)
-                    admin_cursor.execute(f"SELECT payment_code FROM payment_options WHERE payment_code = {card_id}")
+                    admin_cursor.execute(f"SELECT payment_code FROM payment_options WHERE payment_code = '{card_id}'")
                     existing_ids = admin_cursor.fetchall()
                     if card_id not in existing_ids:
                         break
@@ -211,6 +213,28 @@ def open_payment_options():
                 payment_cardholder_name = card_holder_field.text()
                 payment_ccv = ccv_field.text()
                 payment_date = date_field.text()
+                
+                if len(payment_card_number) < 14:
+                    create_card_errors.append("Card number invalid. Enter the card number in format XXXX-XXXX-XXXX, only digits.")
+                if not re.match(r"\d{4}-\d{4}-\d{4}", payment_card_number):
+                    create_card_errors.append("Card number invalid. Enter the card number in format XXXX-XXXX-XXXX, only digits.")
+                if len(payment_ccv) < 3:
+                    create_card_errors.append("CCV number must be at least 3 numbers.")
+                if payment_ccv.isalpha():
+                    create_card_errors.append("CCV number must be only digits.")
+                
+                if len(create_card_errors) == 0:
+                    pass
+                    admin_cursor.execute(f"INSERT INTO payment_options VALUES ('{card_id}', '{payment_name}', '{payment_type}', '{payment_card_number}', '{payment_cardholder_name}', '{payment_ccv}', '{payment_date[0:8]}', 'False', '{current_user}')")
+                else:
+                    create_card_msg = QMessageBox()
+                    create_card_msg.setIcon(QMessageBox.Warning)
+                    create_card_error_msg = '\n'.join(create_card_errors)
+                    create_card_msg.setText(create_card_error_msg)
+                    create_card_msg.setWindowTitle("Error Creating New Card")
+                    create_card_msg.setStandardButtons(QMessageBox.Ok)
+                    msg_box = create_card_msg.exec()
+                    
             
             def cancel_create():
                 create_card_window.hide()
