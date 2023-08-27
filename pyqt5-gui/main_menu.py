@@ -348,5 +348,3 @@ def start_window():
 
 if __name__ == '__main__':
     open_app()
-
-# open_app()

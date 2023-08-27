@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import (QWidget,
                              QComboBox,
                              QGroupBox,
                              QMessageBox,
-                             QPlainTextEdit,
                              QHBoxLayout,
                              QVBoxLayout)
 from PyQt5.QtGui import *
@@ -224,7 +223,6 @@ def open_payment_options():
                     create_card_errors.append("CCV number must be only digits.")
                 
                 if len(create_card_errors) == 0:
-                    pass
                     admin_cursor.execute(f"INSERT INTO payment_options VALUES ('{card_id}', '{payment_name}', '{payment_type}', '{payment_card_number}', '{payment_cardholder_name}', '{payment_ccv}', '{payment_date[0:8]}', 'False', '{current_user}')")
                 else:
                     create_card_msg = QMessageBox()
