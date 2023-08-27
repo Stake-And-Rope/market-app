@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (QWidget,
                              QVBoxLayout)
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys
+import sys, random
 sys.path.append(r'..')
 from db_handle import postgres_conn
 import login
@@ -26,11 +26,15 @@ admin_connection = postgres_conn.POSTGRES_CONNECTION
 user_cursor = postgres_conn.USER_POSTGRES_CURSOR
 user_connection = postgres_conn.USER_POSTGRES_CONNECTION
 
-def open_payment_options():
+def open_payment_options():    
     login.user_cursor.execute("SELECT current_user")
     global current_user
     current_user = login.user_cursor.fetchone()
     current_user = current_user[0].replace("_marketapp", "")
+    
+    """DELETE CARD POP-OUT WINDOW IN A SEPARATE CLASS"""
+    def go_to_del(card_id_num):
+        return lambda: delete_card(card_id_num)
     
     """ADD CUSTOM FONT TO ARRAY READY TO BE LOADED TO ANY TEXT OBJECT"""
     font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
@@ -53,6 +57,7 @@ def open_payment_options():
         current_payment_option = QHBoxLayout()
         current_payment_option.setAlignment(Qt.AlignLeft)
         
+        card_id = str(result[i][0])
         card_type = result[i][2]
         
         payment_type_label = QLabel()
@@ -83,8 +88,8 @@ def open_payment_options():
         delete_button.setIcon(QIcon(r"../img/trash.png"))
         delete_button.setIconSize(QSize(32, 32))
         delete_button.setToolTip("Delete Card")
-        delete_button.clicked.connect(lambda: open_delete_card())
-        
+        delete_button.clicked.connect(go_to_del(card_id))
+                
         current_payment_option.addWidget(payment_type_label)
         current_payment_option.addWidget(payment_name)
         current_payment_option.addWidget(card_holder)
@@ -93,6 +98,23 @@ def open_payment_options():
         current_payment_option.addWidget(delete_button)
 
         payment_options_layout.addLayout(current_payment_option)
+    
+
+    def delete_card(payment):
+        delete_card_msgbox = QMessageBox()
+        delete_card_msgbox.setIcon(QMessageBox.Warning)
+        delete_card_msgbox.setText("Are you sure you wnat to delete this card?")
+        delete_card_msgbox.setWindowTitle("Delete Payment Option")
+        delete_card_msgbox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg_box = delete_card_msgbox.exec()
+        print(delete_card_msgbox.clickedButton().text())
+        
+        if "OK" in delete_card_msgbox.clickedButton().text():
+            print("Ok was pressed!")
+            admin_cursor.execute(f"DELETE FROM payment_options WHERE payment_code = '{payment}';")
+            admin_connection.commit()
+            print(f"{payment} deleted from database.")
+
     
     """CREATE NEW CARD - IT WILL POP-OUT NEW WINDOW"""
     add_new_card = QPushButton()
@@ -105,39 +127,6 @@ def open_payment_options():
     
     payment_options_groupbox.setLayout(payment_options_layout)
     
-    """DELETE CARD POP-OUT WINDOW IN A SEPARATE CLASS"""
-    class DeleteCard(QWidget):
-        def __init__(self):
-            super().__init__()
-            self.setWindowTitle("Delete Card")
-            self.setGeometry(650, 300, 300, 200)
-            self.setWindowIcon(QIcon(r'../img/market.png'))
-            
-            delete_card_main_layout = QVBoxLayout()
-            
-            delete_text = QLabel()
-            delete_text.setText("Are you sure you want to delete this card?")
-            delete_text.setFont(QFont(fonts[0], 12))
-            
-            confirm_delete_button = QPushButton()
-            confirm_delete_button.setText("Delete Card")
-            confirm_delete_button.clicked.connect(lambda: delete_card())
-            
-            cancel_delete_button = QPushButton()
-            cancel_delete_button.setText("Cancel")
-            cancel_delete_button.clicked.connect(lambda: cancel_delete())
-            
-            delete_card_main_layout.addWidget(delete_text)
-            delete_card_main_layout.addWidget(confirm_delete_button)
-            delete_card_main_layout.addWidget(cancel_delete_button)
-            
-            def delete_card():
-                print()
-            
-            def cancel_delete():
-                delete_card_window.hide()
-            
-            self.setLayout(delete_card_main_layout)
 
     """CREATE NEW CARD POP-OUT WINDOW IN A SEPARATE CLASS"""
     class CreateCard(QWidget):
@@ -145,7 +134,7 @@ def open_payment_options():
             super().__init__()
             self.setWindowTitle("Create New Payment Card")
             self.setGeometry(650, 300, 300, 200)
-            self.setWindowIcon(QIcon(r'../img/market.png'))        
+            self.setWindowIcon(QIcon(r'../img/market.png'))   
         
             create_card_main_layout = QVBoxLayout()
             create_card_main_layout.addStretch()
@@ -208,7 +197,20 @@ def open_payment_options():
             self.setLayout(create_card_main_layout)
             
             def create_card():
-                pass
+                create_card_errors = []
+                while True:
+                    card_id = [str(random.randint(0, 9)) for x in range(10)]
+                    card_id = ''.join(card_id)
+                    admin_cursor.execute(f"SELECT payment_code FROM payment_options WHERE payment_code = {card_id}")
+                    existing_ids = admin_cursor.fetchall()
+                    if card_id not in existing_ids:
+                        break
+                payment_name = payment_name_field.text()
+                payment_type = payment_type_field.currentText()
+                payment_card_number = card_number_field.text()
+                payment_cardholder_name = card_holder_field.text()
+                payment_ccv = ccv_field.text()
+                payment_date = date_field.text()
             
             def cancel_create():
                 create_card_window.hide()
@@ -218,13 +220,6 @@ def open_payment_options():
         global create_card_window
         create_card_window = CreateCard()
         create_card_window.show()
-
-
-    def open_delete_card():
-        global delete_card_window
-        delete_card_window = DeleteCard()
-        delete_card_window.show()
-            
     
 
     return payment_options_groupbox

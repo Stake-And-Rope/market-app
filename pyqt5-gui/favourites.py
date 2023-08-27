@@ -117,7 +117,7 @@ def favourites_menu():
     favorites_scroll.setWidget(favorites_widget)
 
     def delete_from_favourite_products(curr_product_name):
-        admin_cursor.execute(f"delete from favourite_products where product_name = '{curr_product_name}' and username = '{current_user}';")
+        admin_cursor.execute(f"DELETE FROM favourite_products WHERE product_name = '{curr_product_name}' AND username = '{current_user}';")
         admin_connection.commit()
         print('Deleted')
 
