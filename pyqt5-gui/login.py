@@ -86,6 +86,7 @@ class LogIn(QWidget):
             first_center_vertical_layout.addWidget(current_label)
         print(user_data[0].text(), user_data[1].text())
 
+        global log_in_button
         log_in_button = QPushButton("Log in")
         log_in_button.clicked.connect(lambda: login())
         log_in_button.setProperty("class", "login_register_button")
@@ -126,6 +127,12 @@ class LogIn(QWidget):
                 user_data[1].setEchoMode(QLineEdit.Normal)
             else:
                 user_data[1].setEchoMode(QLineEdit.Password)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            log_in_button.click()
+        else:
+            super().keyPressEvent(event)
 
 
 """INIT THE MAIN APP - THIS FUNCTION IS USED IN MAIN TO OPEN THE LOGIN"""
