@@ -40,9 +40,51 @@
     background-color: #999;
 }
 
+.main_menu_buttons {
+    width: 120px;
+    height: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #D0D0D0;
+    color: #1A1A1A;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.main_menu_buttons:hover {
+    background-color: #B0E0E6
+}
+
+.categories_buttons {
+    width: 150px;
+    height: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: rgba(225, 225, 225, 150);
+    color: #1A1A1A;
+    border: 1px solid black;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.categories_buttons:hover {
+    background-color: #B0E0E6
+}
+
 .log_out_button {
+    width: 120px;
+    height: 30px;
+    font-size: 14px;
+    font-weight: bold;
     background-color: #3ca9e2;
     color: #fff;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding: 0;
 }
 
 .log_out_button:hover {

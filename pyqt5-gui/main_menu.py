@@ -95,19 +95,21 @@ class MainMenu(QWidget):
         fonts = QFontDatabase.applicationFontFamilies(font)
 
         """CREATE THE USER INFO VERTICAL LAYOUT"""
-        user_info_groupbox = QGroupBox('User Information')
+        user_info_groupbox = QGroupBox()
         admin_cursor.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = '{current_user}'")
         user_info = admin_cursor.fetchone()
 
         user_name = QLabel(f"Hello, {user_info[1]} {user_info[2]}")
-        user_name.setFont(QFont(fonts[0], 12))
+        user_font = QFont(fonts[0], 12)
+        user_font.setWeight(QFont.Weight.Light + 30)
+        user_name.setFont(user_font)
 
         user_id = QLabel(f"Your ID is {user_info[0]}")
-        user_id.setFont(QFont(fonts[0], 12))
+        user_id.setFont(user_font)
         user_info_layout = QVBoxLayout()
 
         user_total_orders = QLabel(f"Total orders: {user_info[3]}")
-        user_total_orders.setFont(QFont(fonts[0], 12))
+        user_total_orders.setFont(user_font)
 
         user_info_layout.addWidget(user_name)
         user_info_layout.addWidget(user_id)
@@ -117,7 +119,7 @@ class MainMenu(QWidget):
         user_info_groupbox.setLayout(user_info_layout)
 
         """CREATE THE LEFT BUTTONS LAYOUT"""
-        left_buttons_groupbox = QGroupBox('User Actions')
+        left_buttons_groupbox = QGroupBox()
         left_buttons_layout = QVBoxLayout()
 
         buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
@@ -129,8 +131,8 @@ class MainMenu(QWidget):
             button_function = button_text.replace(" ", "_")
             button_function = button_function.lower()
             button.setFont(QFont(fonts[0], 12))
+            button.setProperty("class", "main_menu_buttons")
             button.setFixedWidth(250)
-            button.setFixedHeight(30)
             button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             button.clicked.connect(left_layout_buttons_dict[button_function])
             buttons.appendleft(button)
@@ -142,7 +144,7 @@ class MainMenu(QWidget):
         left_buttons_groupbox.setLayout(left_buttons_layout)
 
         """CREATE THE TOP LAYOUT"""
-        top_buttons_groupbox = QGroupBox("Top menu")
+        top_buttons_groupbox = QGroupBox()
         top_buttons_layout = QHBoxLayout()
 
         top_buttons_layout.addStretch(0)
@@ -155,10 +157,14 @@ class MainMenu(QWidget):
             top_button = QPushButton()
             top_button.setText(curr_top_button)
             top_button.setFont(QFont(fonts[0], 9))
-            top_button.setFixedWidth(120)
-            top_button.setFixedHeight(30)
             top_button.setCursor(QCursor(QCursor(Qt.CursorShape.PointingHandCursor)))
             top_button.clicked.connect(top_layout_buttons_dict[curr_top_button])
+
+            if not top_buttons_text:
+                top_button.setProperty("class", "log_out_button")
+
+            else:
+                top_button.setProperty("class", "main_menu_buttons")
 
             top_buttons_layout.addWidget(top_button)
 
@@ -205,7 +211,11 @@ class MainMenu(QWidget):
                     category_button = QPushButton()
                     category_button.setText(category_name)
                     category_button.setFont(QFont(fonts[0], 11))
-                    category_button.setMaximumWidth(150)
+                    category_button.setProperty("class", "categories_buttons")
+                    if category_name == "Home and Living":
+                        category_button.setMaximumWidth(170)
+                    else:
+                        category_button.setMaximumWidth(150)
                     category_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
                     category_button.clicked.connect(open_category_func(category_name))

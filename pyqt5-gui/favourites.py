@@ -71,11 +71,14 @@ def favourites_menu():
 
         current_sku = QLabel()
         current_sku.setText(product_id)
-        current_sku.setFont(QFont(fonts[0], 10))
+        favourites_font = QFont(fonts[0], 10)
+        favourites_font.setWeight(QFont.Weight.Light + 30)
+        current_sku.setFont(favourites_font)
 
         current_description = QLabel(product_description)
         current_description.setWordWrap(True)
-        current_description.setFont(QFont(fonts[0], 9))
+        favourites_font.setPointSize(9)
+        current_description.setFont(favourites_font)
 
         current_buttons_layout = QHBoxLayout()
         current_buttons_layout.setAlignment(Qt.AlignLeft)

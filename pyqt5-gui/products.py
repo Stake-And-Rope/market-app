@@ -73,17 +73,21 @@ def products_menu(subcategory_name):
 
         current_title = QLabel()
         current_title.setText('Test Title')
-        current_title.setFont(QFont(fonts[0], 12))
+        products_font = QFont(fonts[0], 12)
+        products_font.setWeight(QFont.Weight.Light + 30)
+        current_title.setFont(products_font)
 
         current_sku = QLabel()
         current_sku.setText(product_id)
-        current_sku.setFont(QFont(fonts[0], 10))
+        products_font.setPointSize(10)
+        current_sku.setFont(products_font)
 
         product_description = products_descriptions.popleft()
 
         current_description = QLabel(product_description)
         current_description.setWordWrap(True)
-        current_description.setFont(QFont(fonts[0], 9))
+        products_font.setPointSize(9)
+        current_description.setFont(products_font)
 
         current_buttons_layout = QHBoxLayout()
         current_buttons_layout.setAlignment(Qt.AlignLeft)

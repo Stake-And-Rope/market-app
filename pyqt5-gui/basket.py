@@ -65,11 +65,16 @@ def basket_menu():
 
         current_sku = QLabel()
         current_sku.setText(product_id)
-        current_sku.setFont(QFont(fonts[0], 10))
+        # current_sku.setFont(QFont(fonts[0], 10))
+        basket_font = QFont(fonts[0], 10)
+        basket_font.setWeight(QFont.Weight.Light + 30)
+        current_sku.setFont(basket_font)
 
         current_description = QLabel(product_description)
         current_description.setWordWrap(True)
         current_description.setFont(QFont(fonts[0], 9))
+        basket_font.setPointSize(9)
+        current_description.setFont(basket_font)
 
         current_buttons_layout = QHBoxLayout()
         current_buttons_layout.setAlignment(Qt.AlignLeft)
