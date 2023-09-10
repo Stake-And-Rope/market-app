@@ -93,6 +93,7 @@ def products_menu(subcategory_name):
         current_buttons_layout.setAlignment(Qt.AlignLeft)
 
         current_favorites_button = QPushButton()
+        current_favorites_button.setToolTip("Add to favourites")
         current_favorites_button.setFixedWidth(35)
         current_favorites_button.setFixedHeight(35)
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
@@ -101,6 +102,7 @@ def products_menu(subcategory_name):
         current_favorites_button.clicked.connect(redirect_to_insert_to_postgre_func(product_id, product_name))
 
         current_basket_button = QPushButton()
+        current_basket_button.setToolTip("Add to basket")
         current_basket_button.setFixedWidth(35)
         current_basket_button.setFixedHeight(35)
         current_basket_button.setIcon(QIcon(r'../img/shoppingcart.png'))
