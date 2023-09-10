@@ -7,16 +7,10 @@ from PyQt5.QtWidgets import (QApplication,
                              QPushButton,
                              QGridLayout,
                              QLabel,
-                             QFrame,
                              QGroupBox,
-                             QLineEdit,
-                             QMessageBox,
-                             QPlainTextEdit,
                              QHBoxLayout,
                              QVBoxLayout,
-                             QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
-                             )
+                             QGraphicsDropShadowEffect)
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -251,10 +245,11 @@ class MainMenu(QWidget):
             layouts_list.append(edit_account_layout)
             categories_groupbox.hide()
             try:
-                payment_options_layout.hide()
-                subcategories_layout.hide()
+                for i in layouts_list:
+                    if i != edit_account_layout:
+                        i.hide()
             except Exception as error:
-                print("Payment Options Not Opened")                
+                print("Edit Account Error -> No other windows were opened")                
             main_layout.addWidget(edit_account_layout, 1, 1)
             # Disable the button to avoid calling again the function
                 # Not the best approach, but for now it will do
@@ -272,10 +267,11 @@ class MainMenu(QWidget):
             layouts_list.append(payment_options_layout)
             categories_groupbox.hide()
             try:
-                edit_account_layout.hide()
-                subcategories_layout.hide()
+                for i in layouts_list:
+                    if i != payment_options_layout:
+                        i.hide()
             except Exception as error:
-                print("Edit Account Not Opened")            
+                print("Payment Options Error -> No other windows were opened")                
             main_layout.addWidget(payment_options_layout, 1, 1)
             buttons[-3].setEnabled(False)
             buttons[-1].setEnabled(True)
@@ -300,6 +296,7 @@ class MainMenu(QWidget):
             categories_groupbox.hide()
             main_layout.addWidget(subcategories_layout, 1, 1)
 
+        """OPEN FAVORITES MENU"""
         def open_favourites():
             global favourites_layout
             global layouts_list
@@ -307,7 +304,13 @@ class MainMenu(QWidget):
             layouts_list.append(favourites_layout)
             categories_groupbox.hide()
             main_layout.addWidget(favourites_layout, 1, 1)
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
+            print("Favorites was opened")
 
+        """OPEN BASKET MENU"""
         def open_basket():
             global basket_scroll_layout
             global layouts_list
@@ -315,11 +318,14 @@ class MainMenu(QWidget):
             layouts_list.append(basket_scroll_layout)
             categories_groupbox.hide()
             main_layout.addWidget(basket_scroll_layout, 1, 1)
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
 
         
         """BRING BACK THE CATEGORIES"""
         def open_categories():
-            # Not the best approach, that could be improved
             for i in layouts_list:
                 try:
                     i.hide()
