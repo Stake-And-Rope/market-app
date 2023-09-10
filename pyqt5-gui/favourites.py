@@ -84,23 +84,28 @@ def favourites_menu():
         current_buttons_layout.setAlignment(Qt.AlignLeft)
 
         current_favorites_button = QPushButton()
-        current_favorites_button.setFixedWidth(35)
-        current_favorites_button.setFixedHeight(35)
+        current_favorites_button.setFixedSize(35, 35)
         current_favorites_button.setIcon(QIcon(r'../img/favorite.png'))
         current_favorites_button.setIconSize(QSize(30, 30))
         current_favorites_button.clicked.connect(redirect_to_delete_postgres_func(product_name))
 
         current_basket_button = QPushButton()
-        current_basket_button.setFixedWidth(35)
-        current_basket_button.setFixedHeight(35)
+        current_basket_button.setFixedSize(35, 35)
         current_basket_button.setIcon(QIcon(r'../img/shoppingcart.png'))
         current_basket_button.setIconSize(QSize(30, 30))
+        
+        current_remove_button = QPushButton()
+        current_remove_button.setToolTip("Remove from favorites")
+        current_remove_button.setFixedSize(35, 35)
+        current_remove_button.setIcon(QIcon(r"../img/trash.png"))
+        current_remove_button.setIconSize(QSize(30, 30))
+        
 
         current_buttons_layout.addWidget(current_favorites_button)
         current_buttons_layout.addWidget(current_basket_button)
+        current_buttons_layout.addWidget(current_remove_button)
 
         current_horizontal_layout.insertWidget(0, product_image)
-        # current_horizontal_layout.addWidget(current_title)
         current_horizontal_layout.addWidget(current_sku)
         current_horizontal_layout.addWidget(current_description)
         current_horizontal_layout.addLayout(current_buttons_layout)
