@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import (
     QWidget,
     QLineEdit,
     QMessageBox,
-    QApplication, QCheckBox
-)
+    QApplication, 
+    QCheckBox)
 
 from PyQt5.QtGui import (
     QIcon,

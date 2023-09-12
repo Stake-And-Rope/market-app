@@ -45,11 +45,6 @@ Every user can register his own account from the `Register` form and using it's 
 
 ## :framed_picture: Screenshots
 
-![Login Screen](https://github.com/Stake-And-Rope/market-app/assets/86146020/410b3730-a10e-4262-b4e2-1a0aefb551fa)
-
-
-![Register Screen](https://github.com/Stake-And-Rope/market-app/assets/86146020/ba97c7d6-b68c-4dff-81ba-c34c4ddbf681)
-
 
 ## :motorway: Roadmap
 

@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-import sys
-import requests
+
 """IMPORT PyQt5 ENGINE"""
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
@@ -14,7 +13,7 @@ from PyQt5.QtWidgets import (QApplication,
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
+import sys
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
@@ -153,15 +152,11 @@ class MainMenu(QWidget):
             top_button.setFont(QFont(fonts[0], 9))
             top_button.setCursor(QCursor(QCursor(Qt.CursorShape.PointingHandCursor)))
             top_button.clicked.connect(top_layout_buttons_dict[curr_top_button])
-
             if not top_buttons_text:
                 top_button.setProperty("class", "log_out_button")
-
             else:
                 top_button.setProperty("class", "main_menu_buttons")
-
             top_buttons_layout.addWidget(top_button)
-
         top_buttons_groupbox.setLayout(top_buttons_layout)
 
         """CREATE THE CATEGORIES LAYOUT"""
