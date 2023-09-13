@@ -54,6 +54,8 @@ def basket_menu():
 
     result = deque(admin_cursor.fetchall())
 
+    basket_objects = []
+
     for current_product in result:
         product_id, product_name, product_description, product_subcategory, single_price, quantity, total_value = current_product
 
@@ -111,6 +113,8 @@ def basket_menu():
         basket_menu_h_layout.addLayout(current_horizontal_layout)
         basket_menu_h_layout.addStretch()
         basket_menu_h_layout.addSpacing(20)
+
+        basket_objects.append((product_id, current_spin_box))
     
     """HORIZONTAL LAYOUT FOR THE BOTTOM BUTTONS"""
     order_buttons_layout = QHBoxLayout()
@@ -119,6 +123,7 @@ def basket_menu():
     make_order_button.setText("Confirm Order")
     make_order_button.setFixedSize(130, 50)
     make_order_button.setProperty("class", "log_out_button")
+    make_order_button.clicked.connect(lambda: make_order())
     order_buttons_layout.addWidget(make_order_button)
     basket_menu_h_layout.addLayout(order_buttons_layout)
 
@@ -128,6 +133,33 @@ def basket_menu():
     basket_menu_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
     basket_menu_scroll.setWidgetResizable(True)
     basket_menu_scroll.setWidget(basket_widget)
+
+    def make_order():
+        for basket_object in basket_objects:
+            # print(basket_object[0])
+            # print(basket_object[1].value())
+            admin_cursor.execute(f"UPDATE basket SET quantity = {basket_object[1].value()} WHERE product_id = '{basket_object[0]}'"
+                                 f"AND basket.username = '{current_user}';")
+            admin_connection.commit()
+
+        admin_cursor.execute(f"select products.product_id, products.product_name, \
+    		    products.category, products.single_price, products.quantity as av_qty, products.unit_of_measure, \
+    		    basket.product_id as basket_prodid, basket.product_name as basket_prodname, \
+                basket.quantity as ord_qty from products inner join basket on products.product_id = basket.product_id \
+                where basket.username = '{current_user}';")
+
+        basket_result = admin_cursor.fetchall()
+
+        not_valid_items = []
+        for i in basket_result:
+            # print(f"item {i[0]} {i[1]} av_qty {i[4]} - ord_qty {i[7]}")
+            if i[4] < i[8]:
+                not_valid_items.append(
+                    f"{i[1]} {i[0]} not enough available quantity. Difference {abs(i[4] - i[8])} {i[5]}")
+
+        print("\n".join(not_valid_items))
+        error_message_box("\n".join(not_valid_items))
+
 
     def insert_into_favourite_products(curr_id, curr_product_name):
         admin_cursor.execute(
