@@ -1,44 +1,40 @@
 #!/usr/bin/python3
-import sys
-import requests
+
 # Import PyQt5 Engine
-from PyQt5.QtWidgets import (QApplication,
-                             QWidget,
+from PyQt5.QtWidgets import (
                              QPushButton,
                              QGridLayout,
                              QLabel,
-                             QFrame,
                              QGroupBox,
-                             QLineEdit,
-                             QMessageBox,
-                             QPlainTextEdit,
-                             QHBoxLayout,
                              QVBoxLayout,
                              QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
                              )
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
+import sys
 sys.path.append(r'.')
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-# from main_menu_dev import subcategory_name
-import products, main_menu
+import products, login
 
 
 
 
 def open_subcategory(subcatname):
+    """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+    admin_cursor = postgres_conn.POSTGRES_CURSOR
+    admin_connection = postgres_conn.POSTGRES_CONNECTION
+
+    """USER CLIENT TO THE POSTGRE DATABASE"""
+    login.user_cursor.execute("SELECT current_user")
+    current_user = login.user_cursor.fetchone()
+    current_user = current_user[0].replace("_marketapp", "")
+    
     global subcategory_name
     global subcategories_groupbox
-    # subcategory_name = ''
-    
-    """INIT CONNECTION TO THE DATABASE"""
-    postgres_conn.admin_client()
-    
+
     """OPEN THE PRODUCTS BASED ON THE SUBCATEGORY CALLED BY THE USER"""
     def subcats_func(subcat_name):
          return lambda: open_products(subcat_name)
@@ -50,7 +46,7 @@ def open_subcategory(subcatname):
     fonts = QFontDatabase.applicationFontFamilies(font)
 
     """CREATE THE SUBCATEGORIES LAYOUT"""
-    subcategories_groupbox = QGroupBox("SubCategories")
+    subcategories_groupbox = QGroupBox()
 
     image = f"../img/background.png"
     subcats_groupbox_stylesheet = f"QGroupBox {{ background-image: url({image});" \
@@ -61,10 +57,9 @@ def open_subcategory(subcatname):
     main_grid_layout = QGridLayout()
     subcategories_grid_layout = QGridLayout()
     
-
     global subcategory_name
-    postgres_conn.POSTGRES_CURSOR.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{subcatname}' ORDER BY subcategory_name ASC;")
-    result = postgres_conn.POSTGRES_CURSOR.fetchall()
+    admin_cursor.execute(f"SELECT subcategory_name FROM subcategories where parent_category = '{subcatname}' ORDER BY subcategory_name ASC;")
+    result = admin_cursor.fetchall()
     subcategories = deque([x[0] for x in result])
 
     for row in range(3):
@@ -94,7 +89,13 @@ def open_subcategory(subcatname):
         subcategory_button = QPushButton()
         subcategory_button.setText(subcategory_name.text())
         subcategory_button.setFont(QFont(fonts[0], 11))
+        subcategory_button.setProperty("class", "categories_buttons")
         subcategory_button.setMaximumWidth(150)
+        if len(subcategory_name.text()) >= 13:
+            subcategory_button.setMaximumWidth(205)
+            if subcategory_name.text() == "Non-Alcohol Beverages" or subcategory_name.text() == "Photography Gadgets"\
+                    or subcategory_name.text() == "Household Appliances":
+                subcategory_button.setMaximumWidth(235)
         subcategory_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
         subcategory_button.clicked.connect(subcats_func(subcategory_name.text()))

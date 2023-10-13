@@ -1,30 +1,34 @@
 #!/usr/bin/python3
-import sys
-from collections import deque
 
-sys.path.append(r'..')
+"""IMPORT QT FRAMEWORK"""
 from PyQt5.QtWidgets import (
     QVBoxLayout,
-    QHBoxLayout,
     QPushButton,
     QLabel,
     QWidget,
     QLineEdit,
     QMessageBox,
-    QApplication
-)
+    QApplication, 
+    QCheckBox)
 
 from PyQt5.QtGui import (
     QIcon,
     QFontDatabase,
     QFont
 )
-
 from PyQt5.QtCore import Qt
 from pathlib import Path
+from collections import deque
+
+"""DIRECTORY IMPORTS"""
+import sys
+
+sys.path.append(r'..')
 from db_handle import postgres_conn
-import register
-import main_menu
+import register, main_menu
+
+admin_cursor = postgres_conn.POSTGRES_CURSOR
+admin_connection = postgres_conn.POSTGRES_CONNECTION
 
 
 class LogIn(QWidget):
@@ -36,7 +40,7 @@ class LogIn(QWidget):
         self.setMaximumWidth(400)
         self.setMaximumHeight(150)
 
-        """Add custom font to array, ready to be loaded to any text object"""
+        """ADD CUSTOM FONTS"""
         font = QFontDatabase.addApplicationFont(r'../fonts/jetbrains-mono.regular.ttf')
         if font >= 0:
             fonts = QFontDatabase.applicationFontFamilies(font)
@@ -44,11 +48,7 @@ class LogIn(QWidget):
             print("Error loading fonts!")
 
         """INIT THE TITLE LAYOUT"""
-
-        user_data = []
-
         title_layout = QVBoxLayout()
-
         title_label = QLabel()
         title_label.setText("Log In")
         title_label.setFont(QFont("Arial", 23))
@@ -72,26 +72,32 @@ class LogIn(QWidget):
 
         """INIT THE FIRST CENTERED VERTICAL LAYOUT"""
         first_center_vertical_layout = QVBoxLayout()
-
         user_texts = deque(["Username", "Password"])
 
+        user_data = []
         for i in range(2):
             current_label = QLineEdit()
             current_label.setPlaceholderText(user_texts.popleft())
             current_label.setFont(QFont("Arial", 9))
             current_label.setProperty("class", "username_label")
-
             if i == 1:
                 current_label.setEchoMode(QLineEdit.Password)
-
-            user_data.append(current_label.text())
+            user_data.append(current_label)
             first_center_vertical_layout.addWidget(current_label)
+        print(user_data[0].text(), user_data[1].text())
 
+        global log_in_button
         log_in_button = QPushButton("Log in")
         log_in_button.clicked.connect(lambda: login())
         log_in_button.setProperty("class", "login_register_button")
 
+        global show_password_button
+        show_password_button = QCheckBox("Show Password")
+        show_password_button.clicked.connect(lambda: show_password())
+        show_password_button.setFont(QFont("Arial", 9))
+
         """ADD LABEL TO THE CENTERED VERTICAL LAYOUT"""
+        first_center_vertical_layout.addWidget(show_password_button)
         first_center_vertical_layout.addWidget(log_in_button)
 
         """INIT THE MAIN LAYOUT"""
@@ -103,24 +109,33 @@ class LogIn(QWidget):
 
         def login():
             try:
-                postgres_conn.customer_client(username_label.text(), password_label.text())
-                postgres_conn.customer_client(username_textbox.text(), password_textbox.text())
+                postgres_conn.user_client(user_data[0].text(), user_data[1].text())
+                global user_cursor, user_connection
+                user_cursor = postgres_conn.USER_POSTGRES_CURSOR
+                user_connection = postgres_conn.USER_POSTGRES_CONNECTION
                 open_main_menu()
             except (Exception) as error:
                 error_msg_box = QMessageBox(self)
                 error_msg_box.setIcon(QMessageBox.Warning)
                 error_msg_box.setText("Wrong username and/or password!")
-                error_msg_box.setWindowTitle("LoigIn unsuccessfull")
+                error_msg_box.setWindowTitle("LogIn unsuccessfull")
                 error_msg_box.setStandardButtons(QMessageBox.Ok)
                 msg_box = error_msg_box.exec()
 
-        def open_register():
-            register.start_window()
-            login_window.hide()
+        def show_password():
+            if show_password_button.isChecked():
+                user_data[1].setEchoMode(QLineEdit.Normal)
+            else:
+                user_data[1].setEchoMode(QLineEdit.Password)
 
-        def open_main_menu():
-            main_menu.start_window()
-            login_window.hide()
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            log_in_button.click()
+        else:
+            super().keyPressEvent(event)
+
+
+"""INIT THE MAIN APP - THIS FUNCTION IS USED IN MAIN TO OPEN THE LOGIN"""
 
 
 def init_app():
@@ -132,9 +147,22 @@ def init_app():
     app.exec()
 
 
+"""OPENS THE LOGIN MENU - USED TO GO BACK FROM REGISTER OR WHEN USER IS LOGGING OUT"""
+
+
 def start_window():
     global login_window
     login_window = LogIn()
     login_window.show()
 
-# init_app()
+
+"""OPENS THE REGISTER MENU"""
+def open_register():
+    register.start_window()
+    login_window.hide()
+
+
+"""OPENS THE MAIN MENU WINDOW"""
+def open_main_menu():
+    main_menu.start_window()
+    login_window.hide()

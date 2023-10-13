@@ -1,38 +1,31 @@
 #!/usr/bin/python3
-import sys
-import requests
+
 """IMPORT PyQt5 ENGINE"""
 from PyQt5.QtWidgets import (QApplication,
                              QWidget,
                              QPushButton,
                              QGridLayout,
                              QLabel,
-                             QFrame,
                              QGroupBox,
-                             QLineEdit,
-                             QMessageBox,
-                             QPlainTextEdit,
                              QHBoxLayout,
                              QVBoxLayout,
-                             QGraphicsDropShadowEffect,
-                             QGraphicsOpacityEffect,
-                             )
+                             QGraphicsDropShadowEffect)
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
+import sys
 sys.path.append(r'..')
 from collections import deque
 from db_handle import postgres_conn
-import about, subcategories, edit_account, payment_options, products, favourites
+import about, subcategories, edit_account, payment_options, favourites, basket, login
+
+
+
 
 # This global variable should be modified to accept it's value dynamically, based on the cattegory button clicked
 global subcategory_name
 subcategory_name = ''
 layouts_list = []
-
-"""INIT CONNECTION TO THE DATABASE"""
-postgres_conn.admin_client()
 
 class MainMenu(QWidget):
     def __init__(self):
@@ -42,7 +35,15 @@ class MainMenu(QWidget):
         self.setGeometry(200, 150, 1500, 700)
         self.setMaximumWidth(1500)
         self.setMaximumHeight(700)
+        
+        """ADMIN CLIENT TO THE POSTGRE DATABASE"""
+        admin_cursor = postgres_conn.POSTGRES_CURSOR
+        admin_connection = postgres_conn.POSTGRES_CONNECTION
 
+        """USER CLIENT TO THE POSTGRE DATABASE"""
+        login.user_cursor.execute("SELECT current_user")
+        current_user = login.user_cursor.fetchone()
+        current_user = current_user[0].replace("_marketapp", "")
 
     
         """OPEN THE PROPER SUBCATEGORY"""
@@ -57,6 +58,12 @@ class MainMenu(QWidget):
         def open_favourites_func():
             return lambda: open_favourites()
 
+        def open_basket_func():
+            return lambda: open_basket()
+
+        def log_out_func():
+            return lambda: log_out()
+
         """LEFT LAYOUT BUTTONS CALL FUNCTION"""
         left_layout_buttons_dict = {
             'edit_account': lambda: open_update_account(),
@@ -67,9 +74,10 @@ class MainMenu(QWidget):
 
         """TOP LAYOUT BUTTONS CALL FUNCTIONS"""
         top_layout_buttons_dict = {
+            'Basket': open_basket_func(),
             'Favourites': open_favourites_func(),
             'About': lambda: open_about(),
-            # TODO: need to add the log out button function
+            'Log Out': log_out_func()
         }
 
 
@@ -80,22 +88,21 @@ class MainMenu(QWidget):
         fonts = QFontDatabase.applicationFontFamilies(font)
 
         """CREATE THE USER INFO VERTICAL LAYOUT"""
-        user_info_groupbox = QGroupBox('User Information')
-        postgres_conn.POSTGRES_CURSOR.execute("SELECT current_user;")
-        current_user = postgres_conn.POSTGRES_CURSOR.fetchone()
-        # The query below should be modified once we implement the main_menu window with rest of the application. WHERE username = {current_user}
-        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = 'pesho'")
-        user_info = postgres_conn.POSTGRES_CURSOR.fetchone()
+        user_info_groupbox = QGroupBox()
+        admin_cursor.execute(f"SELECT customer_id, first_name, last_name, total_orders FROM customers WHERE username = '{current_user}'")
+        user_info = admin_cursor.fetchone()
 
         user_name = QLabel(f"Hello, {user_info[1]} {user_info[2]}")
-        user_name.setFont(QFont(fonts[0], 12))
+        user_font = QFont(fonts[0], 12)
+        user_font.setWeight(QFont.Weight.Light + 30)
+        user_name.setFont(user_font)
 
         user_id = QLabel(f"Your ID is {user_info[0]}")
-        user_id.setFont(QFont(fonts[0], 12))
+        user_id.setFont(user_font)
         user_info_layout = QVBoxLayout()
 
         user_total_orders = QLabel(f"Total orders: {user_info[3]}")
-        user_total_orders.setFont(QFont(fonts[0], 12))
+        user_total_orders.setFont(user_font)
 
         user_info_layout.addWidget(user_name)
         user_info_layout.addWidget(user_id)
@@ -105,7 +112,7 @@ class MainMenu(QWidget):
         user_info_groupbox.setLayout(user_info_layout)
 
         """CREATE THE LEFT BUTTONS LAYOUT"""
-        left_buttons_groupbox = QGroupBox('User Actions')
+        left_buttons_groupbox = QGroupBox()
         left_buttons_layout = QVBoxLayout()
 
         buttons_text = deque(['Edit Account', 'View My Orders', 'Payment Options', 'Back'])
@@ -117,8 +124,8 @@ class MainMenu(QWidget):
             button_function = button_text.replace(" ", "_")
             button_function = button_function.lower()
             button.setFont(QFont(fonts[0], 12))
+            button.setProperty("class", "main_menu_buttons")
             button.setFixedWidth(250)
-            button.setFixedHeight(30)
             button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
             button.clicked.connect(left_layout_buttons_dict[button_function])
             buttons.appendleft(button)
@@ -130,35 +137,35 @@ class MainMenu(QWidget):
         left_buttons_groupbox.setLayout(left_buttons_layout)
 
         """CREATE THE TOP LAYOUT"""
-        top_buttons_groupbox = QGroupBox("Top menu")
+        top_buttons_groupbox = QGroupBox()
         top_buttons_layout = QHBoxLayout()
 
         top_buttons_layout.addStretch(0)
         top_buttons_layout.addSpacing(1000)
 
-        top_buttons_text = deque(['Favourites', 'About'])  # TODO: need to add the 'Log Out' button
+        top_buttons_text = deque(['Basket', 'Favourites', 'About', 'Log Out'])
 
         while top_buttons_text:
             curr_top_button = top_buttons_text.popleft()
             top_button = QPushButton()
             top_button.setText(curr_top_button)
             top_button.setFont(QFont(fonts[0], 9))
-            top_button.setFixedWidth(120)
-            top_button.setFixedHeight(30)
             top_button.setCursor(QCursor(QCursor(Qt.CursorShape.PointingHandCursor)))
             top_button.clicked.connect(top_layout_buttons_dict[curr_top_button])
-
+            if not top_buttons_text:
+                top_button.setProperty("class", "log_out_button")
+            else:
+                top_button.setProperty("class", "main_menu_buttons")
             top_buttons_layout.addWidget(top_button)
-
         top_buttons_groupbox.setLayout(top_buttons_layout)
 
         """CREATE THE CATEGORIES LAYOUT"""
-        categories_groupbox = QGroupBox("Categories")
+        categories_groupbox = QGroupBox()
 
         categories_grid_layout = QGridLayout()
 
-        postgres_conn.POSTGRES_CURSOR.execute(f"SELECT category_name, category_description, category_function, image_url FROM categories ORDER BY category_name ASC;")
-        result = postgres_conn.POSTGRES_CURSOR.fetchmany(12)
+        admin_cursor.execute(f"SELECT category_name, category_description, category_function, image_url FROM categories ORDER BY category_name ASC;")
+        result = admin_cursor.fetchmany(12)
         categories = deque([x[0] for x in result[0:12]])
         categories_description = deque([x[1] for x in result[0:12]])
 
@@ -193,7 +200,11 @@ class MainMenu(QWidget):
                     category_button = QPushButton()
                     category_button.setText(category_name)
                     category_button.setFont(QFont(fonts[0], 11))
-                    category_button.setMaximumWidth(150)
+                    category_button.setProperty("class", "categories_buttons")
+                    if category_name == "Home and Living":
+                        category_button.setMaximumWidth(170)
+                    else:
+                        category_button.setMaximumWidth(150)
                     category_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
                     category_button.clicked.connect(open_category_func(category_name))
@@ -221,6 +232,7 @@ class MainMenu(QWidget):
 
         
         """OPEN EDIT ACCOUNT LAYOUT/REPLACE CATEGORIES LAYOUT"""
+        global open_update_account
         def open_update_account():
             global edit_account_layout
             global layouts_list
@@ -228,10 +240,11 @@ class MainMenu(QWidget):
             layouts_list.append(edit_account_layout)
             categories_groupbox.hide()
             try:
-                payment_options_layout.hide()
-                subcategories_layout.hide()
+                for i in layouts_list:
+                    if i != edit_account_layout:
+                        i.hide()
             except Exception as error:
-                print("Payment Options Not Opened")                
+                print("Edit Account Error -> No other windows were opened")                
             main_layout.addWidget(edit_account_layout, 1, 1)
             # Disable the button to avoid calling again the function
                 # Not the best approach, but for now it will do
@@ -249,10 +262,11 @@ class MainMenu(QWidget):
             layouts_list.append(payment_options_layout)
             categories_groupbox.hide()
             try:
-                edit_account_layout.hide()
-                subcategories_layout.hide()
+                for i in layouts_list:
+                    if i != payment_options_layout:
+                        i.hide()
             except Exception as error:
-                print("Edit Account Not Opened")            
+                print("Payment Options Error -> No other windows were opened")                
             main_layout.addWidget(payment_options_layout, 1, 1)
             buttons[-3].setEnabled(False)
             buttons[-1].setEnabled(True)
@@ -277,6 +291,7 @@ class MainMenu(QWidget):
             categories_groupbox.hide()
             main_layout.addWidget(subcategories_layout, 1, 1)
 
+        """OPEN FAVORITES MENU"""
         def open_favourites():
             global favourites_layout
             global layouts_list
@@ -284,12 +299,28 @@ class MainMenu(QWidget):
             layouts_list.append(favourites_layout)
             categories_groupbox.hide()
             main_layout.addWidget(favourites_layout, 1, 1)
-        
-        
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
+            print("Favorites was opened")
+
+        """OPEN BASKET MENU"""
+        def open_basket():
+            global basket_scroll_layout
+            global layouts_list
+            basket_scroll_layout = basket.basket_menu()
+            layouts_list.append(basket_scroll_layout)
+            categories_groupbox.hide()
+            main_layout.addWidget(basket_scroll_layout, 1, 1)
+            buttons[-1].setEnabled(True)
+            buttons[-2].setEnabled(True)
+            buttons[-3].setEnabled(True)
+            buttons[-4].setEnabled(True)
+
         
         """BRING BACK THE CATEGORIES"""
         def open_categories():
-            # Not the best approach, that could be improved
             for i in layouts_list:
                 try:
                     i.hide()
@@ -301,6 +332,15 @@ class MainMenu(QWidget):
             buttons[-3].setEnabled(True)
             buttons[-4].setEnabled(True)
         open_categories()
+
+        """LOG OUT TO LOGIN SCREEN"""
+        def log_out():
+            # admin_cursor.close()
+            # admin_connection.close()
+            # # login.user_cursor.close()
+            # # login.user_connection.close()
+            login.start_window()
+            main_menu_window.hide()
         
         
 """OBSOLETE - KEEP FOR NOW FOR DEBUGING PURPOSES, BUT MOST PROBEBLY WONT BE NEEDED"""
@@ -319,5 +359,3 @@ def start_window():
 
 if __name__ == '__main__':
     open_app()
-
-# open_app()
